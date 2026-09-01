@@ -3,7 +3,7 @@
 Install jerry once, then let it do the mechanical parts:
 
 ```sh
-brew install codcod/tap/jerry     # or: go install github.com/codcod/jerry@latest
+brew install codcod/tap/jerry     # or: go install github.com/codcod/jerry/cmd/jerry@latest
 jerry hooks install               # validates and regenerates the index on commit
 ```
 

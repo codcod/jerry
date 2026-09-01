@@ -20,7 +20,7 @@ Or, on any machine with a Go toolchain:
 
 [source,sh]
 ----
-go install github.com/codcod/jerry@latest
+go install github.com/codcod/jerry/cmd/jerry@latest
 ----
 
 == Create a repository

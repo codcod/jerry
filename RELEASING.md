@@ -32,7 +32,7 @@ deliberately `continue-on-error`: a broken manual must never block a release.
 ## What a release means for scaffolded repositories
 
 `jerry init` stamps the version of the binary that ran it into the CI it emits
-(`go install github.com/codcod/jerry@vX.Y.Z`). A repository therefore keeps
+(`go install github.com/codcod/jerry/cmd/jerry@vX.Y.Z`). A repository therefore keeps
 being checked against the rules it was created with until someone deliberately
 bumps the pin. A development build (`dev`, or a `-dirty` describe) falls back to
 `@latest`, because there is no released version for it to pin.

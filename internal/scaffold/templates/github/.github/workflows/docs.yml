@@ -29,7 +29,7 @@ jobs:
       # Pinned, never @latest: a floating version turns unrelated pull requests
       # red. On a macOS runner use `brew install codcod/tap/jerry` instead.
       - name: install jerry
-        run: go install github.com/codcod/jerry@__JERRY_VERSION__
+        run: go install github.com/codcod/jerry/cmd/jerry@__JERRY_VERSION__
       - name: validate
         run: jerry validate
       - name: check index

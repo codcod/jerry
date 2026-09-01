@@ -4,7 +4,7 @@ A single binary that scaffolds a repository of Architecture Decision Records
 and Solution Designs, then owns every rule that governs it.
 
 ```sh
-brew install codcod/tap/jerry     # or: go install github.com/codcod/jerry@latest
+brew install codcod/tap/jerry     # or: go install github.com/codcod/jerry/cmd/jerry@latest
 
 mkdir architecture-docs && cd architecture-docs && git init
 jerry init --forge github         # or --forge gitlab

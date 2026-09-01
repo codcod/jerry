@@ -129,7 +129,7 @@ func TestVersionPinning(t *testing.T) {
 			if err != nil {
 				t.Fatalf("reading workflow: %v", err)
 			}
-			if !strings.Contains(string(content), "github.com/codcod/jerry"+testCase.want) {
+			if !strings.Contains(string(content), "github.com/codcod/jerry/cmd/jerry"+testCase.want) {
 				t.Errorf("workflow does not pin %s", testCase.want)
 			}
 			if strings.Contains(string(content), versionToken) {

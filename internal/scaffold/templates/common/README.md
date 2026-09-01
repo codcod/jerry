@@ -7,7 +7,7 @@ Managed with [jerry](https://github.com/codcod/jerry): every rule in this
 repository is enforced by the `jerry` binary, not by scripts committed here.
 
 ```sh
-brew install codcod/tap/jerry     # or: go install github.com/codcod/jerry@latest
+brew install codcod/tap/jerry     # or: go install github.com/codcod/jerry/cmd/jerry@latest
 jerry validate
 jerry index --check
 ```
