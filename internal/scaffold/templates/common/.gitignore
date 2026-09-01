@@ -1,0 +1,5 @@
+# Local editor settings — never share machine-specific paths.
+.claude/settings.local.json
+.idea/
+.vscode/
+.DS_Store

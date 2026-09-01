@@ -1,0 +1,11 @@
+/jerry
+*.test
+*.out
+/dist/
+
+# Rendered docs (never commit generated artifacts)
+*.pdf
+*.epub
+
+# Editor / OS
+.DS_Store

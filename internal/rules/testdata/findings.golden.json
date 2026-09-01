@@ -1,0 +1,142 @@
+[
+  {
+    "path": "cross-cutting/adr/0001-single-team.md",
+    "line": 1,
+    "severity": "error",
+    "rule": "cross-cutting-teams",
+    "message": "cross-cutting ADRs need a `teams:` list naming every affected team (two or more). If only one team is affected, it belongs under teams/\u003cteam\u003e/adr/"
+  },
+  {
+    "path": "cross-cutting/adr/0001-single-team.md",
+    "line": 5,
+    "severity": "error",
+    "rule": "cross-cutting-team-field",
+    "message": "cross-cutting ADRs use `teams:`, not `team:`"
+  },
+  {
+    "path": "teams/broken/adr/0001-duplicate-id.md",
+    "line": 1,
+    "severity": "error",
+    "rule": "duplicate-id",
+    "message": "duplicate ADR id 0001 in teams/broken/adr: 0001-duplicate-id.md, 0001-many-problems.md — renumber one to the next free number in this folder"
+  },
+  {
+    "path": "teams/broken/adr/0001-duplicate-id.md",
+    "line": 4,
+    "severity": "warning",
+    "rule": "stale-proposal",
+    "message": "still Proposed after 2435 days — accept it, reject it, or close it out"
+  },
+  {
+    "path": "teams/broken/adr/0001-many-problems.md",
+    "line": 1,
+    "severity": "error",
+    "rule": "missing-field",
+    "message": "frontmatter is missing `deciders`"
+  },
+  {
+    "path": "teams/broken/adr/0001-many-problems.md",
+    "line": 1,
+    "severity": "error",
+    "rule": "missing-section",
+    "message": "missing required section(s): ## Decision, ## Consequences"
+  },
+  {
+    "path": "teams/broken/adr/0001-many-problems.md",
+    "line": 2,
+    "severity": "error",
+    "rule": "id-mismatch",
+    "message": "frontmatter id ADR-0002 does not match filename number 0001"
+  },
+  {
+    "path": "teams/broken/adr/0001-many-problems.md",
+    "line": 4,
+    "severity": "error",
+    "rule": "status",
+    "message": "status \"Superseded by ADR-0009\" is not one of: Proposed, Accepted, Rejected, Deprecated, Superseded. Use `status: Superseded` plus `superseded_by:` rather than putting the successor in the status field"
+  },
+  {
+    "path": "teams/broken/adr/0001-many-problems.md",
+    "line": 5,
+    "severity": "error",
+    "rule": "team-mismatch",
+    "message": "frontmatter team \"payments\" does not match folder \"broken\""
+  },
+  {
+    "path": "teams/broken/adr/0001-many-problems.md",
+    "line": 6,
+    "severity": "error",
+    "rule": "date",
+    "message": "date \"2026-13-01\" is not a valid ISO date (YYYY-MM-DD)"
+  },
+  {
+    "path": "teams/broken/adr/0003-bad-references.md",
+    "line": 5,
+    "severity": "error",
+    "rule": "unresolved-ref",
+    "message": "\"ADR-0099\" does not resolve — no ADR-0099 in \"broken\""
+  },
+  {
+    "path": "teams/broken/adr/0003-bad-references.md",
+    "line": 5,
+    "severity": "error",
+    "rule": "unresolved-ref",
+    "message": "\"nosuchteam/ADR-0001\" points at unknown scope \"nosuchteam\""
+  },
+  {
+    "path": "teams/broken/adr/0004-empty-section.md",
+    "line": 16,
+    "severity": "error",
+    "rule": "empty-section",
+    "message": "section \"## Decision\" is empty — a heading with nothing under it reads as though the question was answered"
+  },
+  {
+    "path": "teams/broken/adr/0005-unfilled-template.md",
+    "line": 3,
+    "severity": "error",
+    "rule": "placeholder",
+    "message": "template placeholder \"Short title of the decision\" was never filled in"
+  },
+  {
+    "path": "teams/broken/adr/0005-unfilled-template.md",
+    "line": 4,
+    "severity": "warning",
+    "rule": "stale-proposal",
+    "message": "still Proposed after 211 days — accept it, reject it, or close it out"
+  },
+  {
+    "path": "teams/broken/adr/0005-unfilled-template.md",
+    "line": 26,
+    "severity": "error",
+    "rule": "placeholder",
+    "message": "template placeholder \"**Option A** — why it was rejected\" was never filled in"
+  },
+  {
+    "path": "teams/payments/solution-designs/2026-05-ledger-rewrite.md",
+    "line": 1,
+    "severity": "error",
+    "rule": "missing-section",
+    "message": "missing required section(s): ## Proposed Design, ## Risks \u0026 Trade-offs"
+  },
+  {
+    "path": "teams/payments/solution-designs/2026-05-ledger-rewrite.md",
+    "line": 3,
+    "severity": "error",
+    "rule": "status",
+    "message": "status \"Approved!\" is not one of: Draft, In Review, Approved, Implemented, Superseded, Archived"
+  },
+  {
+    "path": "teams/payments/solution-designs/2026-05-ledger-rewrite.md",
+    "line": 5,
+    "severity": "error",
+    "rule": "filename-date-mismatch",
+    "message": "filename prefix 2026-05 does not match date 2026-07-02"
+  },
+  {
+    "path": "teams/payments/solution-designs/2026-05-ledger-rewrite.md",
+    "line": 7,
+    "severity": "error",
+    "rule": "unresolved-ref",
+    "message": "\"ADR-0404\" does not resolve — no ADR-0404 in \"payments\""
+  }
+]

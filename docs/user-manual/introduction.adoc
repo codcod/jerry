@@ -1,0 +1,179 @@
+= Introduction
+
+{product} scaffolds a repository of Architecture Decision Records and Solution
+Designs, then owns every rule that governs it. Repositories it creates carry no
+scripts of their own: the binary is the single source of truth for the rules, so
+they cannot drift between the repositories that share them.
+
+The full design — why the schema is shaped this way, what is deliberately not
+built, and the phased roadmap — is recorded in `DESIGN.md` at the root of the
+repository. This manual documents how to operate what has actually been built.
+
+== Install
+
+[source,sh]
+----
+brew install codcod/tap/jerry
+----
+
+Or, on any machine with a Go toolchain:
+
+[source,sh]
+----
+go install github.com/codcod/jerry@latest
+----
+
+== Create a repository
+
+[source,sh]
+----
+mkdir architecture-docs && cd architecture-docs
+git init
+jerry init --forge github     # or --forge gitlab
+jerry hooks install
+----
+
+`init` writes templates, an example ADR, CODEOWNERS, CI for the chosen forge,
+`jerry.yaml`, and a generated index. It is idempotent: existing files are
+reported and left alone unless `--force` is given. Use `--dry-run` first to see
+the list.
+
+The emitted CI pins the version of {product} that wrote it, so a repository
+keeps being checked against the rules it was created with until somebody bumps
+the pin deliberately.
+
+== Write a decision
+
+[source,sh]
+----
+jerry new adr "Use event sourcing for the ledger" --team payments
+----
+
+This allocates the next free four-digit id in that folder, slugs the title into
+a filename, stamps today's date and fills `deciders` from your git identity. The
+body arrives as prompts written in HTML comments, which do not count as content
+— a document created and never filled in still fails validation.
+
+For a decision that binds more than one team:
+
+[source,sh]
+----
+jerry new adr "Standardise on OpenTelemetry" --cross-cutting --teams payments,platform
+----
+
+Solution designs work the same way, with `jerry new sd`. They have no sequential
+id: the date is the identifier, so the filename is `YYYY-MM-<slug>.md` and its
+prefix must agree with the frontmatter date.
+
+== Check it
+
+[source,sh]
+----
+jerry validate
+jerry index --check
+----
+
+`validate` reports every problem it finds rather than stopping at the first, and
+exits non-zero when at least one is an error. Warnings — an ADR left `Proposed`
+for more than ninety days — are printed but never fail: that judgement needs a
+human, and failing a pipeline on the calendar only teaches people to falsify
+dates.
+
+For CI that annotates the diff instead of a log nobody opens:
+
+[source,sh]
+----
+jerry validate --format sarif > jerry.sarif
+----
+
+`--format` also accepts `text`, `json` and `junit`.
+
+== Change a status
+
+[source,sh]
+----
+jerry status payments/ADR-0007 accepted
+----
+
+Transitions are checked. `Rejected` is a real outcome and worth recording: it is
+what stops the same proposal returning every year. `Superseded` is deliberately
+unreachable here, because it needs a successor to point at:
+
+[source,sh]
+----
+jerry supersede payments/ADR-0007 --with "Use CockroachDB for the ledger"
+----
+
+That one command creates the successor, sets `status: Superseded` and
+`superseded_by:` on the predecessor, writes the reverse `supersedes:` pointer,
+and adds the note under Consequences. Doing it by hand is how one half of the
+link ends up missing.
+
+== References between decisions
+
+IDs are unique per folder, not globally. A bare `ADR-0007` therefore means "in
+this document's own folder"; anything else must name its scope.
+
+[cols="1,2"]
+|===
+| Reference | Means
+
+| `ADR-0007`
+| ADR-0007 in the same folder
+
+| `payments/ADR-0007`
+| ADR-0007 in `teams/payments/adr/`
+
+| `cross-cutting/ADR-0003`
+| ADR-0003 in `cross-cutting/adr/`
+|===
+
+Every `superseded_by`, `supersedes` and `related_adrs` entry is resolved against
+the corpus.
+
+== Formatting
+
+[source,sh]
+----
+jerry fmt          # canonicalise
+jerry fmt --check  # list files that need it, exit non-zero
+----
+
+`fmt` normalises frontmatter key order and trailing whitespace, and preserves
+keys {product} has never heard of in their authored order. It never reflows
+prose: deciding what is a paragraph and what is a list, table or fenced block is
+exactly where a markdown formatter corrupts authored text.
+
+== Editor support
+
+[source,sh]
+----
+jerry schema --kind adr > adr.schema.json
+----
+
+Point any YAML language server at the result for frontmatter completion and
+inline validation.
+
+== Configuration
+
+`jerry.yaml` is optional; every key falls back to the default `jerry init`
+writes. It is located by walking upward from the working directory, the way git
+and cargo find their manifests, so {product} works from anywhere inside the
+repository.
+
+[source,yaml]
+----
+adr-dir: adr
+solution-design-dir: solution-designs
+skip-dirs: [templates, index, .git, node_modules, dist]
+index-path: index/index.md
+required-adr-sections: ["## Context", "## Decision", "## Consequences"]
+required-sd-sections: ["## Problem Statement", "## Proposed Design", "## Risks & Trade-offs"]
+proposed-stale-days: 90
+----
+
+== Global flags
+
+`-c, --config` names a `jerry.yaml` explicitly. `--json` emits machine-readable
+output where a command has one. `-q, --quiet` suppresses progress but never
+errors. Every command that writes accepts `--dry-run`.

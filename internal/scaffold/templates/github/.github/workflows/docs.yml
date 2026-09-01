@@ -1,0 +1,36 @@
+# The index is a build artifact that gets committed, so CI verifies it rather
+# than writing it. A job that regenerated index/index.md and pushed to main
+# would need a protected-branch bypass, would add a commit per merge, and would
+# fail on a non-fast-forward whenever two pull requests land close together.
+# Authors regenerate it instead — `jerry hooks install` does it on commit.
+name: docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.26'
+          cache: false
+      # Pinned, never @latest: a floating version turns unrelated pull requests
+      # red. On a macOS runner use `brew install codcod/tap/jerry` instead.
+      - name: install jerry
+        run: go install github.com/codcod/jerry@__JERRY_VERSION__
+      - name: validate
+        run: jerry validate
+      - name: check index
+        run: jerry index --check

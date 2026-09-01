@@ -1,0 +1,31 @@
+# The index is a build artifact that gets committed, so CI verifies it rather
+# than writing it. A job that regenerated index/index.md and pushed to main
+# would need a protected-branch bypass, would add a commit per merge, and would
+# fail with a non-fast-forward error whenever two merge requests land close
+# together. Authors regenerate it instead — `jerry hooks install` does it on
+# commit.
+stages:
+  - validate
+
+default:
+  image: golang:1.26
+  before_script:
+    # Pinned, never @latest: a floating version turns unrelated merge requests
+    # red. On a macOS runner use `brew install codcod/tap/jerry` instead.
+    - go install github.com/codcod/jerry@__JERRY_VERSION__
+
+.docs-changes: &docs-changes
+  - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  - if: '$CI_COMMIT_BRANCH == "main"'
+
+validate-docs:
+  stage: validate
+  script:
+    - jerry validate
+  rules: *docs-changes
+
+check-index:
+  stage: validate
+  script:
+    - jerry index --check
+  rules: *docs-changes

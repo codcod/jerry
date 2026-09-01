@@ -1,0 +1,51 @@
+{
+  "schema": "jerry.index/1",
+  "adrs": [
+    {
+      "id": "ADR-0001",
+      "title": "Standardise on OpenTelemetry",
+      "status": "Accepted",
+      "scope": "cross-cutting (payments, platform)",
+      "date": "2026-02-10",
+      "path": "cross-cutting/adr/0001-otel.md",
+      "link": "../cross-cutting/adr/0001-otel.md"
+    },
+    {
+      "id": "ADR-0001",
+      "title": "Use the outbox pattern: at-least-once publishing",
+      "status": "Superseded by ADR-0002",
+      "scope": "payments",
+      "date": "2026-01-05",
+      "path": "teams/payments/adr/0001-use-outbox.md",
+      "link": "../teams/payments/adr/0001-use-outbox.md"
+    },
+    {
+      "id": "ADR-0002",
+      "title": "Use change data capture",
+      "status": "Accepted",
+      "scope": "payments",
+      "date": "2026-04-01",
+      "path": "teams/payments/adr/0002-use-cdc.md",
+      "link": "../teams/payments/adr/0002-use-cdc.md"
+    },
+    {
+      "id": "ADR-0001",
+      "title": "Support a | b routing",
+      "status": "Proposed",
+      "scope": "platform",
+      "date": "2026-06-01",
+      "path": "teams/platform/adr/0001-pipes.md",
+      "link": "../teams/platform/adr/0001-pipes.md"
+    }
+  ],
+  "solution_designs": [
+    {
+      "title": "Ledger rewrite",
+      "status": "Implemented",
+      "scope": "payments",
+      "date": "2026-05-02",
+      "path": "teams/payments/solution-designs/2026-05-ledger-rewrite.md",
+      "link": "../teams/payments/solution-designs/2026-05-ledger-rewrite.md"
+    }
+  ]
+}
