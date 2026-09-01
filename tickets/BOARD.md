@@ -20,11 +20,10 @@ Last updated: 2026-09-01
 
 ## IN REVIEW
 
-### jerry (1/1)
+### jerry (0/1)
 
 | id | title | depends-on |
 |---|---|---|
-| JRY-001 | Cut v0.1.0: verify release pipeline end to end | [] |
 
 ## REWORK
 
@@ -46,6 +45,7 @@ Last updated: 2026-09-01
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
+| JRY-002 | Scaffold CI pin fallback misses non-dirty intermediate builds | medium | low | S | [] |  |
 
 ## DONE
 
@@ -53,6 +53,7 @@ Last updated: 2026-09-01
 
 | id | title | merged |
 |---|---|---|
+| JRY-001 | Cut v0.1.0: verify release pipeline end to end | yes — merged to main (PR #1, #2, #3, #4; commit `08ef282`) |
 
 ## DROPPED
 

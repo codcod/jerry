@@ -149,6 +149,56 @@ three were fixed inline, on the same ticket branch, per user approval at each st
 **note-and-close**. A `debug.ReadBuildInfo()` fallback would fix it but is new feature
 work, out of scope for a release-verification ticket.
 
+### Validation review (2026-09-01)
+
+- [x] Reviewer independence settled (step 0): **delegated**. The reviewing agent authored
+  all three implementation PRs (#1–#3) this same session, so steps 2–4a were delegated to a
+  fresh, adversarially-briefed independent agent with no memory of writing the code; every
+  delegated finding below was re-verified by hand before recording, per step 0.
+- [x] Implementation audit — acceptance test re-run verbatim against the real `v0.1.1`
+  release: `go install github.com/codcod/jerry/cmd/jerry@v0.1.1` resolves (`jerry version`
+  prints `dev`, as the amended acceptance test now expects); `brew install`/`brew upgrade
+  codcod/tap/jerry` resolves to `0.1.1`; `jerry init --forge github|gitlab` in scratch dirs
+  both emit the corrected pinned install line. `just build`/`test`/`lint`/`docs-check`/
+  `dist-check` all pass. Both live release workflow runs (`v0.1.0`, `v0.1.1`) show
+  `success`; the `homebrew-tap` formula content matches (`brew cat codcod/tap/jerry`) —
+  real description, correct checksums. All 8 tasks done in the files they name (steps 1, 2)
+- [x] Quality audit (step 3) — `scaffold_test.go`'s updated assertion still meaningfully
+  tests each version-formatting case, not weakened. No secrets hardcoded or logged anywhere
+  in the diff — both tokens are referenced only via `${{ secrets.* }}`/`.Env.*`
+- [x] Consistency audit (step 4) — whole-tree grep for the broken install path
+  (`github.com/codcod/jerry@` without `/cmd/jerry`) found no remaining hits in tracked
+  files; two findings below (F1, F2)
+- [x] Documentation audit (step 4a) — `just docs-check` passes cleanly;
+  `docs/user-manual/introduction.adoc` (one of the 8 fixed files) is accurate
+- [ ] Docs-readability pass (step 4b, optional) — **conscious skip**: no docs-readability
+  reviewer configured in this host session
+- [x] Findings recorded below with severity, class, and disposition; disposition summary
+  and cost line present (step 5)
+- [x] Ticket moved to `tickets/6-done/`; `## History` appended (step 6)
+- [x] Other references updated; governing documents (`RELEASING.md`, `CHANGELOG.md`)
+  reconciled (step 7)
+- [x] Remaining-tickets impact sweep (step 8) — no other ticket exists yet in
+  `1-to-do/`/`2-ready/` referencing JRY-001 in `depends-on:` or Description; nothing to
+  patch
+- [x] Summary, commit messages, and MR attributes presented for approval at each publish
+  step; overarching bookkeeping committed on `main`; next-ticket suggestion given (step 9)
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | non-blocking | docs-gap | fixed inline | `CHANGELOG.md` never got a `[0.1.1]` entry for the install-path fix PR #2 shipped | `CHANGELOG.md` showed `[0.1.0]` as the latest entry despite `v0.1.1` being the live release | add a `[0.1.1]` section — done, see below |
+| F2 | non-blocking | stale-xref | fixed inline | `.goreleaser.yaml`'s "needs a tap repo + token before the first tag" TODO was made false by this ticket's own two tags | `.goreleaser.yaml:78-80` (pre-fix) | delete the stale comment block — done, see below |
+| F3 | non-blocking | stale-xref | noted | `PLAN.md` (untracked scratch, "discard once the tickets are filed") still shows the broken install path in its own JRY-001 row and prose | `PLAN.md:63,70` | leave as-is; `PLAN.md` documents unfiled tickets JRY-003+ and is not yet due for discard |
+| F4 | non-blocking | correctness | noted | `docs-release.yml`'s new `workflow_run` trigger is unverified in production — zero runs so far | `gh run list --workflow=docs-release.yml` returns nothing | already an explicit, recorded deferral (History); verification happens on the next real release, not manufactured here |
+| F5 | non-blocking | correctness | new ticket | Pre-existing gap in `internal/scaffold/scaffold.go`'s version-pin fallback: a non-dirty intermediate build (e.g. `just build`'s own `v0.1.1-3-g<sha>`) matches none of the `@latest`-fallback branches, so `jerry init` from such a binary would pin scaffolded CI to an unresolvable pseudo-version | `internal/scaffold/scaffold.go:177` | filed as [JRY-002](../1-to-do/JRY-002-scaffold-ci-pin-fallback-misses-non-dirty-intermediate-builds.md), `spawned-by: [JRY-001]` — pre-existing Phase 1 code, out of this ticket's release-verification scope, but passes the promotion test (same failure class this ticket already fixed twice) |
+
+**Disposition summary:** 2 fixed inline (F1, F2), 2 noted (F3, F4), 1 new ticket (F5 →
+JRY-002). No blocking findings.
+
+cost: estimated S, actual M — the ticket's own acceptance test found and fixed three real
+release-pipeline defects (a stale credential, a broken install path affecting every
+scaffolded repo, and a dead CI trigger), each requiring its own PR and, twice, a new tag.
+
 ## History
 
 - 2026-09-01 — created (TO DO). source: pickle ticket new
@@ -165,3 +215,8 @@ work, out of scope for a release-verification ticket.
 - 2026-09-01 — plan amended inline: switch `docs-release.yml` to a `workflow_run` trigger; user approved, deferred re-verification to the next real release
 - 2026-09-01 — [PR #3](https://github.com/codcod/jerry/pull/3) merged (`7163509`)
 - 2026-09-01 — IN DEVELOPMENT → IN REVIEW: acceptance test green against `v0.1.1`; all findings fixed and merged
+- 2026-09-01 — independent review audit run (delegated, step 0); no blocking findings; 5 findings recorded (F1–F5)
+- 2026-09-01 — [PR #4](https://github.com/codcod/jerry/pull/4) merged (`08ef282`): F1 (CHANGELOG v0.1.1 entry), F2 (stale homebrew-tap TODO) fixed inline
+- 2026-09-01 — filed [JRY-002](../1-to-do/JRY-002-scaffold-ci-pin-fallback-misses-non-dirty-intermediate-builds.md) for F5 (scaffold version-pin fallback gap), `spawned-by: [JRY-001]`
+- 2026-09-01 — IN REVIEW → DONE: no blocking findings; disposition summary: 2 fixed inline, 2 noted, 1 new ticket (JRY-002)
+- 2026-09-01 — merged to main (PR #1, #2, #3, #4; commit `08ef282`)
