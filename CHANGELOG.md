@@ -8,6 +8,12 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
 
 ## [Unreleased]
 
+### Fixed
+
+- `jerry init` run from a binary built between tags (e.g. `just build`'s own pseudo-version,
+  `v0.1.1-3-g<sha>`) now falls back to `@latest` in scaffolded CI instead of pinning to an
+  unresolvable commit-describe string.
+
 ## [0.1.1] - 2026-09-01
 
 ### Fixed

@@ -118,6 +118,7 @@ func TestVersionPinning(t *testing.T) {
 		{"AlreadyPrefixedIsNotDoubled", "v0.4.2", "@v0.4.2"},
 		{"DevBuildFallsBackToLatest", "dev", "@latest"},
 		{"DirtyBuildFallsBackToLatest", "v0.4.2-3-gabc-dirty", "@latest"},
+		{"NonDirtyIntermediateBuildFallsBackToLatest", "v0.1.1-3-g3f336b9", "@latest"},
 	}
 	for _, testCase := range cases {
 		t.Run(testCase.name, func(t *testing.T) {

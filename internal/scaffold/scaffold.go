@@ -173,8 +173,10 @@ func collect(forge Forge) (map[string][]byte, error) {
 func replaceTokens(content []byte, version string) []byte {
 	pin := version
 	// A development build has no released version to pin to, so it falls back
-	// to latest rather than emitting CI that cannot resolve.
-	if pin == "" || pin == "dev" || strings.Contains(pin, "-dirty") {
+	// to latest rather than emitting CI that cannot resolve. Any pin with a
+	// hyphen — dirty ("-dirty") or a commits-since-tag pseudo-version
+	// ("-<n>-g<hash>") — is not an exact tag build either.
+	if pin == "" || pin == "dev" || strings.Contains(pin, "-") {
 		pin = "latest"
 	} else if !strings.HasPrefix(pin, "v") {
 		pin = "v" + pin
