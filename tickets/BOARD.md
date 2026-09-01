@@ -13,10 +13,11 @@ Last updated: 2026-09-01
 
 ## IN DEVELOPMENT
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-002 | Scaffold CI pin fallback misses non-dirty intermediate builds | [] |
 
 ## IN REVIEW
 
@@ -38,7 +39,6 @@ Last updated: 2026-09-01
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
-| JRY-002 | Scaffold CI pin fallback misses non-dirty intermediate builds | medium | low | S | [] |  |
 
 ## TO DO (impact order, per child)
 
