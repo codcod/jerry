@@ -90,16 +90,23 @@ confirmed present.
 From a clean environment (or `unset` any cached `GOFLAGS`/module cache pin first):
 
 ```sh
-go install github.com/codcod/jerry@v0.1.0
-jerry version   # prints v0.1.0, not "dev"
+go install github.com/codcod/jerry/cmd/jerry@v0.1.1
+jerry version   # prints "dev" — go install never sets main.Version; only a
+                # goreleaser build injects it via -ldflags. Pre-existing Go
+                # ecosystem limitation, not a defect in this release.
 
 brew install codcod/tap/jerry
+jerry version   # prints 0.1.1
 jerry --help    # installs and runs
 ```
 
-Both installs must resolve against the real, published `v0.1.0` — not a local build, not
-`@latest`. `jerry init` in a scratch directory must emit CI that pins
-`go install github.com/codcod/jerry@v0.1.0` (not `@latest`).
+**Amended inline** (rules §1) from the original text, which assumed `go install
+github.com/codcod/jerry@v0.1.0` was the right module path and that `jerry version` would
+print the tag regardless of install method — both wrong; see `## Review` for why. Final
+verified tag is `v0.1.1`, not `v0.1.0` (see History). Both installs must resolve against
+the real, published tag — not a local build, not `@latest`. `jerry init` in a scratch
+directory must emit CI that pins `go install github.com/codcod/jerry/cmd/jerry@v0.1.1`
+(not `@latest`), for both `--forge github` and `--forge gitlab`.
 
 ### Docs
 
@@ -124,8 +131,37 @@ No blocking findings; every load-bearing plan assumption held against current re
 | Task 2's "update the link references at the bottom" of `CHANGELOG.md` refers to a section that does not exist in the current file (no-op) | non-blocking | note-and-close |
 | `AGENTS.md` carries a slightly different one-line jerry description than the README line the plan chose for the Homebrew formula | non-blocking | note-and-close (README's wording stands) |
 
+### Execution findings (acceptance testing, 2026-09-01)
+
+The plan's own acceptance test surfaced three real defects while cutting the release. All
+three were fixed inline, on the same ticket branch, per user approval at each step (rules
+§1 — "plan amended inline").
+
+| finding | severity | class | disposition |
+|---|---|---|---|
+| `HOMEBREW_TAP_GITHUB_TOKEN` returned `401 Bad credentials` against `codcod/homebrew-tap` on the first `v0.1.0` release run — expired/invalid PAT, not a config bug | blocking (for the acceptance test) | environment | fixed — user rotated the PAT; re-ran the same workflow run and it succeeded |
+| `go install github.com/codcod/jerry@vX.Y.Z` never resolves: the module root has no `main` package, only `cmd/jerry` does. Broke the documented install command in `README.md`, `RELEASING.md`, `docs/user-manual/introduction.adoc`, both scaffold `README.md`/`CONTRIBUTING.md` templates, and — most seriously — both scaffold CI templates (`docs.yml`, `.gitlab-ci.yml`) that `jerry init` emits into every scaffolded repository | blocking | correctness | fixed — [PR #2](https://github.com/codcod/jerry/pull/2), released as `v0.1.1` since `v0.1.0`'s tag is immutable |
+| `docs-release.yml`'s `on: release: types: [published]` trigger never fires: `release.yml` publishes via goreleaser using the default `GITHUB_TOKEN`, and GitHub Actions does not cascade `GITHUB_TOKEN`-created events to other workflows. Confirmed by zero runs of `docs-release.yml` across both `v0.1.0` and `v0.1.1` | non-blocking (project already treats the manual as best-effort, `continue-on-error`) | correctness | fixed — [PR #3](https://github.com/codcod/jerry/pull/3), switched to `workflow_run`; verification deferred to the next real release per user decision (not worth cutting `v0.1.2` solely to prove it) |
+
+`jerry version` printing `"dev"` for `go install`-based installs (vs. the real tag for
+`brew install`) is a pre-existing Go-ecosystem limitation (`main.Version` is only set via
+`-ldflags` at goreleaser build time), not something this release introduced — disposition:
+**note-and-close**. A `debug.ReadBuildInfo()` fallback would fix it but is new feature
+work, out of scope for a release-verification ticket.
+
 ## History
 
 - 2026-09-01 — created (TO DO). source: pickle ticket new
 - 2026-09-01 — TO DO → READY: plan complete
 - 2026-09-01 — READY → IN DEVELOPMENT: picked up
+- 2026-09-01 — [PR #1](https://github.com/codcod/jerry/pull/1) merged (`0c8a303`): goreleaser formula description + CHANGELOG retitle
+- 2026-09-01 — tagged and pushed `v0.1.0`; release workflow run [33549010917](https://github.com/codcod/jerry/actions/runs/33549010917) failed at the Homebrew formula step: `401 Bad credentials` on `HOMEBREW_TAP_GITHUB_TOKEN`. GitHub Release + binaries + checksums still published successfully
+- 2026-09-01 — user rotated `HOMEBREW_TAP_GITHUB_TOKEN`; re-ran run 33549010917, succeeded — [v0.1.0 release](https://github.com/codcod/jerry/releases/tag/v0.1.0), tap formula confirmed correct
+- 2026-09-01 — acceptance test found `go install github.com/codcod/jerry@v0.1.0` does not resolve (blocking; see `## Review`)
+- 2026-09-01 — plan amended inline: fix the install path in 8 files, updated the affected test assertion; user approved
+- 2026-09-01 — [PR #2](https://github.com/codcod/jerry/pull/2) merged (`22bdaed`); tagged and pushed `v0.1.1`; release workflow run [33550559396](https://github.com/codcod/jerry/actions/runs/33550559396) succeeded — [v0.1.1 release](https://github.com/codcod/jerry/releases/tag/v0.1.1)
+- 2026-09-01 — re-ran acceptance test against `v0.1.1`: `go install`, `brew install`/`brew upgrade`, and `jerry init --forge github|gitlab` all confirmed correct (see amended Acceptance test)
+- 2026-09-01 — found `docs-release.yml` never ran for either release (blocking finding, non-blocking disposition; see `## Review`)
+- 2026-09-01 — plan amended inline: switch `docs-release.yml` to a `workflow_run` trigger; user approved, deferred re-verification to the next real release
+- 2026-09-01 — [PR #3](https://github.com/codcod/jerry/pull/3) merged (`7163509`)
+- 2026-09-01 — IN DEVELOPMENT → IN REVIEW: acceptance test green against `v0.1.1`; all findings fixed and merged

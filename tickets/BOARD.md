@@ -13,18 +13,18 @@ Last updated: 2026-09-01
 
 ## IN DEVELOPMENT
 
+### jerry (0/1)
+
+| id | title | depends-on |
+|---|---|---|
+
+## IN REVIEW
+
 ### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
 | JRY-001 | Cut v0.1.0: verify release pipeline end to end | [] |
-
-## IN REVIEW
-
-### jerry (0/1)
-
-| id | title | depends-on |
-|---|---|---|
 
 ## REWORK
 
