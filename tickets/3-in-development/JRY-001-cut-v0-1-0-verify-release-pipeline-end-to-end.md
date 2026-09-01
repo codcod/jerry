@@ -115,9 +115,17 @@ confirmed live. Record the tag and workflow run URL in the ticket's `## History`
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+### Applicability audit (pickup, 2026-09-01)
+
+No blocking findings; every load-bearing plan assumption held against current repo state.
+
+| finding | severity | disposition |
+|---|---|---|
+| Task 2's "update the link references at the bottom" of `CHANGELOG.md` refers to a section that does not exist in the current file (no-op) | non-blocking | note-and-close |
+| `AGENTS.md` carries a slightly different one-line jerry description than the README line the plan chose for the Homebrew formula | non-blocking | note-and-close (README's wording stands) |
 
 ## History
 
 - 2026-09-01 — created (TO DO). source: pickle ticket new
 - 2026-09-01 — TO DO → READY: plan complete
+- 2026-09-01 — READY → IN DEVELOPMENT: picked up
