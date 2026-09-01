@@ -175,7 +175,7 @@ func replaceTokens(content []byte, version string) []byte {
 	// A development build has no released version to pin to, so it falls back
 	// to latest rather than emitting CI that cannot resolve. Any pin with a
 	// hyphen — dirty ("-dirty") or a commits-since-tag pseudo-version
-	// ("-<n>-g<hash>") — is not an exact tag build either.
+	// ("-<n>-g<hash>") — is not an exact tag build either (JRY-002).
 	if pin == "" || pin == "dev" || strings.Contains(pin, "-") {
 		pin = "latest"
 	} else if !strings.HasPrefix(pin, "v") {

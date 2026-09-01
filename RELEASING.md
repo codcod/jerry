@@ -34,8 +34,10 @@ deliberately `continue-on-error`: a broken manual must never block a release.
 `jerry init` stamps the version of the binary that ran it into the CI it emits
 (`go install github.com/codcod/jerry/cmd/jerry@vX.Y.Z`). A repository therefore keeps
 being checked against the rules it was created with until someone deliberately
-bumps the pin. A development build (`dev`, or a `-dirty` describe) falls back to
-`@latest`, because there is no released version for it to pin.
+bumps the pin. Any build that is not an exact, clean tag — `dev`, dirty
+(`-dirty`), or built between tags (a `-<n>-g<hash>` describe, e.g. `just build`'s
+own output) — falls back to `@latest`, because there is no released version for
+it to pin (JRY-002).
 
 Rule changes are therefore **not** retroactive across the estate, which is the
 intended behaviour: a new check must not turn every existing repository red the
