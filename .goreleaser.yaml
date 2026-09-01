@@ -65,10 +65,6 @@ changelog:
       - "^test:"
       - "^chore:"
 
-# TODO: confirm codcod/jerry is this repo's actual GitHub
-# owner/name before the first tag. This was derived from `git remote get-url origin`
-# at scaffold time; if that remote wasn't set yet (or didn't point at GitHub), the
-# owner below reads "TODO-owner" instead and must be filled in by hand.
 release:
   github:
     owner: codcod
@@ -94,6 +90,6 @@ brews:
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     homepage: "https://github.com/codcod/jerry"
-    description: "TODO: one-line description of jerry"
+    description: "A single binary that scaffolds a repository of Architecture Decision Records and Solution Designs, then owns every rule that governs it."
     install: |
       bin.install "jerry"
