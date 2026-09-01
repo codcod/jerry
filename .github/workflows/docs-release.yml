@@ -1,24 +1,32 @@
 # Attach the AsciiDoc user manual (built with snowball) to a GitHub release.
-# GitHub-only: this workflow relies on `gh` and the `release` event, both specific
-# to GitHub — there is no equivalent step here for other forges.
+# GitHub-only: this workflow relies on `gh` and a tag push, both specific to
+# GitHub — there is no equivalent step here for other forges.
 #
-# Triggers whenever a release is published, regardless of what created it (a
-# manual release, goreleaser, or anything else) — the manual is not the release,
-# so a broken manual build never blocks or unpublishes the release itself.
+# Triggers on the `release` workflow completing, not on `release: published`:
+# goreleaser publishes the release using the default GITHUB_TOKEN, and GitHub
+# Actions deliberately does not cascade events created by that token into other
+# workflow runs. `workflow_run` has no such restriction. The manual is not the
+# release, so a broken manual build must never block or unpublish the release
+# itself — hence the `conclusion == 'success'` guard rather than a hard failure,
+# and `continue-on-error` on the build step below.
 name: docs-release
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ["release"]
+    types: [completed]
 
 permissions:
   contents: write
 
 jobs:
   attach-manual:
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       # `brew update` first: a preinstalled runner image's Homebrew snapshot can
       # lag behind the tap's bottle metadata, which otherwise only fails on fresh
@@ -38,7 +46,7 @@ jobs:
       - name: Attach user manual to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ github.event.release.tag_name }}
+          TAG: ${{ github.event.workflow_run.head_branch }}
         run: |
           shopt -s nullglob
           existing=(dist/docs/*.pdf dist/docs/*.epub)
