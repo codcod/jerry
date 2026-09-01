@@ -152,3 +152,4 @@ this one pin case).
 - 2026-09-01 — created (TO DO). source: review: found during JRY-001's independent review audit
 - 2026-09-01 — TO DO → READY: plan complete
 - 2026-09-01 — READY → IN DEVELOPMENT: picked up
+- 2026-09-01 — IN DEVELOPMENT → IN REVIEW: acceptance green
