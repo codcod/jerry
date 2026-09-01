@@ -8,6 +8,14 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-09-01
+
+### Fixed
+
+- `go install github.com/codcod/jerry@vX.Y.Z` never resolved: the module root has no `main`
+  package, only `cmd/jerry` does. Every documented and scaffold-emitted install command now
+  reads `go install github.com/codcod/jerry/cmd/jerry@vX.Y.Z`.
+
 ## [0.1.0] - 2026-09-01
 
 ### Added

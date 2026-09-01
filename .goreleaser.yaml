@@ -75,10 +75,6 @@ release:
   replace_existing_artifacts: true   # `mode: replace` alone only governs the release body/
   # changelog; without this, a re-run's asset uploads still 422 on an already-published tag.
 
-# TODO: publishing to a homebrew tap needs its own `homebrew-tap` repo under
-# codcod and a HOMEBREW_TAP_GITHUB_TOKEN repo secret (a PAT with `repo`
-# scope on that tap repo) before the first tag.
-#
 # `brews:` (not `homebrew_casks:`) is deliberate: `homebrew_casks:` is for GUI
 # apps/bundles, and a plain CLI binary formula belongs in `brews:`. `goreleaser
 # check` reporting a deprecation notice for `brews:` is expected and safe to
