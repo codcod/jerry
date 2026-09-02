@@ -54,6 +54,8 @@ func Check(corpus *doc.Corpus, options Options) Findings {
 			checkSD(&findings, corpus, document, options)
 		}
 		checkPlaceholders(&findings, document, options)
+		checkAppliesTo(&findings, document)
+		checkUnknownKeys(&findings, document)
 	}
 	checkDuplicateIDs(&findings, corpus)
 
@@ -263,6 +265,62 @@ func checkPlaceholders(findings *Findings, document *doc.Document, options Optio
 		if strings.Contains(document.Raw, placeholder) {
 			findings.errorf(document.Path, document.LineOf(placeholder), "placeholder",
 				"template placeholder %q was never filled in", placeholder)
+		}
+	}
+}
+
+// checkAppliesTo rejects an applies_to entry that cannot be a path. Matching
+// semantics (globs, existence) is separate, larger work — this only guards
+// against the field silently governing nothing.
+func checkAppliesTo(findings *Findings, document *doc.Document) {
+	line := doc.FieldLine(document.Mapping, "applies_to")
+	for _, entry := range document.Front.AppliesTo {
+		if reason, bad := badAppliesToPath(entry); bad {
+			findings.errorf(document.Path, line, "applies-to",
+				"applies_to entry %q is not a valid path: %s", entry, reason)
+		}
+	}
+}
+
+func badAppliesToPath(entry string) (string, bool) {
+	if strings.TrimSpace(entry) == "" {
+		return "empty or whitespace-only", true
+	}
+	if path.IsAbs(entry) {
+		return "must be relative", true
+	}
+	for _, segment := range strings.Split(entry, "/") {
+		if segment == ".." {
+			return "must not contain `..`", true
+		}
+	}
+	return "", false
+}
+
+// knownKeys is doc.KeyOrder as a set, so checkUnknownKeys can test membership
+// without a linear scan per key.
+var knownKeys = func() map[string]bool {
+	set := make(map[string]bool, len(doc.KeyOrder))
+	for _, key := range doc.KeyOrder {
+		set[key] = true
+	}
+	return set
+}()
+
+// checkUnknownKeys warns on a frontmatter key jerry does not recognise. A
+// warning, never an error: a repository may legitimately carry fields jerry
+// has no opinion about. `jerry fmt` still preserves the key untouched — this
+// only makes its presence visible.
+func checkUnknownKeys(findings *Findings, document *doc.Document) {
+	mapping := document.Mapping
+	if mapping == nil {
+		return
+	}
+	for i := 0; i+1 < len(mapping.Content); i += 2 {
+		key := mapping.Content[i].Value
+		if !knownKeys[key] {
+			findings.warnf(document.Path, mapping.Content[i].Line, "unknown-key",
+				"frontmatter key %q is not one jerry knows — check for a typo (preserved as-is by `jerry fmt`)", key)
 		}
 	}
 }

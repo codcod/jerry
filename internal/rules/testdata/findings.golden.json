@@ -112,6 +112,34 @@
     "message": "template placeholder \"**Option A** — why it was rejected\" was never filled in"
   },
   {
+    "path": "teams/broken/adr/0006-bad-applies-to.md",
+    "line": 8,
+    "severity": "error",
+    "rule": "applies-to",
+    "message": "applies_to entry \"   \" is not a valid path: empty or whitespace-only"
+  },
+  {
+    "path": "teams/broken/adr/0006-bad-applies-to.md",
+    "line": 8,
+    "severity": "error",
+    "rule": "applies-to",
+    "message": "applies_to entry \"/etc/passwd\" is not a valid path: must be relative"
+  },
+  {
+    "path": "teams/broken/adr/0006-bad-applies-to.md",
+    "line": 8,
+    "severity": "error",
+    "rule": "applies-to",
+    "message": "applies_to entry \"../../etc/passwd\" is not a valid path: must not contain `..`"
+  },
+  {
+    "path": "teams/broken/adr/0007-unknown-key.md",
+    "line": 9,
+    "severity": "warning",
+    "rule": "unknown-key",
+    "message": "frontmatter key \"applies-to\" is not one jerry knows — check for a typo (preserved as-is by `jerry fmt`)"
+  },
+  {
     "path": "teams/payments/solution-designs/2026-05-ledger-rewrite.md",
     "line": 1,
     "severity": "error",

@@ -8,6 +8,13 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
 
 ## [Unreleased]
 
+### Added
+
+- `jerry validate` now rejects an `applies_to` entry that cannot be a path (empty,
+  whitespace-only, absolute, or containing a `..` segment), and warns on any frontmatter key it
+  does not recognise (a misspelling like `applies-to:` no longer parses clean and governs
+  nothing silently).
+
 ### Changed
 
 - Emitted CI (`jerry init --forge github|gitlab`) no longer runs

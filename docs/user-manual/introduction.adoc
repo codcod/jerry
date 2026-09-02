@@ -131,6 +131,12 @@ this document's own folder"; anything else must name its scope.
 Every `superseded_by`, `supersedes` and `related_adrs` entry is resolved against
 the corpus.
 
+`applies_to` entries are validated as paths: an empty or whitespace-only entry, an
+absolute path, or a `..`-traversal is an error. Matching those paths against a
+repository is separate, larger work and not yet built. Any frontmatter key
+{product} does not recognise is reported as a warning rather than silently
+preserved — see the note on `fmt` below about what "preserved" still means.
+
 == Formatting
 
 [source,sh]

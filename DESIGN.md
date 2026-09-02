@@ -1,6 +1,6 @@
 # jerry — solution design
 
-**Version 2.1** · 2026-09-02 · Phase 1 implemented; sections 7.2 onward are intent, not code.
+**Version 2.2** · 2026-09-02 · Phase 1 implemented; sections 7.2 onward are intent, not code.
 
 This file is authoritative on **intent**. Where it conflicts with a shipped
 ticket decision, the ticket wins and this file is wrong and should be corrected.
@@ -120,15 +120,15 @@ than merely old. Its lifecycle therefore has somewhere to end.
 | `date` | required | required | ISO. For SDs the filename prefix must agree. |
 | `deciders` / `authors` | required | required | |
 | `related_adrs` | — | optional | Checked. |
-| `applies_to` | optional | optional | Paths. Accepted and preserved now, **not yet validated** (§10); nothing reads it until Phase 2. |
+| `applies_to` | optional | optional | Paths. Validated: rejects empty/whitespace-only, absolute, and `..`-traversal entries. Nothing yet *reads* the field for drift or ownership — that's still Phase 2. |
 
 **Unknown keys are preserved, not rejected.** `jerry fmt` keeps keys jerry has
 never heard of, in their authored order, because a tool that silently deletes
-what it does not understand cannot be trusted to write files at all. The cost
-is that a misspelling is invisible: `applies-to:` parses clean, round-trips
-intact, and governs nothing — permanently and silently, on the one field the
-whole of §7.2 depends on. Preservation stays; the **warning that a key is not
-one jerry knows** is what is missing.
+what it does not understand cannot be trusted to write files at all.
+Preservation stays, but a misspelling is no longer invisible: `validate` now
+warns when a frontmatter key is not one jerry knows, so `applies-to:` (hyphen)
+no longer parses clean and governs nothing — permanently and silently — on
+the one field the whole of §7.2 depends on.
 
 **`applies_to` holds paths, not service ids.** Version 1 of this document said
 "paths or service ids"; nothing resolves a service id until a catalogue exists
@@ -432,7 +432,6 @@ needing one.
 
 | # | This document says | The code does | Where |
 |---|---|---|---|
-| 1 | `applies_to` is validated (v1 §4.1) | Nothing validates it; no rule reads the field. A misspelled key is silently preserved | `internal/rules/rules.go`, `internal/doc/frontmatter.go` |
 | 2 | `schema_version` keeps the tool tolerant of old documents (§3.6) | Nothing reads it, and `jerry schema` publishes `const: 1`, which will reject v2 documents outright | `internal/cli/schema.go` |
 | 3 | Repositories own none of the rules (v1 §3.2) | `jerry.yaml` replaces the placeholder and required-section lists, so a repository can switch a rule off | `internal/config/config.go` |
 | 4 | Status lifecycles are enforced (§4.2) | `jerry status` enforces transitions; `validate` checks only membership, so a hand edit passes CI | `internal/cli/status.go` vs `internal/rules/rules.go` |
@@ -459,5 +458,8 @@ that is absent, because the green tick is taken as evidence.
   checksum-verified release binary instead of running `go install`, so §6's
   paragraph on the pin mechanism was rewritten to describe the shipped
   behaviour and the now-resolved row was removed from §10's table.
+- **Version 2.2** (2026-09-02) — JRY-005 closed divergence 1 (§4.1/§10 vs. `applies_to`
+  validation): the field is now validated for path shape, unknown frontmatter keys warn, and
+  the resolved row was removed from §10's table.
 - **Version 1** (2026-09-01) — initial design, written alongside the Phase 1
   implementation.
