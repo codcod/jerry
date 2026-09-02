@@ -193,5 +193,18 @@ func TestCheckPlaceholders(t *testing.T) {
 		if stripComments(body) != "" {
 			t.Errorf("allow marker was not stripped as a comment, body reads as filled: %q", stripComments(body))
 		}
+
+		// End-to-end: a section whose only content is the marker must still
+		// trip checkSections' empty-section rule, not just stripComments in
+		// isolation.
+		document := &doc.Document{
+			Path: "x.md",
+			Body: "## Context\n\n" + placeholderAllowMarker + "\n\n## Decision\n\nfilled in\n",
+		}
+		var sectionFindings Findings
+		checkSections(&sectionFindings, document, []string{"## Context", "## Decision"})
+		if len(sectionFindings) != 1 || sectionFindings[0].Rule != "empty-section" {
+			t.Errorf("expected exactly one empty-section finding for the marker-only section, got %v", sectionFindings)
+		}
 	})
 }

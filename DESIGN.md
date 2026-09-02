@@ -1,6 +1,6 @@
 # jerry — solution design
 
-**Version 2.2** · 2026-09-02 · Phase 1 implemented; sections 7.2 onward are intent, not code.
+**Version 2.3** · 2026-09-02 · Phase 1 implemented; sections 7.2 onward are intent, not code.
 
 This file is authoritative on **intent**. Where it conflicts with a shipped
 ticket decision, the ticket wins and this file is wrong and should be corrected.
