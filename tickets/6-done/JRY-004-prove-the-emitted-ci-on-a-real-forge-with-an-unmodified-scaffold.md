@@ -269,3 +269,5 @@ diagnosing an account-level blocker outside the scaffold's own control, not the 
   for the deferred GitLab confirmation, `spawned-by: [JRY-004]`
 - 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green (GitHub); GitLab deferred to JRY-009
 - 2026-09-02 — [PR #7](https://github.com/codcod/jerry/pull/7) opened against `main`; awaiting human merge
+- 2026-09-02 — merged to main (PR #7, `e8d2fe2`)
+- 2026-09-02 — IN REVIEW → DONE: GitHub proven end to end; no blocking findings; 1 new ticket (JRY-009 → GitLab confirmation)
