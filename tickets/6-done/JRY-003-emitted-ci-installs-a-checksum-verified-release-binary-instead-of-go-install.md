@@ -302,3 +302,4 @@ cost: estimated M, actual M
 - 2026-09-02 — READY → IN DEVELOPMENT: picked up
 - 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-02 — IN REVIEW → DONE: review clean; 4 fixed inline, 2 noted
+- 2026-09-02 — [PR #6](https://github.com/codcod/jerry/pull/6) opened against `main`; awaiting human merge
