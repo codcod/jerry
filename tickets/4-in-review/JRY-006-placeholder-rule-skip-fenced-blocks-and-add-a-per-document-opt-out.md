@@ -191,7 +191,55 @@ just docs-check
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+- [x] Reviewer independence settled (step 0): the implementing agent authored the branch this
+  session, so audits (steps 2–4a) were delegated to an independent sub-agent, briefed
+  adversarially and instructed to find defects; its findings were re-verified by hand before
+  being recorded below (per step 0's "delegation buys independence, not accuracy").
+- [x] Implementation audit — acceptance test re-run (`just test`, `just lint`, `just
+  docs-check`, plus `go test ./internal/rules/... -run TestCheckPlaceholders -v`), all green;
+  every task and confirmed design decision verified against the diff (steps 1, 2).
+- [x] Quality audit (step 3) — no dependency added (`go.mod` untouched), regex has no
+  pathological behaviour beyond an accepted, ticket-documented limitation (nested/odd fence
+  counts), test coverage adequate.
+- [x] Consistency audit (step 4) — whole-repo grep for stale `DESIGN.md §` citations and prior
+  placeholder-rule descriptions found nothing else to correct.
+- [x] Documentation audit (step 4a) — `docs/user-manual/introduction.adoc` edit verified
+  accurate and placed sensibly; `just docs-check` passes; `CHANGELOG.md` coverage was found
+  missing (F1, blocking).
+- [x] Docs-readability pass — no docs-readability reviewer available in this host; conscious
+  skip (step 4b).
+- [x] Findings recorded below, severity + class + disposition; disposition summary and cost
+  line present (step 5).
+- [x] Ticket moved per step 6 (see History).
+- [x] Governing documents reconciled: `DESIGN.md` §5/§10/§11 (ticket's own docs task) and the
+  version stamp (F2); `PLAN.md`'s own `JRY-006` row updated to reflect this review's outcome as
+  part of concluding the ticket (step 7 addendum). `PLAN.md`'s `JRY-005` row is separately stale
+  (still "to do" though done/merged) — pre-existing, not caused by this branch; noted (F5) rather
+  than fixed here.
+- [x] Remaining-tickets impact sweep done (step 8) — no ticket in `1-to-do/`/`2-ready/` depends
+  on or references JRY-006; no impact.
+- [ ] Summary + commit message & MR attributes presented for approval (step 9) — pending user
+  approval below.
+
+### Findings
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | blocking | docs-gap | — | `CHANGELOG.md`'s `## [Unreleased]` section has no entry for this ticket's user-facing change (fenced-block exclusion + the `<!-- jerry:allow placeholder -->` opt-out marker), though JRY-003 and JRY-005 both added one for their own user-facing changes | `CHANGELOG.md:9-18` (`## [Unreleased]` / `### Added`) | Add an `### Added` bullet describing the marker and the fenced-block exclusion; fixed via scoped rework (round 1) |
+| F2 | non-blocking | stale-xref | fixed inline | `DESIGN.md` line 3's version stamp was left at "Version 2.2" although this ticket's own §11 entry (added in the same commit) claims "Version 2.3" | `DESIGN.md:3` | Bumped to "Version 2.3" on the feature branch (commit `8037030`) |
+| F3 | non-blocking | test-gap | fixed inline | `TestCheckPlaceholders/AllowMarkerDoesNotFillAnEmptySection` only asserted `stripComments` in isolation, not `checkSections` end-to-end — a real (if narrow) gap versus what decision 4 claims to prove | `internal/rules/rules_test.go` (`AllowMarkerDoesNotFillAnEmptySection`) | Added an end-to-end case constructing a document and calling `checkSections` directly; fixed on the feature branch (commit `8037030`) |
+| F4 | non-blocking | other | noted | The opt-out marker is matched by exact `strings.Contains`; a near-miss (extra space, wrong casing, "placeholders") silently fails to suppress the finding with no diagnostic telling the author their marker didn't take | `internal/rules/rules.go:264` (`placeholderAllowMarker`) | Would need a fuzzy-match warning to fix; not worth scheduling on its own — noted for a future placeholder-rule ticket to pick up if one is ever filed |
+| F5 | non-blocking | stale-xref | noted | `PLAN.md`'s `applies-to-validate` / `JRY-005` row still reads "to do" although JRY-005 is done and merged — a gap in JRY-005's own review (step 7), not something this branch caused | `PLAN.md:35` | Out of scope for this ticket; a future review or audit pass can correct it |
+
+Disposition summary: 1 blocking (F1, fixed via scoped rework round 1), 2 fixed inline (F2, F3),
+2 noted (F4, F5).
+
+cost: estimated S, actual S
+
+### Rework fix record — round 1 (commit c284739)
+
+Added a `### Added` bullet to `CHANGELOG.md`'s `## [Unreleased]` section describing the fenced-
+block exclusion and the `<!-- jerry:allow placeholder -->` opt-out marker (F1). No other change.
 
 ## History
 
