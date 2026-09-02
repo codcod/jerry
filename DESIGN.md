@@ -1,6 +1,6 @@
 # jerry — solution design
 
-**Version 2** · 2026-09-02 · Phase 1 implemented; sections 7.2 onward are intent, not code.
+**Version 2.1** · 2026-09-02 · Phase 1 implemented; sections 7.2 onward are intent, not code.
 
 This file is authoritative on **intent**. Where it conflicts with a shipped
 ticket decision, the ticket wins and this file is wrong and should be corrected.
@@ -69,8 +69,9 @@ approval is the approval.
    not replace them.** (Today they replace — see §10.)
 3. **Stateless, single binary, no runtime dependencies.** It must run in any CI
    image and in a pre-commit hook without a toolchain behind it — which is a
-   claim about the *binary*, and one the emitted CI currently breaks by
-   installing jerry with `go install`. §6 states what it should do instead.
+   claim about the *binary*, and one the emitted CI now honours: it downloads
+   and checksum-verifies the release binary instead of running `go install`.
+   §6 states the mechanism.
 4. **Findings accumulate.** No command stops at the first problem.
 5. **Hooks are UX; CI is the gate.** `--no-verify` exists. No check may exist
    only in a hook.
@@ -239,13 +240,12 @@ distinct from a clean-with-loose-ends run.
   retroactive across the estate; a new check must not turn every repository red
   the day it merges.
 - The pin is to a **released artifact, verified by checksum** — not to a source
-  install. Today the emitted CI runs
-  `go install github.com/codcod/jerry/cmd/jerry@vX.Y.Z`, which needs a Go
-  toolchain in the image and the module proxy reachable on every pipeline run,
-  and so throws away the single-binary property of §3.3 at the one place it was
-  meant to pay for itself. The release already publishes binaries *and*
-  checksums; fetching those is both faster and the only version that honours
-  the charter. Source install stays documented as a fallback (§10).
+  install. The emitted CI downloads the platform-matched release archive and
+  verifies it against the published `checksums.txt`, which needs nothing but
+  `curl`/`sh` in the runner image and honours the single-binary property of
+  §3.3 at the one place it is meant to pay for itself.
+  `go install github.com/codcod/jerry/cmd/jerry@latest` stays documented in the
+  emitted `CONTRIBUTING.md` as a source-install fallback.
 - **Pinning needs an upgrade path, and it is not the same thing as retroactive
   rules.** Freezing a version means a *bugfix* cannot reach a scaffolded
   repository either — the `0.1.1` fix to the install path is the live example,
@@ -433,14 +433,13 @@ needing one.
 | # | This document says | The code does | Where |
 |---|---|---|---|
 | 1 | `applies_to` is validated (v1 §4.1) | Nothing validates it; no rule reads the field. A misspelled key is silently preserved | `internal/rules/rules.go`, `internal/doc/frontmatter.go` |
-| 2 | jerry needs no toolchain behind it (§3.3) | Emitted CI installs it with `go install` in a `golang` image, against the module proxy, every run | `internal/scaffold/templates/*/ci` |
-| 3 | `schema_version` keeps the tool tolerant of old documents (§3.6) | Nothing reads it, and `jerry schema` publishes `const: 1`, which will reject v2 documents outright | `internal/cli/schema.go` |
-| 4 | Repositories own none of the rules (v1 §3.2) | `jerry.yaml` replaces the placeholder and required-section lists, so a repository can switch a rule off | `internal/config/config.go` |
-| 5 | Status lifecycles are enforced (§4.2) | `jerry status` enforces transitions; `validate` checks only membership, so a hand edit passes CI | `internal/cli/status.go` vs `internal/rules/rules.go` |
-| 6 | The placeholder rule is the highest-value check (§5) | It is a substring scan of the whole file, fenced blocks included, with no per-document escape — so the cheapest fix for a false positive is disabling it | `internal/rules/rules.go` |
-| 7 | Findings accumulate and are always printed (§3.4, §5) | True — except `validate --diff`, which filters findings by a corpus-relative path against git's repo-relative output. With `jerry.yaml` below the git root it discards every finding and exits 0 | `internal/cli/validate.go` |
+| 2 | `schema_version` keeps the tool tolerant of old documents (§3.6) | Nothing reads it, and `jerry schema` publishes `const: 1`, which will reject v2 documents outright | `internal/cli/schema.go` |
+| 3 | Repositories own none of the rules (v1 §3.2) | `jerry.yaml` replaces the placeholder and required-section lists, so a repository can switch a rule off | `internal/config/config.go` |
+| 4 | Status lifecycles are enforced (§4.2) | `jerry status` enforces transitions; `validate` checks only membership, so a hand edit passes CI | `internal/cli/status.go` vs `internal/rules/rules.go` |
+| 5 | The placeholder rule is the highest-value check (§5) | It is a substring scan of the whole file, fenced blocks included, with no per-document escape — so the cheapest fix for a false positive is disabling it | `internal/rules/rules.go` |
+| 6 | Findings accumulate and are always printed (§3.4, §5) | True — except `validate --diff`, which filters findings by a corpus-relative path against git's repo-relative output. With `jerry.yaml` below the git root it discards every finding and exits 0 | `internal/cli/validate.go` |
 
-Item 7 is the worst of these: a validator that passes silently is worse than one
+Item 6 is the worst of these: a validator that passes silently is worse than one
 that is absent, because the green tick is taken as evidence.
 
 ## 11. Revision history
@@ -455,5 +454,10 @@ that is absent, because the green tick is taken as evidence.
   §7.2 moves adoption counting into the bot and states the token model; §7.3
   states the on-call boundary; §9 gains a stop condition and a stable-key option
   for ids; §10 is new.
+- **Version 2.1** (2026-09-02) — JRY-003 closed divergence 2 (§3.3/§6 vs. the
+  emitted CI's install mechanism): the emitted CI now downloads a
+  checksum-verified release binary instead of running `go install`, so §6's
+  paragraph on the pin mechanism was rewritten to describe the shipped
+  behaviour and the now-resolved row was removed from §10's table.
 - **Version 1** (2026-09-01) — initial design, written alongside the Phase 1
   implementation.

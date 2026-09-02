@@ -8,11 +8,50 @@ stages:
   - validate
 
 default:
-  image: golang:1.26
+  image: alpine:3.20
   before_script:
     # Pinned, never @latest: a floating version turns unrelated merge requests
-    # red. On a macOS runner use `brew install codcod/tap/jerry` instead.
-    - go install github.com/codcod/jerry/cmd/jerry@__JERRY_VERSION__
+    # red. Downloads the released binary and verifies it against the
+    # published checksums.txt — no Go toolchain, no module proxy. Alpine's
+    # busybox already provides sh/tar/sha256sum/grep/sed/mktemp; only curl is
+    # missing.
+    - apk add --no-cache curl
+    - |
+      set -eu
+      JERRY_VERSION=__JERRY_VERSION__
+      case "$(uname -s)" in
+        Linux) JERRY_OS=linux ;;
+        Darwin) JERRY_OS=darwin ;;
+        *)
+          echo "jerry install: unsupported OS $(uname -s) -- released binaries cover linux and darwin. See CONTRIBUTING.md for a source install." >&2
+          exit 1
+          ;;
+      esac
+      case "$(uname -m)" in
+        x86_64|amd64) JERRY_ARCH=amd64 ;;
+        aarch64|arm64) JERRY_ARCH=arm64 ;;
+        *)
+          echo "jerry install: unsupported architecture $(uname -m) -- released binaries cover amd64 and arm64. See CONTRIBUTING.md for a source install." >&2
+          exit 1
+          ;;
+      esac
+      if [ "$JERRY_VERSION" = "latest" ]; then
+        JERRY_VERSION=$(curl -fsSL -o /dev/null -w '%{url_effective}' https://github.com/codcod/jerry/releases/latest | sed 's#.*/tag/##')
+      fi
+      ARCHIVE="jerry_${JERRY_VERSION#v}_${JERRY_OS}_${JERRY_ARCH}.tar.gz"
+      BASE_URL="https://github.com/codcod/jerry/releases/download/${JERRY_VERSION}"
+      TMP=$(mktemp -d)
+      curl -fsSL -o "$TMP/$ARCHIVE" "$BASE_URL/$ARCHIVE" || {
+        echo "jerry install: no release asset $ARCHIVE at tag $JERRY_VERSION ($JERRY_OS/$JERRY_ARCH). See CONTRIBUTING.md for a source install." >&2
+        exit 1
+      }
+      curl -fsSL -o "$TMP/checksums.txt" "$BASE_URL/checksums.txt" || {
+        echo "jerry install: no checksums.txt at tag $JERRY_VERSION. See CONTRIBUTING.md for a source install." >&2
+        exit 1
+      }
+      ( cd "$TMP" && grep " ${ARCHIVE}\$" checksums.txt | sha256sum -c - )
+      tar -xzf "$TMP/$ARCHIVE" -C "$TMP"
+      export PATH="$TMP:$PATH"
 
 .docs-changes: &docs-changes
   - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'

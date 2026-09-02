@@ -114,11 +114,11 @@ func TestVersionPinning(t *testing.T) {
 		version string
 		want    string
 	}{
-		{"ReleasedVersionIsPinned", "0.4.2", "@v0.4.2"},
-		{"AlreadyPrefixedIsNotDoubled", "v0.4.2", "@v0.4.2"},
-		{"DevBuildFallsBackToLatest", "dev", "@latest"},
-		{"DirtyBuildFallsBackToLatest", "v0.4.2-3-gabc-dirty", "@latest"},
-		{"NonDirtyIntermediateBuildFallsBackToLatest", "v0.1.1-3-g3f336b9", "@latest"},
+		{"ReleasedVersionIsPinned", "0.4.2", "v0.4.2"},
+		{"AlreadyPrefixedIsNotDoubled", "v0.4.2", "v0.4.2"},
+		{"DevBuildFallsBackToLatest", "dev", "latest"},
+		{"DirtyBuildFallsBackToLatest", "v0.4.2-3-gabc-dirty", "latest"},
+		{"NonDirtyIntermediateBuildFallsBackToLatest", "v0.1.1-3-g3f336b9", "latest"},
 	}
 	for _, testCase := range cases {
 		t.Run(testCase.name, func(t *testing.T) {
@@ -130,7 +130,7 @@ func TestVersionPinning(t *testing.T) {
 			if err != nil {
 				t.Fatalf("reading workflow: %v", err)
 			}
-			if !strings.Contains(string(content), "github.com/codcod/jerry/cmd/jerry"+testCase.want) {
+			if !strings.Contains(string(content), "JERRY_VERSION="+testCase.want) {
 				t.Errorf("workflow does not pin %s", testCase.want)
 			}
 			if strings.Contains(string(content), versionToken) {
