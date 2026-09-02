@@ -258,11 +258,25 @@ func checkSections(findings *Findings, document *doc.Document, required []string
 	}
 }
 
+// placeholderAllowMarker silences checkPlaceholders for the whole document it
+// appears in — the escape for a decision that legitimately discusses a
+// placeholder phrase instead of leaving it unfilled.
+const placeholderAllowMarker = "<!-- jerry:allow placeholder -->"
+
+// fencedBlockPattern matches a fenced code block. Quoting a template is the
+// common legitimate reason a real placeholder phrase appears in a document,
+// and never indicates an unfilled one.
+var fencedBlockPattern = regexp.MustCompile("(?s)```.*?```")
+
 // checkPlaceholders catches a template that was copied and half-filled — the
 // most common real defect, and one every structural check passes.
 func checkPlaceholders(findings *Findings, document *doc.Document, options Options) {
+	if strings.Contains(document.Raw, placeholderAllowMarker) {
+		return
+	}
+	scanText := fencedBlockPattern.ReplaceAllString(document.Raw, "")
 	for _, placeholder := range options.Placeholders {
-		if strings.Contains(document.Raw, placeholder) {
+		if strings.Contains(scanText, placeholder) {
 			findings.errorf(document.Path, document.LineOf(placeholder), "placeholder",
 				"template placeholder %q was never filled in", placeholder)
 		}

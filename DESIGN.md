@@ -200,15 +200,15 @@ Two of these earn their place beyond the obvious structural checks:
   real defect. A test asserts every placeholder in the default list actually
   appears in a shipped template, so the list cannot rot into decoration.
 
-  The rule is a substring scan of the whole file, and that has an unmanaged
+  The rule was a substring scan of the whole file, which had an unmanaged
   cost: a decision that *documents* the id convention, or quotes a template in
-  a fenced block, fails on a phrase it is legitimately discussing. The only
-  escape today is deleting the phrase from `jerry.yaml`, which switches the
+  a fenced block, failed on a phrase it was legitimately discussing. The only
+  escape was deleting the phrase from `jerry.yaml`, which switches the
   check off for every document in the repository. For the rule this section
   calls the most valuable one, the path of least resistance must not be
   "turn it off": **fenced code blocks are excluded from the scan, and a
-  document opts out of one phrase with an inline `<!-- jerry:allow
-  placeholder -->` marker.** Neither is built yet (§10).
+  document opts out of the whole rule with an inline `<!-- jerry:allow
+  placeholder -->` marker.**
 
 Staleness is a warning rather than an error deliberately: failing CI on the
 calendar teaches people to falsify dates, and the judgement — accept it, reject
@@ -435,7 +435,6 @@ needing one.
 | 2 | `schema_version` keeps the tool tolerant of old documents (§3.6) | Nothing reads it, and `jerry schema` publishes `const: 1`, which will reject v2 documents outright | `internal/cli/schema.go` |
 | 3 | Repositories own none of the rules (v1 §3.2) | `jerry.yaml` replaces the placeholder and required-section lists, so a repository can switch a rule off | `internal/config/config.go` |
 | 4 | Status lifecycles are enforced (§4.2) | `jerry status` enforces transitions; `validate` checks only membership, so a hand edit passes CI | `internal/cli/status.go` vs `internal/rules/rules.go` |
-| 5 | The placeholder rule is the highest-value check (§5) | It is a substring scan of the whole file, fenced blocks included, with no per-document escape — so the cheapest fix for a false positive is disabling it | `internal/rules/rules.go` |
 | 6 | Findings accumulate and are always printed (§3.4, §5) | True — except `validate --diff`, which filters findings by a corpus-relative path against git's repo-relative output. With `jerry.yaml` below the git root it discards every finding and exits 0 | `internal/cli/validate.go` |
 
 Item 6 is the worst of these: a validator that passes silently is worse than one
@@ -461,5 +460,9 @@ that is absent, because the green tick is taken as evidence.
 - **Version 2.2** (2026-09-02) — JRY-005 closed divergence 1 (§4.1/§10 vs. `applies_to`
   validation): the field is now validated for path shape, unknown frontmatter keys warn, and
   the resolved row was removed from §10's table.
+- **Version 2.3** (2026-09-02) — JRY-006 closed divergence 5 (§5/§10 vs. the placeholder rule):
+  fenced code blocks are now excluded from the scan, and a document opts out of the rule
+  entirely with an inline `<!-- jerry:allow placeholder -->` marker; §5's wording was corrected
+  from "opts out of one phrase" to match, and the resolved row was removed from §10's table.
 - **Version 1** (2026-09-01) — initial design, written alongside the Phase 1
   implementation.
