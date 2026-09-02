@@ -230,3 +230,4 @@ GitLab attempt did not recur.
 - 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-02 — IN REVIEW → DONE: review clean; 1 non-blocking finding fixed inline
 - 2026-09-02 — [PR #10](https://github.com/codcod/jerry/pull/10) opened against `main`; awaiting human merge
+- 2026-09-02 — merged to main (PR #10, `af6ccf2`)
