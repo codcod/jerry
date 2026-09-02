@@ -33,7 +33,7 @@ them again.
 | `ci-binary-install` | `JRY-003` | done |
 | `forge-proof` | `JRY-004` | done — GitHub proven end to end; GitLab half deferred to `JRY-009` |
 | `applies-to-validate` | `JRY-005` | to do |
-| `placeholder-escapes` | `JRY-006` | to do |
+| `placeholder-escapes` | `JRY-006` | done, publish-gated |
 | `golden-tests` | `JRY-007` | to do |
 | `schema-tolerance` | `JRY-008` | to do |
 | `forge-proof-gitlab` | `JRY-009` | to do — spawned by `JRY-004`'s own account-level GitLab CI blocker |
