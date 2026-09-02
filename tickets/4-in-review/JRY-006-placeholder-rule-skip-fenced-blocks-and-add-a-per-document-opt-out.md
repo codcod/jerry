@@ -241,6 +241,13 @@ cost: estimated S, actual S
 Added a `### Added` bullet to `CHANGELOG.md`'s `## [Unreleased]` section describing the fenced-
 block exclusion and the `<!-- jerry:allow placeholder -->` opt-out marker (F1). No other change.
 
+**Scoped re-review of round 1:** delegated to an independent reviewer (same rationale as step
+0). Confirmed the commit touches only `CHANGELOG.md` (no scope creep), the bullet accurately
+describes the shipped behaviour (whole-document opt-out, fenced-block exclusion — checked
+against the actual `internal/rules/rules.go` diff, not just the prose), is placed correctly
+under `## [Unreleased]` → `### Added`, matches the file's existing tone, and `just docs-check`
+still passes. Verdict: clean, F1 closed. No new findings from the fix itself.
+
 ## History
 
 - 2026-09-02 — created (TO DO). source: pickle ticket new
