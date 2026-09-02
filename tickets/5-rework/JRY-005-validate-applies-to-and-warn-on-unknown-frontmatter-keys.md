@@ -189,9 +189,12 @@ go test ./internal/rules -update   # regenerate golden fixtures, then inspect th
 just test                          # go test ./... — full suite green, golden fixture stable
 just lint                          # gofmt clean
 just docs-check                    # snowball check — DESIGN.md and the user manual still resolve
-jerry validate ./internal/rules/testdata/corpus   # spot-check: 0006 reports 4 applies-to errors,
-                                                    # 0007 reports 1 unknown-key warning, exit
-                                                    # code reflects errors present
+# spot-check: `validate` takes no positional path (cobra.NoArgs) — cd into the fixture corpus
+# first, since it has no jerry.yaml of its own for -c/--config to point at:
+(cd internal/rules/testdata/corpus && jerry validate)   # 0006: 3 applies-to errors (the 4th
+                                                          # entry, a bare empty string, never
+                                                          # reaches the rule — doc.List drops it
+                                                          # first); 0007: 1 unknown-key warning
 ```
 
 ### Docs update (mandatory when user-facing)
@@ -222,7 +225,48 @@ jerry validate ./internal/rules/testdata/corpus   # spot-check: 0006 reports 4 a
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+- [x] Reviewer independence settled (step 0): **delegated** — the orchestrating reviewer
+  authored this branch in this session, so steps 2–4a (implementation/quality/consistency/docs
+  audits) were run by a fresh sub-agent with no memory of writing the code, briefed
+  adversarially. Every delegated finding below was independently re-verified by hand
+  (file/line read, or command re-run) before being recorded here.
+- [x] Implementation audit — every task and confirmed decision done in the files named;
+  acceptance test re-run (see F5's fix — the ticket's own literal invocation didn't work as
+  written; the corrected form reproduces the golden fixture exactly: 3 `applies-to` errors on
+  `0006`, 1 `unknown-key` warning on `0007`). `just build`/`test`/`lint`/`docs-check` all green,
+  both before and after this review's fix-now commit.
+- [x] Quality audit (step 3) — idiomatic, no new dependencies, findings genuinely accumulate
+  (verified `checkAppliesTo` reports all 3 bad entries, not just the first), severity choices
+  match the addendum's "a judgement a validator cannot make is a warning" principle.
+- [x] Consistency audit (step 4) — see F1.
+- [x] Documentation audit (step 4a) — manual coverage correctly placed and cross-referenced;
+  `just docs-check` clean; see F2/F3 for the two doc surfaces it missed.
+- [x] Docs-readability pass (step 4b) — **conscious skip**: no docs-readability reviewer
+  configured in this session.
+- [x] Findings recorded with severity, class, disposition; disposition summary + cost line below.
+- [ ] Ticket moved (step 6) — → `tickets/5-rework/` (one blocking finding).
+- [x] Governing documents reconciled or reach/reason recorded (step 7) — see F1 (fixed via
+  rework), F2/F3 (fixed now), F6 (recorded why not: scratch file).
+- [x] Remaining-tickets impact sweep (step 8) — no ticket in `1-to-do/`/`2-ready/` references
+  JRY-005 in `depends-on:` or Description; nothing to patch.
+- [ ] Summary + commit message/MR attributes presented, overarching bookkeeping committed, next
+  ticket suggested (step 9) — deferred until the rework round closes.
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | blocking | correctness | — | `DESIGN.md`'s §4.1 prose paragraph on unknown-key warnings still says the warning "is what is missing," directly contradicting the §4.1 table row and the shipped `unknown-key` rule three lines above it | `DESIGN.md:125-131` (the "Unknown keys are preserved, not rejected." paragraph, closing sentence) | Rewrite the closing sentence to state the warning now exists, in the rework round |
+| F2 | non-blocking | stale-xref | fix-now (done, commit `8b07ad1`) | `DESIGN.md`'s version banner still read "2.1" while §11 already recorded "2.2" as latest | `DESIGN.md:3` | Bumped banner to 2.2 |
+| F3 | non-blocking | docs-gap | fix-now (done, commit `8b07ad1`) | `CHANGELOG.md`'s `## [Unreleased]` had no entry for the new `validate` behaviour, a user-facing change | `CHANGELOG.md` | Added an "Added" bullet |
+| F4 | non-blocking | other | fix-now (done, commit `8b07ad1`) | `TestCheckFixtureContract`'s `stale-proposal` comment said "one of two warnings in the fixture"; the fixture now has three (two `stale-proposal` + one `unknown-key`) | `internal/rules/rules_test.go:89` | Corrected the comment |
+| F5 | non-blocking | spec-unclear | fix-now (done, this commit) | The ticket's own Acceptance Test block used `jerry validate <path>`, but `validate` takes no positional argument (`cobra.NoArgs`); it also still said "4 applies-to errors" after Task 3 was amended to 3 | `tickets/4-in-review/JRY-005-…md`, Acceptance test section | Corrected to `(cd … && jerry validate)` and the count |
+| F6 | non-blocking | stale-xref | note-and-close | `PLAN.md:74` ("Phase 1 does not validate it (DESIGN §10.1)") is now false | `PLAN.md:74` | Not fixed: `PLAN.md`'s own preamble calls it a scratch artifact to discard once tickets are filed — reconciling a line about to be deleted wholesale isn't worth a commit |
+| F7 | non-blocking | design | note-and-close | `unknown-key` has no config-driven way to permanently silence a legitimate custom frontmatter key — it warns on every `validate` run forever | `internal/config/config.go` (no allow-list field), `internal/rules/rules.go`'s `checkUnknownKeys` | Deliberately out of this ticket's stated scope (no escape hatch was promised); revisit if a real repository hits this |
+| F8 | non-blocking | test-gap | note-and-close | `badAppliesToPath`'s edge cases (mid-string vs. trailing `..`, a genuinely valid relative path) are covered only via the golden-fixture diff, not a direct table-driven unit test | `internal/rules/rules_test.go` | Fixture/golden comparison is exact and adequate; a dedicated table-driven test would be nicer-to-have, not missing coverage |
+
+Disposition summary: 1 blocking (F1, → rework) · 4 fix-now (F2, F3, F4, F5) · 3 note-and-close
+(F6, F7, F8).
+
+cost: estimated S, actual S — the rework round is a one-paragraph doc fix; no scope grew.
 
 ## History
 
@@ -240,3 +284,4 @@ jerry validate ./internal/rules/testdata/corpus   # spot-check: 0006 reports 4 a
   `wanted` rule list so the new rules have a regression guard.
 - 2026-09-02 — READY → IN DEVELOPMENT: picked up
 - 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green
+- 2026-09-02 — IN REVIEW → REWORK: F1 blocking: DESIGN.md prose contradicts its own updated table row
