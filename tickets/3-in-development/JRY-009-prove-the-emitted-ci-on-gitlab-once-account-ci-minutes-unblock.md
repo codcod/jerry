@@ -175,7 +175,36 @@ not user-facing.
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+### Evidence (GitLab — proven, current template)
+
+- Re-scaffold + push (Task 2): reused `nicos.ka/jerry-test-gitlab`
+  (`~/temp/arch-docs/jerry-test-gitlab`); cleared its stale (pre-JRY-003, `go install`) scaffold
+  and re-ran unmodified `jerry init --forge gitlab` off current HEAD
+  (`v0.1.1-68-gc9174b7`) — the emitted `.gitlab-ci.yml` grew from 981 to 2757 bytes and now
+  installs via the checksum-verified release-archive download, not `go install`. Pushed
+  (`ac27efe`). Pipeline
+  [2814501697](https://gitlab.com/nicos.ka/jerry-test-gitlab/-/pipelines/2814501697) —
+  **success**.
+- Broken doc (Task 3): copied `internal/scaffold/templates/common/templates/adr-template.md`
+  verbatim into `teams/example-team/adr/0002-broken.md`, unedited, committed (`005122f`, local
+  pre-commit hook from an earlier `jerry hooks install` in that throwaway repo bypassed with
+  `--no-verify` so the failure surfaces in the remote pipeline instead of blocking locally),
+  pushed. Pipeline
+  [2814503528](https://gitlab.com/nicos.ka/jerry-test-gitlab/-/pipelines/2814503528) —
+  **failed**. The runner installs jerry via the checksum-verified download
+  (`jerry_0.1.1_linux_amd64.tar.gz: OK`), then `jerry validate`'s own log names the real defects:
+  ```
+  teams/example-team/adr/0002-broken.md:3: error: frontmatter id must be ADR-NNNN, got "ADR-NNNN" (id-format)
+  teams/example-team/adr/0002-broken.md:3: error: template placeholder "ADR-NNNN" was never filled in (placeholder)
+  teams/example-team/adr/0002-broken.md:4: error: template placeholder "Short title of the decision" was never filled in (placeholder)
+  teams/example-team/adr/0002-broken.md:9: error: frontmatter team "your-team" does not match folder "example-team" (team-mismatch)
+  teams/example-team/adr/0002-broken.md:9: error: template placeholder "your-team" was never filled in (placeholder)
+  teams/example-team/adr/0002-broken.md:11: error: date "YYYY-MM-DD" is not a valid ISO date (YYYY-MM-DD) (date)
+  teams/example-team/adr/0002-broken.md:11: error: template placeholder "YYYY-MM-DD" was never filled in (placeholder)
+  teams/example-team/adr/0002-broken.md:12: error: template placeholder "[alice, bob]" was never filled in (placeholder)
+  teams/example-team/adr/0002-broken.md:37: error: template placeholder "**Option A** — why it was rejected" was never filled in (placeholder)
+  ```
+  Both jobs (`check-index`, `validate-docs`) failed for the same reason.
 
 ## History
 
