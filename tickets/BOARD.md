@@ -38,6 +38,7 @@ Last updated: 2026-09-02
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
+| JRY-006 | Placeholder rule: skip fenced blocks and add a per-document opt-out | medium | low | S | [] |  |
 
 ## TO DO (impact order, per child)
 
@@ -45,7 +46,6 @@ Last updated: 2026-09-02
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
-| JRY-006 | Placeholder rule: skip fenced blocks and add a per-document opt-out | medium | low | S | [] |  |
 | JRY-009 | Prove the emitted CI on GitLab once account CI minutes unblock | medium | low | S | [] |  |
 | JRY-007 | Command-level golden tests for the cobra tree | medium | medium | M | [] |  |
 | JRY-008 | schema_version tolerance, and stop jerry schema publishing const 1 | medium | medium | M | [] |  |
