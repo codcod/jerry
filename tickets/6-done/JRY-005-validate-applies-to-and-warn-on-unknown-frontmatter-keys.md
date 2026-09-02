@@ -306,3 +306,5 @@ defect introduced by the fix. **Verdict: clean — F1 closed.**
 - 2026-09-02 — IN REVIEW → REWORK: F1 blocking: DESIGN.md prose contradicts its own updated table row
 - 2026-09-02 — REWORK → IN REVIEW: F1 fixed, findings-fixed
 - 2026-09-02 — IN REVIEW → DONE: review verdict: clean; 1 blocking fixed and re-reviewed, 4 fix-now, 3 note-and-close
+- 2026-09-02 — PR #8 opened (github.com/codcod/jerry/pull/8), branch
+  feat/JRY-005-validate-applies-to pushed. Merging is the human's.
