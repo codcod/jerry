@@ -30,7 +30,7 @@ them again.
 |---|---|---|
 | `release` | `JRY-001` | done, merged (`v0.1.0`, then `v0.1.1`) |
 | `pin-fallback` | `JRY-002` | done, publish-gated — unplanned, spawned by `JRY-001`'s review |
-| `ci-binary-install` | `JRY-003` | to do |
+| `ci-binary-install` | `JRY-003` | done |
 | `forge-proof` | `JRY-004` | to do |
 | `applies-to-validate` | `JRY-005` | to do |
 | `placeholder-escapes` | `JRY-006` | to do |
