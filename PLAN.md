@@ -36,7 +36,7 @@ them again.
 | `placeholder-escapes` | `JRY-006` | done, publish-gated |
 | `golden-tests` | `JRY-007` | to do |
 | `schema-tolerance` | `JRY-008` | to do |
-| `forge-proof-gitlab` | `JRY-009` | to do — spawned by `JRY-004`'s own account-level GitLab CI blocker |
+| `forge-proof-gitlab` | `JRY-009` | done — GitLab proven end to end with the current (checksum-verified) template |
 
 `pin-fallback` is not a row in the tables below and never was; it is recorded here because it
 consumed the id this file's second row expected.
