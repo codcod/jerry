@@ -186,3 +186,17 @@ No user-facing surface changes — no template or code diff ships. `PLAN.md`'s `
 - 2026-09-02 — created (TO DO). source: pickle ticket new
 - 2026-09-02 — TO DO → READY: plan complete
 - 2026-09-02 — READY → IN DEVELOPMENT: picked up
+- 2026-09-02 — Task 2 done: `codcod/jerry-forge-proof-github` scaffolded (unmodified `jerry
+  init --forge github`), pushed, GitHub Actions run
+  [33621310129](https://github.com/codcod/jerry-forge-proof-github/actions/runs/33621310129)
+  succeeded — no hand edits
+- 2026-09-02 — Task 3 blocked: `nicos.ka/jerry-forge-proof-gitlab` scaffolded and pushed
+  (unmodified `jerry init --forge gitlab`), but its pipeline
+  ([2812901714](https://gitlab.com/nicos.ka/jerry-forge-proof-gitlab/-/pipelines/2812901714))
+  stays `pending` indefinitely — no runner ever picks up either job, despite shared runners
+  showing enabled and online on the project. The pipeline page itself shows GitLab's identity-
+  verification banner: this GitLab.com account needs identity verification (payment method/
+  phone) before shared-runner CI minutes unlock. Not something this session can resolve.
+  User decision: wait and retry later rather than verify now or drop GitLab from scope. Pausing
+  here — both throwaway repos left live (GitHub evidence captured, GitLab not yet), feature
+  branch `feat/JRY-004-real-forge-ci-proof` untouched, ticket stays in `3-in-development/`
