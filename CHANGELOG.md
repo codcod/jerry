@@ -14,6 +14,10 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
   whitespace-only, absolute, or containing a `..` segment), and warns on any frontmatter key it
   does not recognise (a misspelling like `applies-to:` no longer parses clean and governs
   nothing silently).
+- The placeholder rule no longer flags a phrase quoted inside a fenced code block, and a
+  document opts out of the rule entirely with an inline `<!-- jerry:allow placeholder -->`
+  marker — so a decision that legitimately discusses a placeholder phrase no longer has to
+  disable the check repository-wide in `jerry.yaml` to pass.
 
 ### Changed
 

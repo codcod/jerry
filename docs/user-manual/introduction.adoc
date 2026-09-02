@@ -88,6 +88,12 @@ jerry validate --format sarif > jerry.sarif
 
 `--format` also accepts `text`, `json` and `junit`.
 
+`validate` also flags an unfilled template placeholder anywhere in the document, except inside a
+fenced code block — quoting a template is not the same as forgetting to fill one in. A document
+that legitimately discusses a placeholder phrase — documenting the `ADR-NNNN` id convention, say
+— opts out of the whole check for that document with an inline `<!-- jerry:allow placeholder
+-->` marker.
+
 == Change a status
 
 [source,sh]

@@ -149,3 +149,62 @@ func TestFindingsSortIsStable(t *testing.T) {
 		}
 	}
 }
+
+// TestCheckPlaceholders exercises checkPlaceholders directly rather than
+// through the golden corpus: the fenced-block exclusion and the per-document
+// opt-out are both about what does *not* fire, which the fixture-based
+// contract test above is a poor fit for.
+func TestCheckPlaceholders(t *testing.T) {
+	options := testOptions()
+	placeholder := "ADR-NNNN"
+
+	t.Run("FencedBlockOnlyIsNotFlagged", func(t *testing.T) {
+		document := &doc.Document{Path: "x.md", Raw: "# Title\n\n```\nid: " + placeholder + "\n```\n"}
+		var findings Findings
+		checkPlaceholders(&findings, document, options)
+		if len(findings) != 0 {
+			t.Errorf("fenced-only placeholder was flagged: %v", findings)
+		}
+	})
+
+	t.Run("SamePhraseOutsideFenceIsStillFlagged", func(t *testing.T) {
+		document := &doc.Document{Path: "x.md", Raw: "id: " + placeholder + "\n\n```\nid: " + placeholder + "\n```\n"}
+		var findings Findings
+		checkPlaceholders(&findings, document, options)
+		if len(findings) != 1 {
+			t.Errorf("expected exactly one finding for the unfenced occurrence, got %d: %v", len(findings), findings)
+		}
+	})
+
+	t.Run("AllowMarkerSilencesTheWholeDocument", func(t *testing.T) {
+		document := &doc.Document{Path: "x.md", Raw: placeholderAllowMarker + "\n\nid: " + placeholder + "\n"}
+		var findings Findings
+		checkPlaceholders(&findings, document, options)
+		if len(findings) != 0 {
+			t.Errorf("allow marker did not silence an unfenced placeholder: %v", findings)
+		}
+	})
+
+	t.Run("AllowMarkerDoesNotFillAnEmptySection", func(t *testing.T) {
+		// The marker is itself an HTML comment, so stripComments (the
+		// empty-section rule's emptiness test) already strips it like any
+		// other comment - it must not make an empty section look filled.
+		body := "\n" + placeholderAllowMarker + "\n"
+		if stripComments(body) != "" {
+			t.Errorf("allow marker was not stripped as a comment, body reads as filled: %q", stripComments(body))
+		}
+
+		// End-to-end: a section whose only content is the marker must still
+		// trip checkSections' empty-section rule, not just stripComments in
+		// isolation.
+		document := &doc.Document{
+			Path: "x.md",
+			Body: "## Context\n\n" + placeholderAllowMarker + "\n\n## Decision\n\nfilled in\n",
+		}
+		var sectionFindings Findings
+		checkSections(&sectionFindings, document, []string{"## Context", "## Decision"})
+		if len(sectionFindings) != 1 || sectionFindings[0].Rule != "empty-section" {
+			t.Errorf("expected exactly one empty-section finding for the marker-only section, got %v", sectionFindings)
+		}
+	})
+}
