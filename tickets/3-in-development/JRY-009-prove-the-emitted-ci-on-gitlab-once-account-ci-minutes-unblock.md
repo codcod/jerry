@@ -183,3 +183,4 @@ not user-facing.
   GitLab CI-minutes/identity-verification blocker that never resolved within that ticket's
   session; scoped down to GitHub-only proof and this ticket carries the deferred GitLab half
 - 2026-09-02 — TO DO → READY: plan complete
+- 2026-09-02 — READY → IN DEVELOPMENT: picked up
