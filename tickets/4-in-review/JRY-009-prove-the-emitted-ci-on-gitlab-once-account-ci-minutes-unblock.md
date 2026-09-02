@@ -213,3 +213,4 @@ not user-facing.
   session; scoped down to GitHub-only proof and this ticket carries the deferred GitLab half
 - 2026-09-02 — TO DO → READY: plan complete
 - 2026-09-02 — READY → IN DEVELOPMENT: picked up
+- 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green
