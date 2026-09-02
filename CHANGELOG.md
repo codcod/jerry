@@ -8,6 +8,15 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
 
 ## [Unreleased]
 
+### Changed
+
+- Emitted CI (`jerry init --forge github|gitlab`) no longer runs
+  `go install github.com/codcod/jerry/cmd/jerry@vX.Y.Z`. It downloads the
+  platform-matched release binary and verifies it against the published
+  `checksums.txt` instead, so a scaffolded repository's pipeline needs no Go
+  toolchain and no module proxy. The GitLab template's default image changes
+  from `golang:1.26` to `alpine:3.20`.
+
 ### Fixed
 
 - `jerry init` run from a binary built between tags (e.g. `just build`'s own pseudo-version,
