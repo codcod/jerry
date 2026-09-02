@@ -268,6 +268,15 @@ Disposition summary: 1 blocking (F1, → rework) · 4 fix-now (F2, F3, F4, F5) �
 
 cost: estimated S, actual S — the rework round is a one-paragraph doc fix; no scope grew.
 
+### Rework fix record — round 1 (commit `ad4e318`)
+
+F1: rewrote `DESIGN.md`'s "Unknown keys are preserved, not rejected." paragraph — the closing
+two sentences ("The cost is that a misspelling is invisible... Preservation stays; the warning
+that a key is not one jerry knows is what is missing.") now read "Preservation stays, but a
+misspelling is no longer invisible: validate now warns when a frontmatter key is not one jerry
+knows, so applies-to: (hyphen) no longer parses clean and governs nothing." No other file
+touched. `just test`, `just lint`, `just docs-check` re-run clean after the fix.
+
 ## History
 
 - 2026-09-02 — created (TO DO). source: pickle ticket new
@@ -285,3 +294,4 @@ cost: estimated S, actual S — the rework round is a one-paragraph doc fix; no 
 - 2026-09-02 — READY → IN DEVELOPMENT: picked up
 - 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-02 — IN REVIEW → REWORK: F1 blocking: DESIGN.md prose contradicts its own updated table row
+- 2026-09-02 — REWORK → IN REVIEW: F1 fixed, findings-fixed
