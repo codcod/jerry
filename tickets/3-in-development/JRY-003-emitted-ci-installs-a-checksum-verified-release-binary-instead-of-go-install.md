@@ -241,3 +241,4 @@ about installing jerry itself for local development, unaffected).
 
 - 2026-09-02 — created (TO DO). source: pickle ticket new
 - 2026-09-02 — TO DO → READY: plan complete
+- 2026-09-02 — READY → IN DEVELOPMENT: picked up
