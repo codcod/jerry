@@ -308,3 +308,4 @@ defect introduced by the fix. **Verdict: clean — F1 closed.**
 - 2026-09-02 — IN REVIEW → DONE: review verdict: clean; 1 blocking fixed and re-reviewed, 4 fix-now, 3 note-and-close
 - 2026-09-02 — PR #8 opened (github.com/codcod/jerry/pull/8), branch
   feat/JRY-005-validate-applies-to pushed. Merging is the human's.
+- 2026-09-02 — merged to main (PR #8, `5914ad0`)
