@@ -44,8 +44,9 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
   the diff in GitHub and GitLab rather than in a log nobody opens.
 - `jerry schema` emits JSON Schema for the frontmatter, so any editor with a
   YAML language server gets completion and inline validation for free.
-- `applies_to` is accepted and validated now though nothing reads it until
-  Phase 2, so `jerry related` will not need a migration.
+- `applies_to` is accepted and preserved now though nothing reads it until
+  Phase 2, so `jerry related` will not need a migration. It is not yet
+  *validated* — an earlier wording of this entry claimed it was.
 
 ### Fixed
 
