@@ -20,11 +20,10 @@ Last updated: 2026-09-02
 
 ## IN REVIEW
 
-### jerry (1/1)
+### jerry (0/1)
 
 | id | title | depends-on |
 |---|---|---|
-| JRY-009 | Prove the emitted CI on GitLab once account CI minutes unblock | [] |
 
 ## REWORK
 
@@ -61,6 +60,7 @@ Last updated: 2026-09-02
 | JRY-004 | Prove the emitted CI on a real forge with an unmodified scaffold | yes — merged to main (PR #7, `e8d2fe2`) |
 | JRY-005 | Validate applies_to and warn on unknown frontmatter keys | yes — merged to main (PR #8, `5914ad0`) |
 | JRY-006 | Placeholder rule: skip fenced blocks and add a per-document opt-out | yes — merged to main (PR #9, `79fb3ca`) |
+| JRY-009 | Prove the emitted CI on GitLab once account CI minutes unblock | no — publish-gated |
 
 ## DROPPED
 

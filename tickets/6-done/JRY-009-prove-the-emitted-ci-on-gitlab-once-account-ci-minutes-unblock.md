@@ -205,6 +205,20 @@ not user-facing.
   teams/example-team/adr/0002-broken.md:37: error: template placeholder "**Option A** — why it was rejected" was never filled in (placeholder)
   ```
   Both jobs (`check-index`, `validate-docs`) failed for the same reason.
+- Cleanup (Task 4, decision 6): remote `nicos.ka/jerry-test-gitlab` deleted via `glab repo delete
+  nicos.ka/jerry-test-gitlab --yes`, confirmed gone (`glab api projects/nicos.ka%2Fjerry-test-gitlab`
+  now 404s); local clone `~/temp/arch-docs/jerry-test-gitlab` removed (`rm -rf`).
+
+### Findings
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | non-blocking | docs-gap | fixed inline | Evidence section recorded the pass/fail pipelines but never stated the mandatory repo deletion (decision 6/Task 4) actually happened | independent audit of this ticket's own Review section (prior to this fix) | added the cleanup bullet above, confirming the remote 404 and local dir removal |
+
+**Disposition summary:** 1 non-blocking (F1 → fixed inline). No blocking findings.
+
+cost: estimated S, actual S — matched estimate; the account-hold risk that inflated JRY-004's
+GitLab attempt did not recur.
 
 ## History
 
@@ -214,3 +228,4 @@ not user-facing.
 - 2026-09-02 — TO DO → READY: plan complete
 - 2026-09-02 — READY → IN DEVELOPMENT: picked up
 - 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green
+- 2026-09-02 — IN REVIEW → DONE: review clean; 1 non-blocking finding fixed inline
