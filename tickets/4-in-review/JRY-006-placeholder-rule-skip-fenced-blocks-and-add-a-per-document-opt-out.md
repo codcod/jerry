@@ -248,3 +248,4 @@ block exclusion and the `<!-- jerry:allow placeholder -->` opt-out marker (F1). 
 - 2026-09-02 — READY → IN DEVELOPMENT: picked up
 - 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-02 — IN REVIEW → REWORK: F1: CHANGELOG.md missing coverage entry (blocking docs-gap)
+- 2026-09-02 — REWORK → IN REVIEW: findings fixed

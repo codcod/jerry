@@ -20,10 +20,11 @@ Last updated: 2026-09-02
 
 ## IN REVIEW
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-006 | Placeholder rule: skip fenced blocks and add a per-document opt-out | [] |
 
 ## REWORK
 
@@ -31,7 +32,6 @@ Last updated: 2026-09-02
 
 | id | title | open findings |
 |---|---|---|
-| JRY-006 | Placeholder rule: skip fenced blocks and add a per-document opt-out | F1: CHANGELOG.md missing coverage entry (blocking docs-gap) |
 
 ## READY (impact order, per child)
 
