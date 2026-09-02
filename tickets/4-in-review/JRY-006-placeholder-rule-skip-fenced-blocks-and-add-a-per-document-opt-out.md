@@ -218,8 +218,8 @@ just docs-check
   than fixed here.
 - [x] Remaining-tickets impact sweep done (step 8) — no ticket in `1-to-do/`/`2-ready/` depends
   on or references JRY-006; no impact.
-- [ ] Summary + commit message & MR attributes presented for approval (step 9) — pending user
-  approval below.
+- [x] Summary + commit message & MR attributes presented for approval (step 9) — presented to
+  the user; publishing (push/MR) awaits their approval.
 
 ### Findings
 
