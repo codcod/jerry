@@ -244,13 +244,14 @@ just docs-check                    # snowball check — DESIGN.md and the user m
 - [x] Docs-readability pass (step 4b) — **conscious skip**: no docs-readability reviewer
   configured in this session.
 - [x] Findings recorded with severity, class, disposition; disposition summary + cost line below.
-- [ ] Ticket moved (step 6) — → `tickets/5-rework/` (one blocking finding).
+- [x] Ticket moved (step 6) — → `tickets/5-rework/` for F1, fix applied and independently
+  scoped-re-reviewed (above), → `tickets/6-done/`.
 - [x] Governing documents reconciled or reach/reason recorded (step 7) — see F1 (fixed via
   rework), F2/F3 (fixed now), F6 (recorded why not: scratch file).
 - [x] Remaining-tickets impact sweep (step 8) — no ticket in `1-to-do/`/`2-ready/` references
   JRY-005 in `depends-on:` or Description; nothing to patch.
-- [ ] Summary + commit message/MR attributes presented, overarching bookkeeping committed, next
-  ticket suggested (step 9) — deferred until the rework round closes.
+- [x] Summary + commit message/MR attributes presented, overarching bookkeeping committed, next
+  ticket suggested (step 9) — see below.
 
 | id | severity | class | disposition | description | evidence | suggestion |
 |---|---|---|---|---|---|---|
@@ -277,6 +278,15 @@ misspelling is no longer invisible: validate now warns when a frontmatter key is
 knows, so applies-to: (hyphen) no longer parses clean and governs nothing." No other file
 touched. `just test`, `just lint`, `just docs-check` re-run clean after the fix.
 
+**Scoped re-review (round 1):** independent (fresh sub-agent, no memory of authoring either the
+branch or the fix; verified by hand). Confirmed `git show ad4e318` touches only `DESIGN.md`
+(5+/5-), the new prose correctly states the warning ships and reads coherently in context
+against §4.1's table row and §11's revision entry, and a repo-wide grep for the retracted
+phrasing ("is what is missing", "warning that a key") turns up no second occurrence. No new
+defect introduced by the fix. **Verdict: clean — F1 closed.**
+
+**Final verdict:** no blocking findings outstanding. Ticket → `tickets/6-done/`.
+
 ## History
 
 - 2026-09-02 — created (TO DO). source: pickle ticket new
@@ -295,3 +305,4 @@ touched. `just test`, `just lint`, `just docs-check` re-run clean after the fix.
 - 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-02 — IN REVIEW → REWORK: F1 blocking: DESIGN.md prose contradicts its own updated table row
 - 2026-09-02 — REWORK → IN REVIEW: F1 fixed, findings-fixed
+- 2026-09-02 — IN REVIEW → DONE: review verdict: clean; 1 blocking fixed and re-reviewed, 4 fix-now, 3 note-and-close
