@@ -55,7 +55,7 @@ Last updated: 2026-09-02
 | id | title | merged |
 |---|---|---|
 | JRY-001 | Cut v0.1.0: verify release pipeline end to end | yes — merged to main (PR #1, #2, #3, #4; commit `08ef282`) |
-| JRY-002 | Scaffold CI pin fallback misses non-dirty intermediate builds | no — publish-gated |
+| JRY-002 | Scaffold CI pin fallback misses non-dirty intermediate builds | yes — merged to main (PR #5, `4ece909`) |
 | JRY-003 | Emitted CI installs a checksum-verified release binary instead of go install | yes — merged to main (PR #6, `4593316`) |
 | JRY-004 | Prove the emitted CI on a real forge with an unmodified scaffold | yes — merged to main (PR #7, `e8d2fe2`) |
 | JRY-005 | Validate applies_to and warn on unknown frontmatter keys | yes — merged to main (PR #8, `5914ad0`) |

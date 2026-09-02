@@ -200,3 +200,4 @@ fix-inline edits (RELEASING.md wording, a comment citation) stayed well within s
 - 2026-09-01 — READY → IN DEVELOPMENT: picked up
 - 2026-09-01 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-01 — IN REVIEW → DONE: review clean; 2 fixed inline, 2 noted
+- 2026-09-02 — merged to main (PR #5, `4ece909`)
