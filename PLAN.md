@@ -31,11 +31,12 @@ them again.
 | `release` | `JRY-001` | done, merged (`v0.1.0`, then `v0.1.1`) |
 | `pin-fallback` | `JRY-002` | done, publish-gated — unplanned, spawned by `JRY-001`'s review |
 | `ci-binary-install` | `JRY-003` | done |
-| `forge-proof` | `JRY-004` | to do |
+| `forge-proof` | `JRY-004` | done — GitHub proven end to end; GitLab half deferred to `JRY-009` |
 | `applies-to-validate` | `JRY-005` | to do |
 | `placeholder-escapes` | `JRY-006` | to do |
 | `golden-tests` | `JRY-007` | to do |
 | `schema-tolerance` | `JRY-008` | to do |
+| `forge-proof-gitlab` | `JRY-009` | to do — spawned by `JRY-004`'s own account-level GitLab CI blocker |
 
 `pin-fallback` is not a row in the tables below and never was; it is recorded here because it
 consumed the id this file's second row expected.
