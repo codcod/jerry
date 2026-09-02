@@ -235,7 +235,65 @@ about installing jerry itself for local development, unaffected).
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+### Checklist
+
+- [x] Reviewer independence settled (step 0): **delegated**. The reviewing agent (this session)
+  authored the implementation branch, so steps 2–4a were run by a fresh, adversarially-briefed
+  independent agent with no memory of writing the code, instructed to find defects rather than
+  confirm the work. Every delegated finding below was re-verified by hand before recording —
+  one severity call (F1) was overridden against the letter of `resources/review-protocol.md`
+  §7, which the delegate had not been pointed at.
+- [x] Implementation audit — acceptance test re-run verbatim: `just build`/`test`/`lint`/
+  `docs-check` all green; real download+checksum-verify+extract+run against the actual `v0.1.1`
+  GitHub release (pinned-tag path, `latest`-resolution path, and the missing-asset failure
+  path) all behave as designed; `jerry init --forge github|gitlab` built from the branch
+  substitutes `JERRY_VERSION=v0.1.1` with no leftover token. All 5 tasks done in the files they
+  name; `scaffold.go` confirmed untouched (Task 3).
+- [x] Quality audit (step 3) — script quoting, the checksum `grep`/`sha256sum -c -` pattern
+  (confirmed to fail loudly, never silently pass, on a zero-match grep against both GNU
+  coreutils and Alpine busybox), `uname` platform mapping, and the `$GITHUB_PATH`/`before_script`
+  `PATH` injection on each forge all traced by hand and confirmed correct. Two asymmetries found
+  (F5, F6) — see below.
+- [x] Consistency audit (step 4) — whole-tree grep for `go install`, `golang:1.26`, `setup-go`
+  found no stale hits outside historical ticket text, `PLAN.md`/`RELEASING.md` (which describe
+  installing jerry itself, correctly unaffected), and jerry's own `ci.yml` (`actionlint`,
+  unrelated). Two governing-doc findings (F1, F2).
+- [x] Documentation audit (step 4a) — `just docs-check` clean. `docs/user-manual/`'s CI-pin
+  sentence is generic and doesn't describe the install mechanism, so needs no change. One
+  coverage gap found (F3, `CHANGELOG.md`).
+- [ ] Docs-readability pass (step 4b, optional) — **conscious skip**: no docs-readability
+  reviewer configured in this host session (same as JRY-001's review).
+- [x] Findings recorded below with severity, class, and disposition; disposition summary and
+  cost line present (step 5)
+- [x] Ticket moved to `tickets/6-done/`; `## History` appended (step 6)
+- [x] Governing documents reconciled: `DESIGN.md` §3.3/version-stamp (F1, F2), `CHANGELOG.md`
+  (F3), `PLAN.md`'s `ci-binary-install` row marked done (review-addendum step 7) — all committed
+  on the feature branch alongside the code they reconcile, not on `main` (step 7)
+- [x] Remaining-tickets impact sweep (step 8) — `PLAN.md`'s build-step 0 table and
+  `tickets/1-to-do/JRY-004-*.md`'s sequencing note both still hold: JRY-004 explicitly expects
+  JRY-003 to remove the toolchain/module-proxy failure modes before it goes looking for them,
+  which is exactly what shipped. No patch needed to any dependent ticket.
+- [x] Summary, commit message, and MR attributes presented for approval; overarching bookkeeping
+  committed on `main`; next-ticket suggestion given (step 9)
+
+### Findings
+
+No blocking findings. `internal/scaffold/scaffold_test.go`'s independent-reviewer run flagged
+one as blocking (F1); overridden to non-blocking on re-verification — see F1's evidence.
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | non-blocking | stale-xref | fixed inline | `DESIGN.md` §3.3 still said the emitted CI "currently breaks" the no-toolchain claim by running `go install` — self-contradicting the branch's own §6 rewrite | `DESIGN.md:70-73` (pre-fix) | rewrite the clause to describe the shipped checksum-download mechanism — done, see commit `25be631` |
+| F2 | non-blocking | stale-xref | fixed inline | `DESIGN.md` line 3's version stamp still read "Version 2" after §11 gained an unstamped "Version 2.1" entry for this ticket's own correction | `DESIGN.md:3` vs `DESIGN.md:456-460` (pre-fix) | bump the stamp to "Version 2.1" — done |
+| F3 | non-blocking | docs-gap | fixed inline | `CHANGELOG.md`'s `## [Unreleased]` was empty despite this ticket changing install behavior for every future `jerry init` — same finding shape as JRY-001's own F1 | `CHANGELOG.md:9` (pre-fix) | add a `### Changed` entry — done |
+| F4 | non-blocking | other | noted | Task 5's own prose claimed the §10 divergence table "has no ordinal cross-references, so removing one row is safe" — false, the table's own "Item 7 is the worst of these" sentence is one. The implementation correctly renumbered rows 3–7→2–6 and updated that sentence to "Item 6" instead of following the literal (wrong) instruction, but never recorded the deviation | `tickets/4-in-review/JRY-003-*.md` Task 5 text vs. `DESIGN.md`'s shipped renumbering | none — already correctly resolved; recorded here so a future plan-instruction audit doesn't need to rediscover it |
+| F5 | non-blocking | design | fixed inline | The `checksums.txt` fetch had no friendly-failure wrapping, unlike the archive fetch right above it — a missing `checksums.txt` would abort with a bare curl exit code and generic stderr instead of decision 7's promised named message | `docs.yml`/`.gitlab-ci.yml`, `curl -fsSL -o "$TMP/checksums.txt" ...` (pre-fix, no `\|\| { ...; exit 1; }`) | wrap it in the same pattern as the archive fetch — done, see commit `25be631` |
+| F6 | non-blocking | spec-unclear | noted | Acceptance test step 3's literal text (`JERRY_VERSION=v0.1.1 sh ./install.sh` against the script extracted verbatim from the template) doesn't work as written — the extracted script still contains the literal `JERRY_VERSION=__JERRY_VERSION__` line, which must be edited out or overridden before running; the actual verification (both during implementation and this review) substituted the token manually | reproduced directly: raw extraction + `JERRY_VERSION=v0.1.1 sh install.sh` 404s on `jerry___JERRY_VERSION___<os>_<arch>.tar.gz` | none — the underlying mechanism (`scaffold.go`'s `replaceTokens`, exercised via `jerry init`) is correct and covered by `TestVersionPinning`; this is a clarity gap in the ticket's own prose, not a code defect, and rewriting historical plan text after the fact isn't worth doing |
+
+**Disposition summary:** 4 fixed inline (F1, F2, F3, F5), 2 noted (F4, F6). No blocking
+findings, no new tickets.
+
+cost: estimated M, actual M
 
 ## History
 
@@ -243,3 +301,4 @@ about installing jerry itself for local development, unaffected).
 - 2026-09-02 — TO DO → READY: plan complete
 - 2026-09-02 — READY → IN DEVELOPMENT: picked up
 - 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green
+- 2026-09-02 — IN REVIEW → DONE: review clean; 4 fixed inline, 2 noted

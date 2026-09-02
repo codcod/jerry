@@ -20,11 +20,10 @@ Last updated: 2026-09-02
 
 ## IN REVIEW
 
-### jerry (1/1)
+### jerry (0/1)
 
 | id | title | depends-on |
 |---|---|---|
-| JRY-003 | Emitted CI installs a checksum-verified release binary instead of go install | [] |
 
 ## REWORK
 
@@ -60,6 +59,7 @@ Last updated: 2026-09-02
 |---|---|---|
 | JRY-001 | Cut v0.1.0: verify release pipeline end to end | yes — merged to main (PR #1, #2, #3, #4; commit `08ef282`) |
 | JRY-002 | Scaffold CI pin fallback misses non-dirty intermediate builds | no — publish-gated |
+| JRY-003 | Emitted CI installs a checksum-verified release binary instead of go install | no — publish-gated |
 
 ## DROPPED
 
