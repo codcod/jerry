@@ -239,3 +239,4 @@ jerry validate ./internal/rules/testdata/corpus   # spot-check: 0006 reports 4 a
   applicability audit: `applies-to` and `unknown-key` added to `TestCheckFixtureContract`'s
   `wanted` rule list so the new rules have a regression guard.
 - 2026-09-02 — READY → IN DEVELOPMENT: picked up
+- 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green
