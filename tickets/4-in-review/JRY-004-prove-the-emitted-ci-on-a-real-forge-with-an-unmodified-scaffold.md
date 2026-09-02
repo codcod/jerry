@@ -151,13 +151,16 @@ matching the style of the `ci-binary-install` row's own update for JRY-003.
 
 ### Acceptance test
 
-This ticket's acceptance test *is* Tasks 1–5, run for real against the live GitHub and GitLab
-APIs — there is no separate check beyond re-reading the captured run URLs and confirming:
+**Amended inline** (rules §1, 2026-09-02): GitLab's pipeline never left `pending` — an
+account-level CI-minutes/identity-verification hold, not a defect in the emitted
+`.gitlab-ci.yml` — so items 1–2 below are satisfied for GitHub only; the GitLab half is deferred
+to [JRY-009](../1-to-do/JRY-009-prove-the-emitted-ci-on-gitlab-once-account-ci-minutes-unblock.md).
+See `## Review` for the evidence and `## History` for what was tried.
 
-1. Task 2's GitHub Actions run and Task 3's GitLab pipeline both report success, from an
-   unmodified `jerry init` output, with no hand edits.
-2. Task 4's re-run of both fails, and each failing job's log names the actual defect (not a
-   generic non-zero exit with no explanation).
+1. Task 2's GitHub Actions run reports success, from an unmodified `jerry init` output, with no
+   hand edits. (GitLab: attempted, not confirmed — see amendment above.)
+2. Task 4's re-run fails, and the failing job's log names the actual defects (not a generic
+   non-zero exit with no explanation). (GitHub only, per amendment above.)
 3. `just build`/`test`/`lint`/`docs-check` stay clean in this repo (only `PLAN.md` changed here).
 
 ### Docs update (mandatory when user-facing)
@@ -167,10 +170,10 @@ No user-facing surface changes — no template or code diff ships. `PLAN.md`'s `
 
 ### Finish (mandatory)
 
-1. Acceptance test green (evidence captured for both forges, both pass and fail cases); `just
-   build`/`test`/`lint`/`docs-check` clean.
-2. `PLAN.md` updated per Task 6.
-3. Write a summary (both throwaway repo run URLs before deletion, what was observed, anything
+1. Acceptance test green for GitHub (both pass and fail cases); GitLab deferred to JRY-009 per
+   the inline amendment above; `just build`/`test`/`lint`/`docs-check` clean.
+2. `PLAN.md` updated per Task 6 (and the JRY-009 follow-up noted in its own row).
+3. Write a summary (both throwaway repo run/pipeline URLs, what was observed, what was
    deferred).
 4. Suggested commit message: `docs(plan): mark forge-proof verified end-to-end (JRY-004)`.
 5. Tidy WIP commits into atomic ones (root-path child) before presenting.
@@ -179,7 +182,57 @@ No user-facing surface changes — no template or code diff ships. `PLAN.md`'s `
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+### Evidence (GitHub — proven)
+
+- Scaffold + push (Task 2): `codcod/jerry-forge-proof-github`, unmodified `jerry init --forge
+  github`. Actions run
+  [33621310129](https://github.com/codcod/jerry-forge-proof-github/actions/runs/33621310129) —
+  **success**.
+- Broken doc (Task 4): copied `internal/scaffold/templates/common/templates/adr-template.md`
+  verbatim into `teams/example-team/adr/0002-broken.md`, unedited, committed, pushed. Actions
+  run
+  [33625024312](https://github.com/codcod/jerry-forge-proof-github/actions/runs/33625024312) —
+  **failure**, with the `validate` step's own log naming the real defects:
+  ```
+  teams/example-team/adr/0002-broken.md:3: error: frontmatter id must be ADR-NNNN, got "ADR-NNNN" (id-format)
+  teams/example-team/adr/0002-broken.md:3: error: template placeholder "ADR-NNNN" was never filled in (placeholder)
+  teams/example-team/adr/0002-broken.md:4: error: template placeholder "Short title of the decision" was never filled in (placeholder)
+  teams/example-team/adr/0002-broken.md:9: error: frontmatter team "your-team" does not match folder "example-team" (team-mismatch)
+  teams/example-team/adr/0002-broken.md:9: error: template placeholder "your-team" was never filled in (placeholder)
+  teams/example-team/adr/0002-broken.md:11: error: date "YYYY-MM-DD" is not a valid ISO date (YYYY-MM-DD) (date)
+  teams/example-team/adr/0002-broken.md:11: error: template placeholder "YYYY-MM-DD" was never filled in (placeholder)
+  teams/example-team/adr/0002-broken.md:12: error: template placeholder "[alice, bob]" was never filled in (placeholder)
+  teams/example-team/adr/0002-broken.md:37: error: template placeholder "**Option A** — why it was rejected" was never filled in (placeholder)
+  ```
+- Repo deleted after evidence capture (decision 2), by the user directly (`gh` token lacked
+  `delete_repo` scope).
+
+### Evidence (GitLab — attempted, not confirmed)
+
+- Scaffold + push: `nicos.ka/jerry-forge-proof-gitlab`, unmodified `jerry init --forge gitlab`.
+  Pipeline [2812901714](https://gitlab.com/nicos.ka/jerry-forge-proof-gitlab/-/pipelines/2812901714)
+  stayed `pending` indefinitely — no runner ever assigned (`"runner":null` on both jobs), despite
+  the project's shared runners showing `enabled`/`online`.
+- The pipeline page displayed GitLab's identity-verification banner. After the user completed
+  identity verification, `data-identity-verification-required` flipped to `false`, but a
+  retrigger (API-sourced pipeline `2812980823`, then a push-sourced retry `2813046699`) both
+  still sat `pending` with no assigned runner.
+- Conclusion: an account-level CI-minutes/quota or review-hold issue on `nicos.ka`, separate from
+  the identity-verification flag and not a defect in the emitted `.gitlab-ci.yml` (its shape is
+  the same install-script/`jerry validate`/`jerry index --check` pattern already proven on
+  GitHub). Not resolvable within this session.
+- Repo marked for deletion (decision 2) via `glab api -X DELETE projects/86011204`.
+
+### Findings
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | non-blocking | environment | new ticket | GitLab.com account-level CI-minutes/quota hold prevented confirming the GitLab half of the scaffold contract; the emitted template itself is unverified on that forge | pipelines `2812901714`, `2812980823`, `2813046699` all `pending`, no assigned runner | filed [JRY-009](../1-to-do/JRY-009-prove-the-emitted-ci-on-gitlab-once-account-ci-minutes-unblock.md), `spawned-by: [JRY-004]` — re-run once the account unblocks; not a code change |
+
+**Disposition summary:** 1 new ticket (F1 → JRY-009). No blocking findings.
+
+cost: estimated M, actual M — GitHub's proof ran clean; the GitLab half cost was mostly spent
+diagnosing an account-level blocker outside the scaffold's own control, not the scaffold logic.
 
 ## History
 
@@ -200,3 +253,18 @@ No user-facing surface changes — no template or code diff ships. `PLAN.md`'s `
   User decision: wait and retry later rather than verify now or drop GitLab from scope. Pausing
   here — both throwaway repos left live (GitHub evidence captured, GitLab not yet), feature
   branch `feat/JRY-004-real-forge-ci-proof` untouched, ticket stays in `3-in-development/`
+- 2026-09-02 — resumed: user completed GitLab identity verification; pipeline still stuck
+  `pending` after both a fresh API-triggered pipeline (`2812980823`) and a push-triggered retry
+  (`2813046699`) — an account-level CI-minutes/quota hold, distinct from the identity-
+  verification flag, that did not resolve this session
+- 2026-09-02 — plan amended inline: scoped acceptance test to GitHub only; GitLab confirmation
+  deferred to a new ticket rather than blocking this one indefinitely (user decision). Completed
+  Task 4 for GitHub (broken-doc push, run
+  [33625024312](https://github.com/codcod/jerry-forge-proof-github/actions/runs/33625024312)
+  failed with legible errors); ran Task 5 (evidence recorded in `## Review`, GitHub repo deleted
+  by the user, GitLab repo marked for deletion); ran Task 6 (`PLAN.md`'s `forge-proof` row → done,
+  new `forge-proof-gitlab` row added for JRY-009), committed on the feature branch
+  (`688aeb5`)
+- 2026-09-02 — filed [JRY-009](../1-to-do/JRY-009-prove-the-emitted-ci-on-gitlab-once-account-ci-minutes-unblock.md)
+  for the deferred GitLab confirmation, `spawned-by: [JRY-004]`
+- 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green (GitHub); GitLab deferred to JRY-009

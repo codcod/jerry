@@ -13,18 +13,18 @@ Last updated: 2026-09-02
 
 ## IN DEVELOPMENT
 
+### jerry (0/1)
+
+| id | title | depends-on |
+|---|---|---|
+
+## IN REVIEW
+
 ### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
 | JRY-004 | Prove the emitted CI on a real forge with an unmodified scaffold | [JRY-003] |
-
-## IN REVIEW
-
-### jerry (0/1)
-
-| id | title | depends-on |
-|---|---|---|
 
 ## REWORK
 
@@ -48,6 +48,7 @@ Last updated: 2026-09-02
 |---|---|---|---|---|---|---|
 | JRY-005 | Validate applies_to and warn on unknown frontmatter keys | high | low | S | [] |  |
 | JRY-006 | Placeholder rule: skip fenced blocks and add a per-document opt-out | medium | low | S | [] |  |
+| JRY-009 | Prove the emitted CI on GitLab once account CI minutes unblock | medium | low | S | [] |  |
 | JRY-007 | Command-level golden tests for the cobra tree | medium | medium | M | [] |  |
 | JRY-008 | schema_version tolerance, and stop jerry schema publishing const 1 | medium | medium | M | [] |  |
 
