@@ -8,6 +8,8 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-02
+
 ### Added
 
 - `jerry validate` now rejects an `applies_to` entry that cannot be a path (empty,
