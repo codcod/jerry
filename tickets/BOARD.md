@@ -13,10 +13,11 @@ Last updated: 2026-09-02
 
 ## IN DEVELOPMENT
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-004 | Prove the emitted CI on a real forge with an unmodified scaffold | [JRY-003] |
 
 ## IN REVIEW
 
@@ -38,7 +39,6 @@ Last updated: 2026-09-02
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
-| JRY-004 | Prove the emitted CI on a real forge with an unmodified scaffold | high | medium | M | [JRY-003] |  |
 
 ## TO DO (impact order, per child)
 
