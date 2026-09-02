@@ -258,3 +258,4 @@ still passes. Verdict: clean, F1 closed. No new findings from the fix itself.
 - 2026-09-02 — REWORK → IN REVIEW: findings fixed
 - 2026-09-02 — IN REVIEW → DONE: review clean; F1 fixed via scoped rework, F2/F3 fixed inline, F4/F5 noted
 - 2026-09-02 — PR #9 opened (https://github.com/codcod/jerry/pull/9)
+- 2026-09-02 — merged to main (PR #9, `79fb3ca`)
