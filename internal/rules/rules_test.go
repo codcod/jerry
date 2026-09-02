@@ -86,7 +86,9 @@ func TestCheckFixtureContract(t *testing.T) {
 		"cross-cutting-teams", // cross-cutting naming fewer than two teams
 		"cross-cutting-team-field",
 		"filename-date-mismatch", // SD prefix disagrees with its date
-		"stale-proposal",         // the only warning in the fixture
+		"stale-proposal",         // one of two warnings in the fixture
+		"applies-to",             // whitespace-only, absolute, and `..`-traversal entries
+		"unknown-key",            // applies-to (hyphen) beside the real applies_to
 	}
 	for _, rule := range wanted {
 		if byRule[rule] == 0 {

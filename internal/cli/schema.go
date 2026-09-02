@@ -82,7 +82,7 @@ func adrSchema() map[string]any {
 			"teams":          map[string]any{"type": "array", "items": map[string]any{"type": "string"}, "minItems": 2, "description": "Cross-cutting ADRs use this instead of team."},
 			"date":           map[string]any{"type": "string", "format": "date"},
 			"deciders":       stringList("Who made the decision."),
-			"applies_to":     stringList("Paths or service ids this decision governs."),
+			"applies_to":     stringList("Paths this decision governs."),
 		},
 	}
 }
@@ -102,7 +102,7 @@ func sdSchema() map[string]any {
 			"date":           map[string]any{"type": "string", "format": "date"},
 			"authors":        stringList("Who wrote the design."),
 			"related_adrs":   refList("ADRs this design produced or depends on."),
-			"applies_to":     stringList("Paths or service ids this design covers."),
+			"applies_to":     stringList("Paths this design covers."),
 		},
 	}
 }
