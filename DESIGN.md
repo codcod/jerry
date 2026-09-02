@@ -124,11 +124,11 @@ than merely old. Its lifecycle therefore has somewhere to end.
 
 **Unknown keys are preserved, not rejected.** `jerry fmt` keeps keys jerry has
 never heard of, in their authored order, because a tool that silently deletes
-what it does not understand cannot be trusted to write files at all. The cost
-is that a misspelling is invisible: `applies-to:` parses clean, round-trips
-intact, and governs nothing — permanently and silently, on the one field the
-whole of §7.2 depends on. Preservation stays; the **warning that a key is not
-one jerry knows** is what is missing.
+what it does not understand cannot be trusted to write files at all.
+Preservation stays, but a misspelling is no longer invisible: `validate` now
+warns when a frontmatter key is not one jerry knows, so `applies-to:` (hyphen)
+no longer parses clean and governs nothing — permanently and silently — on
+the one field the whole of §7.2 depends on.
 
 **`applies_to` holds paths, not service ids.** Version 1 of this document said
 "paths or service ids"; nothing resolves a service id until a catalogue exists
