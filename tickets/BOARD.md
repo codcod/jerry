@@ -47,6 +47,7 @@ Last updated: 2026-09-02
 |---|---|---|---|---|---|---|
 | JRY-007 | Command-level golden tests for the cobra tree | medium | medium | M | [] |  |
 | JRY-008 | schema_version tolerance, and stop jerry schema publishing const 1 | medium | medium | M | [] |  |
+| JRY-010 | docs-release.yml fails: ubuntu-latest has no brew | low | low | S | [] |  |
 
 ## DONE
 
