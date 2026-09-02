@@ -151,9 +151,11 @@ Call `checkUnknownKeys(&findings, document)` from `Check`, next to `checkApplies
 #### Task 3 — test fixtures
 Add two fixtures under `internal/rules/testdata/corpus/teams/broken/adr/`, following the
 existing single-issue-per-file convention (`0003-bad-references.md`, `0004-empty-section.md`):
-- `0006-bad-applies-to.md` — otherwise-clean ADR whose `applies_to:` list has four entries,
-  one per bad case: empty string, whitespace-only, an absolute path, and a `..`-traversal
-  path — expect four `applies-to` errors.
+- `0006-bad-applies-to.md` — otherwise-clean ADR whose `applies_to:` list has four entries
+  (empty string, whitespace-only, an absolute path, a `..`-traversal path) — expect three
+  `applies-to` errors: `doc.List.UnmarshalYAML` (shared by every list field) silently drops
+  the bare empty string before `Front.AppliesTo` is populated, so only the other three are
+  ever visible to the rule (see History: plan amended inline).
 - `0007-unknown-key.md` — otherwise-clean ADR with a valid `applies_to:` plus a sibling
   `applies-to:` (hyphen) key holding some value — the exact motivating typo from the
   Description — expect one `unknown-key` warning and no `applies-to` error (the correctly
@@ -226,4 +228,14 @@ jerry validate ./internal/rules/testdata/corpus   # spot-check: 0006 reports 4 a
 
 - 2026-09-02 — created (TO DO). source: pickle ticket new
 - 2026-09-02 — TO DO → READY: plan complete
+- 2026-09-02 — READY → IN DEVELOPMENT: picked up, branch feat/JRY-005-validate-applies-to
+- 2026-09-02 — plan amended inline: `doc.List.UnmarshalYAML` (shared by every list-typed
+  field) silently drops a bare empty-string sequence item before `Front.AppliesTo` is ever
+  populated, so a plain empty string in `applies_to:` cannot reach `checkAppliesTo` — only
+  whitespace-only, absolute, and `..`-traversal entries are checkable. Pre-existing, shared
+  decode behavior; out of scope to change for this ticket (would affect every List field:
+  authors, deciders, teams, supersedes, related_adrs). Task 3's fixture and expected-error
+  count adjusted from four to three; also added the fix-now finding from the pickup
+  applicability audit: `applies-to` and `unknown-key` added to `TestCheckFixtureContract`'s
+  `wanted` rule list so the new rules have a regression guard.
 - 2026-09-02 — READY → IN DEVELOPMENT: picked up
