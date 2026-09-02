@@ -226,3 +226,4 @@ jerry validate ./internal/rules/testdata/corpus   # spot-check: 0006 reports 4 a
 
 - 2026-09-02 — created (TO DO). source: pickle ticket new
 - 2026-09-02 — TO DO → READY: plan complete
+- 2026-09-02 — READY → IN DEVELOPMENT: picked up
