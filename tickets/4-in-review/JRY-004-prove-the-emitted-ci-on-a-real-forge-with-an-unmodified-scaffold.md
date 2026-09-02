@@ -268,3 +268,4 @@ diagnosing an account-level blocker outside the scaffold's own control, not the 
 - 2026-09-02 — filed [JRY-009](../1-to-do/JRY-009-prove-the-emitted-ci-on-gitlab-once-account-ci-minutes-unblock.md)
   for the deferred GitLab confirmation, `spawned-by: [JRY-004]`
 - 2026-09-02 — IN DEVELOPMENT → IN REVIEW: acceptance green (GitHub); GitLab deferred to JRY-009
+- 2026-09-02 — [PR #7](https://github.com/codcod/jerry/pull/7) opened against `main`; awaiting human merge
