@@ -13,10 +13,11 @@ Last updated: 2026-09-02
 
 ## IN DEVELOPMENT
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-006 | Placeholder rule: skip fenced blocks and add a per-document opt-out | [] |
 
 ## IN REVIEW
 
@@ -38,7 +39,6 @@ Last updated: 2026-09-02
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
-| JRY-006 | Placeholder rule: skip fenced blocks and add a per-document opt-out | medium | low | S | [] |  |
 
 ## TO DO (impact order, per child)
 
