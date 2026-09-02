@@ -86,7 +86,7 @@ func TestCheckFixtureContract(t *testing.T) {
 		"cross-cutting-teams", // cross-cutting naming fewer than two teams
 		"cross-cutting-team-field",
 		"filename-date-mismatch", // SD prefix disagrees with its date
-		"stale-proposal",         // one of two warnings in the fixture
+		"stale-proposal",         // two of the fixture's three warnings
 		"applies-to",             // whitespace-only, absolute, and `..`-traversal entries
 		"unknown-key",            // applies-to (hyphen) beside the real applies_to
 	}
