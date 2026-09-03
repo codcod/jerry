@@ -200,7 +200,46 @@ this ticket extends to fixture *inputs*; no wording change needed there.
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+- [x] Reviewer independence settled (step 0): the reviewing agent authored this branch in this
+  same session, so audits (steps 2-4) were **delegated** to an independent, adversarially-briefed
+  sub-agent with no memory of writing the code. Findings below were re-verified by the
+  orchestrating reviewer before recording (the delegated agent's cobra-source claims were
+  cross-checked against `$(go env GOMODCACHE)/github.com/spf13/cobra@v1.10.2/command.go` directly).
+- [x] Implementation audit — acceptance test re-run, tasks & criteria verified (step 1, 2)
+- [x] Quality audit (step 3)
+- [x] Consistency audit (step 4)
+- [x] Documentation audit (step 4a) — no user-facing surface (test-only change to `internal/cli`);
+  `just docs-check` clean; no `CHANGELOG.md` entry required (this project's convention carries no
+  entry for internal test infrastructure — confirmed by grep, no prior test-only ticket has one)
+- [ ] Docs-readability pass (step 4b) — conscious skip: no `.adoc`/`.md` prose changed by this branch
+- [x] Findings recorded with severity, class, disposition (step 5)
+- [x] Ticket moved (step 6) — see below
+- [ ] Other references / governing documents (step 7) — deferred to the scoped re-review's
+  conclusion, once F1 lands: `review-addendum.md`'s step-2 claim that this ticket "is where [the
+  stdout/stderr split] becomes mechanical" is not yet true (see F1) and should be revisited then,
+  not edited now while the fix is still pending
+- [ ] Remaining-tickets impact sweep (step 8) — deferred: this round does not conclude the ticket
+- [ ] Summary + commit message + MR attributes for approval (step 9) — deferred: not reaching
+  `6-done/` this round
+
+**Acceptance test, re-run verbatim:** all six commands from the Implementation Plan pass —
+`go test ./internal/cli/... -v` (all subtests green), `go test ./internal/cli/... -update && git
+status --porcelain internal/cli/testdata` (empty — goldens reproducible), `just build`,
+`just test`, `just lint`, `just docs-check`. Every task and decision in the plan is implemented
+exactly where it says, with one exception: decision 3's claim that `SetOut`/`SetErr` compare
+stdout/stderr "independently" is contradicted by F1 below.
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | blocking | correctness | — | `runCLI` (`internal/cli/golden_test.go`) calls both `tree.SetOut` and `tree.SetErr`, but cobra v1.10.2's `Print`/`Println`/`Printf` resolve through `OutOrStderr()` → `getOut(os.Stderr)`, which returns `c.outWriter` (the `SetOut` buffer) whenever it is non-nil — never `c.errWriter`. Every `cmd.Print*` call in the tree (used by `fmt`, `new`, `hooks`, `supersede`, `status`, `validate`) therefore lands in the captured "stdout" bucket, indistinguishable from `fmt.Fprintln(cmd.OutOrStdout(), …)`. All 14 committed goldens show `"stderr": ""`. This defeats the ticket's own Outcome (stdout/stderr/exit code "byte-compared") and the exact regression class it exists to catch (`CHANGELOG.md` 0.1.0's `Print*`-breaks-the-git-hook defect, cited in this ticket's own Description) — a leaf's output moving between the two real streams produces a byte-identical golden diff. | `internal/cli/golden_test.go:57-58`; cobra `command.go:398,412,1435-1441`; confirmed with a throwaway reproduction (`SetOut`+`SetErr` set, `RunE` calls both `cmd.Println("A")` and `fmt.Fprintln(cmd.OutOrStdout(), "B")` → stdout=`"A\nB\n"`, stderr=`""`) | Capture real stream separation instead of relying on cobra's `SetOut`/`SetErr` pair for this: redirect the OS-level `os.Stdout`/`os.Stderr` (e.g. `os.Pipe`) around `tree.Execute()` while leaving `SetOut`/`SetErr` unset, so `OutOrStdout()`/`OutOrStderr()` fall through to the real `os.Stdout`/`os.Stderr` cobra uses in production (`cli.Execute` never calls `SetOut`/`SetErr` either) — then every existing golden case's expected split can be regenerated and asserted against the real behaviour it claims to pin. |
+| F2 | non-blocking | test-gap | note-and-close | No golden case currently produces non-empty `stderr`, so the capture wiring for that field is itself unexercised. | all 14 files in `internal/cli/testdata/golden/*.json` show `"stderr": ""` | Expected to resolve as a natural consequence once F1 is fixed correctly (several existing cases — `fmt --check`, `validate`, `status`, `supersede`, `new` — use `cmd.Print*` in production and will populate `stderr` once the split is real); no separate task needed. |
+| F3 | non-blocking | test-gap | note-and-close | `hooks status`'s other two branches ("installed by jerry", "a hook exists but jerry did not write it") have no golden case — only "not installed" is covered. | `internal/hooks/hooks.go` (`Status` callers in `hooksStatusCmd`); `internal/cli/golden_test.go`'s single `hooks-status` case | Not required by the ticket's Task 4 (leaf coverage, not branch coverage); too small on its own to pass the promotion test for a follow-up ticket. Revisit if more coverage gaps of this shape accumulate. |
+| F4 | non-blocking | test-gap | note-and-close | The `--json` envelope output (`jerry.findings/1`, `jerry.index/1`) is not exercised by any golden case. | `internal/cli/golden_test.go`'s `goldenCases` table (no `--json` args) | Outside Task 4's stated scope (it names no `--json` case); marginal value on its own. Revisit alongside F3 if a themed "broaden golden coverage" ticket is ever filed. |
+
+**Disposition summary:** 1 blocking (F1, routed to rework), 3 non-blocking — all `note-and-close`
+(F2, F3, F4).
+
+cost: estimated M, actual M
 
 ## History
 
@@ -214,3 +253,4 @@ this ticket extends to fixture *inputs*; no wording change needed there.
   test were corrected after finding `go test ./... -update` already fails on `internal/scaffold`
   pre-existing this ticket, unrelated to it — verification rescoped to `internal/cli`
 - 2026-09-03 — IN DEVELOPMENT → IN REVIEW: acceptance green
+- 2026-09-03 — IN REVIEW → REWORK: F1 blocking: stdout/stderr capture collapsed by SetOut/SetErr, see Review
