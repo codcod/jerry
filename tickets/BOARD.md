@@ -9,7 +9,7 @@ hand — edit the tickets. Hand-written planning notes live in [`NOTES.md`](NOTE
 **WIP limits (per child-project):**
 - `jerry`: `3-in-development/` ≤ 1 · `4-in-review/` ≤ 1
 
-Last updated: 2026-09-02
+Last updated: 2026-09-03
 
 ## IN DEVELOPMENT
 
@@ -38,6 +38,7 @@ Last updated: 2026-09-02
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
+| JRY-010 | docs-release.yml fails: ubuntu-latest has no brew | low | low | S | [] |  |
 
 ## TO DO (impact order, per child)
 
@@ -47,7 +48,6 @@ Last updated: 2026-09-02
 |---|---|---|---|---|---|---|
 | JRY-007 | Command-level golden tests for the cobra tree | medium | medium | M | [] |  |
 | JRY-008 | schema_version tolerance, and stop jerry schema publishing const 1 | medium | medium | M | [] |  |
-| JRY-010 | docs-release.yml fails: ubuntu-latest has no brew | low | low | S | [] |  |
 
 ## DONE
 
