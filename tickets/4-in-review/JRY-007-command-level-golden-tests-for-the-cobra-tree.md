@@ -213,3 +213,4 @@ this ticket extends to fixture *inputs*; no wording change needed there.
   which reads `os.Getwd()` directly instead of `g.configPath`; decision 5 and the acceptance
   test were corrected after finding `go test ./... -update` already fails on `internal/scaffold`
   pre-existing this ticket, unrelated to it — verification rescoped to `internal/cli`
+- 2026-09-03 — IN DEVELOPMENT → IN REVIEW: acceptance green
