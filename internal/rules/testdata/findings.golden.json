@@ -140,6 +140,13 @@
     "message": "frontmatter key \"applies-to\" is not one jerry knows — check for a typo (preserved as-is by `jerry fmt`)"
   },
   {
+    "path": "teams/payments/adr/0002-schema-version-from-the-future.md",
+    "line": 2,
+    "severity": "warning",
+    "rule": "schema-version-ahead",
+    "message": "schema_version 99 is newer than this jerry binary knows (1) — checked with 1's rules; upgrade jerry to read 99's own rules"
+  },
+  {
     "path": "teams/payments/solution-designs/2026-05-ledger-rewrite.md",
     "line": 1,
     "severity": "error",

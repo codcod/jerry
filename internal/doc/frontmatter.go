@@ -62,6 +62,12 @@ func (l List) MarshalYAML() (any, error) {
 	return []string(l), nil
 }
 
+// CurrentSchemaVersion is the newest schema_version this binary understands.
+// jerry new and jerry supersede write it into every document; jerry schema
+// publishes it as a floor, not an equality (DESIGN.md §3.6): a document above
+// it must warn, never error, so upgrading jerry is never a merge prerequisite.
+const CurrentSchemaVersion = 1
+
 // Front is the typed view of the fields jerry has rules about. Fields absent
 // from a document stay at their zero value; rules distinguish "absent" from
 // "invalid" themselves, so nothing here is defaulted.

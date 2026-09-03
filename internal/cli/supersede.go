@@ -63,7 +63,7 @@ func supersedeCmd(g *globals) *cobra.Command {
 			successorRef := doc.Ref{Scope: scope, ID: id}
 
 			front := doc.Front{
-				SchemaVersion: 1,
+				SchemaVersion: doc.CurrentSchemaVersion,
 				ID:            "ADR-" + id,
 				Title:         with,
 				Status:        canonicalStatus,

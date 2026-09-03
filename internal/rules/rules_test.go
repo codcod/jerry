@@ -89,6 +89,7 @@ func TestCheckFixtureContract(t *testing.T) {
 		"stale-proposal",         // two of the fixture's three warnings
 		"applies-to",             // whitespace-only, absolute, and `..`-traversal entries
 		"unknown-key",            // applies-to (hyphen) beside the real applies_to
+		"schema-version-ahead",   // schema_version claiming a version from the future
 	}
 	for _, rule := range wanted {
 		if byRule[rule] == 0 {
@@ -110,6 +111,22 @@ func TestCheckFixtureContract(t *testing.T) {
 		for _, finding := range findings {
 			if finding.Rule == "stale-proposal" && finding.Severity != SeverityWarning {
 				t.Errorf("stale-proposal must never fail CI, got severity %q", finding.Severity)
+			}
+		}
+	})
+
+	t.Run("SchemaVersionAheadIsAWarningNotAnError", func(t *testing.T) {
+		for _, finding := range findings {
+			if finding.Rule == "schema-version-ahead" && finding.Severity != SeverityWarning {
+				t.Errorf("schema-version-ahead must never fail CI, got severity %q", finding.Severity)
+			}
+		}
+	})
+
+	t.Run("SchemaVersionFromTheFutureStillValidates", func(t *testing.T) {
+		for _, finding := range findings {
+			if strings.Contains(finding.Path, "0002-schema-version-from-the-future.md") && finding.Severity == SeverityError {
+				t.Errorf("a document above the newest known schema_version must still validate, got error: %s", finding)
 			}
 		}
 	})
