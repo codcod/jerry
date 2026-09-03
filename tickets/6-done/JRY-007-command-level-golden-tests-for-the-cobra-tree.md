@@ -214,13 +214,17 @@ this ticket extends to fixture *inputs*; no wording change needed there.
 - [ ] Docs-readability pass (step 4b) — conscious skip: no `.adoc`/`.md` prose changed by this branch
 - [x] Findings recorded with severity, class, disposition (step 5)
 - [x] Ticket moved (step 6) — see below
-- [ ] Other references / governing documents (step 7) — deferred to the scoped re-review's
-  conclusion, once F1 lands: `review-addendum.md`'s step-2 claim that this ticket "is where [the
-  stdout/stderr split] becomes mechanical" is not yet true (see F1) and should be revisited then,
-  not edited now while the fix is still pending
-- [ ] Remaining-tickets impact sweep (step 8) — deferred: this round does not conclude the ticket
-- [ ] Summary + commit message + MR attributes for approval (step 9) — deferred: not reaching
-  `6-done/` this round
+- [x] Other references / governing documents (step 7) — `review-addendum.md`'s step-2 claim is
+  now true of what shipped; no edit needed (see round-1 re-review note below)
+- [x] Remaining-tickets impact sweep (step 8) — `tickets/2-ready/` empty; JRY-008 (the only
+  `1-to-do/` ticket) neither depends on nor references JRY-007; nothing to patch
+- [x] Summary + commit message + MR attributes for approval (step 9) — below
+
+**Round 1 re-review (reviewer independence):** the reviewing agent authored commit `ffb4eb5`
+(the fix) in this same session, so this round's audit was again **delegated** to a fresh,
+independent, adversarially-briefed sub-agent with no memory of writing the fix, scoped to the
+fix diff per the protocol's scoped-re-review rule. Findings re-verified by the orchestrating
+reviewer before recording (F5 spot-checked directly against the current file text).
 
 **Acceptance test, re-run verbatim:** all six commands from the Implementation Plan pass —
 `go test ./internal/cli/... -v` (all subtests green), `go test ./internal/cli/... -update && git
@@ -257,6 +261,55 @@ said was missing. F2 resolved as predicted, as a side effect of the fix, with no
 round's scope. Full acceptance test re-run green (`go test ./internal/cli/... -v`, reproducibility
 check, `just build`, `just test`, `just lint`, `just docs-check`).
 
+### Scoped re-review — round 1
+
+Independence: this reviewer authored commit `ffb4eb5` in this same session, so the audit was
+again **delegated** to a fresh, independent, adversarially-briefed sub-agent with no memory of
+writing the fix. Findings re-verified by the orchestrating reviewer before recording (F5 spot-
+checked directly against `internal/cli/golden_test.go`'s current text below).
+
+**Scope, per protocol §1:** commit `ffb4eb5` only — F1's fix diff, audited both for whether F1 is
+actually closed and for fresh defects in the fix's own replacement code. F2, F3, F4 were out of
+this round's scope (not touched by the commit) and are not re-litigated.
+
+**F1 — confirmed fixed.** `SetOut`/`SetErr` are no longer called anywhere in
+`internal/cli/golden_test.go` (grep confirms zero call sites outside a comment). `captureStreams`
+correctly swaps the real `os.Stdout`/`os.Stderr` package vars around `tree.Execute()`, matching
+production (`cli.Execute` never calls `SetOut`/`SetErr` either). Verified both by reading and
+empirically: `go test ./internal/cli/... -race -run TestGolden -v` passes with no race reported.
+Spot-checked `validate-dirty.json` (findings now in `stdout`, the `cmd.Printf` summary now in
+`stderr`), `status-real.json` and `fmt-check.json` (both `cmd.Print*`-driven, now non-empty
+`stderr`) — the exact split F1 said was missing is real. 9 of 14 goldens now carry non-empty
+`stderr`, matching the round-1 fix record.
+
+Full acceptance test re-run, all six commands from the Implementation Plan: **all pass**
+(`go test ./internal/cli/... -v`; `go test ./internal/cli/... -update && git status --porcelain
+internal/cli/testdata` empty; `just build`; `just test`; `just lint`; `just docs-check`).
+
+Three new findings surfaced in `captureStreams`'s own code (`internal/cli/golden_test.go:84-115`)
+— none reopen F1, none currently manifest as a test failure:
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F5 | non-blocking | design | note-and-close | `captureStreams` restores `os.Stdout`/`os.Stderr` only on the normal-return path after `fn()` (`runErr := fn()`, no `defer`). A panic inside `tree.Execute()` would skip the restore — moot in practice today (an unrecovered panic aborts the whole `go test` binary regardless, so there is no "later test sees corrupted streams" scenario to actually trigger), but the code's whole job is safely handling shared global state, so leaving the restore undefended is a latent robustness gap rather than a live bug. | `internal/cli/golden_test.go:104-109` (`runErr := fn()` … restore two lines later, no `defer`) | Wrap the restore (and ideally the pipe-close/goroutine-join) in a `defer` for defensive symmetry, even though no current path exercises the gap. |
+| F6 | non-blocking | other | note-and-close | If the stdout `os.Pipe()` succeeds but the stderr one fails, `t.Fatalf` fires without closing the already-open `stdoutR`/`stdoutW` first — a 2-fd leak scoped to the test binary's lifetime. `os.Pipe()` failing at all is rare. | `internal/cli/golden_test.go:87-94` | Close the stdout pipe ends before the second `t.Fatalf`, or defer closes immediately after each successful `os.Pipe()` call. |
+| F7 | non-blocking | design | note-and-close | Nothing prevents a future golden case from adding `t.Parallel()`, which would silently corrupt output between concurrently-running cases via the shared `os.Stdout`/`os.Stderr` package vars — no compiler or lint signal today. Confirmed no current usage (`grep -n Parallel internal/cli/golden_test.go` empty) and the full suite is green under `-race`, so this is not a current defect, only a latent one. | `internal/cli/golden_test.go` (no `t.Parallel` present) | A one-line comment on `captureStreams` noting it requires sequential execution would make the invariant discoverable before someone breaks it. |
+
+**Disposition summary (round 1 re-review):** 0 blocking, 3 non-blocking — all `note-and-close`
+(F5, F6, F7). Combined with the original review: F1 fixed and closed; F2 resolved as a side
+effect; F3, F4, F5, F6, F7 all `note-and-close`.
+
+cost: estimated M, actual M (unchanged — the rework round was within the original estimate)
+
+**Verdict: no blocking findings remain. Ticket proceeds to `tickets/6-done/`.**
+
+Step 7 (governing documents): `review-addendum.md`'s step-2 claim that JRY-007 "is where [the
+stdout/stderr split] becomes mechanical" — flagged as a candidate stale-xref in the original
+review pending F1's fix — is now true of what shipped; no edit needed.
+
+Step 8 (impact sweep): `tickets/2-ready/` is empty; `tickets/1-to-do/` holds only JRY-008, which
+neither depends on nor references JRY-007. No downstream assumption to patch.
+
 ## History
 
 - 2026-09-02 — created (TO DO). source: pickle ticket new
@@ -271,3 +324,6 @@ check, `just build`, `just test`, `just lint`, `just docs-check`).
 - 2026-09-03 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-03 — IN REVIEW → REWORK: F1 blocking: stdout/stderr capture collapsed by SetOut/SetErr, see Review
 - 2026-09-03 — REWORK → IN REVIEW: findings fixed
+- 2026-09-03 — IN REVIEW → DONE: F1 confirmed fixed, scoped re-review clean; 3 non-blocking
+  (F5, F6, F7), all note-and-close
+- 2026-09-03 — IN REVIEW → DONE: review clean, F1 fixed
