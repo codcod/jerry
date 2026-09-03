@@ -189,3 +189,4 @@ pipeline's internals).
   command not found` during the `v0.2.0` release cut (JRY-009's follow-on release step); the
   sibling project `morty` already carries the fix (`runs-on: macos-latest`)
 - 2026-09-03 — TO DO → READY: plan complete
+- 2026-09-03 — READY → IN DEVELOPMENT: picked up
