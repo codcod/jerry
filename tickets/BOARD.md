@@ -20,11 +20,10 @@ Last updated: 2026-09-03
 
 ## IN REVIEW
 
-### jerry (1/1)
+### jerry (0/1)
 
 | id | title | depends-on |
 |---|---|---|
-| JRY-010 | docs-release.yml fails: ubuntu-latest has no brew | [] |
 
 ## REWORK
 
@@ -62,6 +61,7 @@ Last updated: 2026-09-03
 | JRY-005 | Validate applies_to and warn on unknown frontmatter keys | yes — merged to main (PR #8, `5914ad0`) |
 | JRY-006 | Placeholder rule: skip fenced blocks and add a per-document opt-out | yes — merged to main (PR #9, `79fb3ca`) |
 | JRY-009 | Prove the emitted CI on GitLab once account CI minutes unblock | yes — merged to main (PR #10, `af6ccf2`) |
+| JRY-010 | docs-release.yml fails: ubuntu-latest has no brew | no — publish-gated |
 
 ## DROPPED
 

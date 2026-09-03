@@ -201,6 +201,24 @@ The `gh release list` fallback path (non-`workflow_dispatch` case) was verified 
 inspection only, per the ticket's own acceptance-test note — not independently triggerable
 without a fresh `workflow_run` event.
 
+**Reviewer independence (step 0):** the reviewing agent authored the branch in this same
+session, so steps 2–4a were delegated to an independent sub-agent, spawned fresh with no
+memory of writing the code and briefed adversarially. Its findings were re-verified by hand
+before recording below (`git diff main...feat/JRY-010-docs-release-brew-fix`, `echo '[]' | jq
+-r '.[0].tagName'` → confirmed `null`). It also independently re-derived the live-run claim
+(`gh run view 33724479793`, `gh release view v0.2.0`) and confirmed it accurate.
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | non-blocking | other | noted | Checkout step's `ref` changed to `${{ github.event.workflow_run.head_sha \|\| github.sha }}` — a fourth code change needed to make checkout work under `workflow_dispatch` (where `workflow_run` is null), not enumerated in any Task or decision | `.github/workflows/docs-release.yml:39`; confirmed correct and necessary via the green live-dispatch run | none — correct as shipped; noting the plan under-specified this line for future ticket-writing quality |
+| F2 | non-blocking | correctness | noted | If `gh release list` ever returns zero releases, `jq -r '.[0].tagName'` yields the literal string `null`, so `TAG` becomes `"null"` and `gh release upload "null" ...` fails with a confusing error instead of a clean one | `.github/workflows/docs-release.yml:54`; reproduced `echo '[]' \| jq -r '.[0].tagName'` → `null`. Same latent pattern as morty's original fix; unreachable on the actual golden path since this job only runs after a release already exists (job fires post-`release.yml`, or manual dispatch against a repo that already has releases) | guard with `if [ -z "$tag" ] \|\| [ "$tag" = "null" ]; then echo "::error::no releases found"; exit 1; fi` if ever revisited — not worth its own ticket for a repo that always has ≥1 release |
+| F3 | non-blocking | docs-gap | fixed inline | Top-of-file header comment documented the `workflow_run` trigger's rationale but not the newly added `workflow_dispatch` trigger | `.github/workflows/docs-release.yml:1-11` (before fix) | fixed inline: added a two-line note on the new trigger, commit `44c8665` |
+
+Disposition summary: 2 noted (F1, F2), 1 fixed inline (F3). No blocking findings, no follow-up
+tickets spawned.
+
+cost: estimated S, actual S
+
 ## History
 
 - 2026-09-02 — created (TO DO). source: self-host: `docs-release.yml` failed with `brew:
@@ -209,3 +227,4 @@ without a fresh `workflow_run` event.
 - 2026-09-03 — TO DO → READY: plan complete
 - 2026-09-03 — READY → IN DEVELOPMENT: picked up
 - 2026-09-03 — IN DEVELOPMENT → IN REVIEW: acceptance green
+- 2026-09-03 — IN REVIEW → DONE: reviewed: 2 noted, 1 fixed inline, no blocking findings
