@@ -4,6 +4,7 @@ title: Harden validate --diff: fix corpus/git path mismatch and base-ref handlin
 project: jerry
 depends-on: [JRY-007]
 spawned-by: []
+family: JRY-011
 impact: high
 complexity: medium
 cost: M

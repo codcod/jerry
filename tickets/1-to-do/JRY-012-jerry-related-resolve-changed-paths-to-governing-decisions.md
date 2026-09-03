@@ -4,6 +4,7 @@ title: jerry related: resolve changed paths to governing decisions
 project: jerry
 depends-on: [JRY-011]
 spawned-by: []
+family: JRY-011
 impact: high
 complexity: medium
 cost: M
