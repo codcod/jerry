@@ -9,24 +9,54 @@
 # release, so a broken manual build must never block or unpublish the release
 # itself — hence the `conclusion == 'success'` guard rather than a hard failure,
 # and `continue-on-error` on the build step below.
+#
+# Also triggers on `workflow_dispatch` (optional `tag` input), to run this job on demand
+# against an existing release without waiting for or cutting a new one.
 name: docs-release
 
 on:
   workflow_run:
     workflows: ["release"]
     types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to attach the manual to (defaults to the latest release)"
+        required: false
+        type: string
 
 permissions:
   contents: write
 
 jobs:
   attach-manual:
-    if: github.event.workflow_run.conclusion == 'success'
-    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+    # macOS, not ubuntu-latest: this step's own "brew update first" comment always assumed a
+    # preinstalled Homebrew, which is true only on GitHub's macOS runners. Confirmed live:
+    # ubuntu-latest has no `brew` at all ("command not found"), so this job has never actually
+    # completed before now.
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      # workflow_run carries no `release` payload (head_branch is the branch, e.g. "main",
+      # not the tag), so the tag has to be looked up. The release.yml run that just finished
+      # is, barring a race with a concurrent one, the newest release in the repo. A manual
+      # workflow_dispatch run can instead target an explicit tag.
+      - name: Determine the release tag
+        id: tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DISPATCH_TAG: ${{ inputs.tag }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "$DISPATCH_TAG" ]; then
+            tag="$DISPATCH_TAG"
+          else
+            tag="$(gh release list --limit 1 --json tagName --jq '.[0].tagName')"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
       # `brew update` first: a preinstalled runner image's Homebrew snapshot can
       # lag behind the tap's bottle metadata, which otherwise only fails on fresh
@@ -46,7 +76,7 @@ jobs:
       - name: Attach user manual to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ github.event.workflow_run.head_branch }}
+          TAG: ${{ steps.tag.outputs.tag }}
         run: |
           shopt -s nullglob
           existing=(dist/docs/*.pdf dist/docs/*.epub)
