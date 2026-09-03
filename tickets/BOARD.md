@@ -20,10 +20,11 @@ Last updated: 2026-09-03
 
 ## IN REVIEW
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-007 | Command-level golden tests for the cobra tree | [] |
 
 ## REWORK
 
@@ -31,7 +32,6 @@ Last updated: 2026-09-03
 
 | id | title | open findings |
 |---|---|---|
-| JRY-007 | Command-level golden tests for the cobra tree | F1 blocking: stdout/stderr capture collapsed by SetOut/SetErr, see Review |
 
 ## READY (impact order, per child)
 

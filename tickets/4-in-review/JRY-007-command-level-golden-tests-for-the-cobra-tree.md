@@ -270,3 +270,4 @@ check, `just build`, `just test`, `just lint`, `just docs-check`).
   pre-existing this ticket, unrelated to it — verification rescoped to `internal/cli`
 - 2026-09-03 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-03 — IN REVIEW → REWORK: F1 blocking: stdout/stderr capture collapsed by SetOut/SetErr, see Review
+- 2026-09-03 — REWORK → IN REVIEW: findings fixed
