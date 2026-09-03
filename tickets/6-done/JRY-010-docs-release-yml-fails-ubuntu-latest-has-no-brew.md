@@ -228,3 +228,5 @@ cost: estimated S, actual S
 - 2026-09-03 — READY → IN DEVELOPMENT: picked up
 - 2026-09-03 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-03 — IN REVIEW → DONE: reviewed: 2 noted, 1 fixed inline, no blocking findings
+- 2026-09-03 — pushed `feat/JRY-010-docs-release-brew-fix`, opened PR #11
+  (https://github.com/codcod/jerry/pull/11) against `main`; awaiting human merge
