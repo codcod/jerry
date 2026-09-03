@@ -1,0 +1,5 @@
+{
+  "stdout": "(dry run) would write teams/example-team/solution-designs/2026-09-test-design.md\n\n---\nschema_version: 1\ntitle: Test Design\nstatus: Draft\nteam: example-team\ndate: \"2026-09-03\"\nauthors:\n  - Golden Author\n---\n\n# Test Design\n\n## Problem Statement\n\n\u003c!-- What problem are we solving? Who is affected, and why now? --\u003e\n\n## Goals / Non-Goals\n\n\u003c!-- Goals: what this design commits to achieving.\n     Non-Goals: explicitly out of scope, to prevent scope creep. --\u003e\n\n## Proposed Design\n\n\u003c!-- Describe the design. Diagrams welcome (link or embed). --\u003e\n\n## Alternatives Considered\n\n\u003c!-- What else was considered, and why was it not chosen? --\u003e\n\n## Risks \u0026 Trade-offs\n\n\u003c!-- Be honest about what could go wrong and what is being traded away. --\u003e\n\n## Rollout / Migration Plan\n\n\u003c!-- Migration steps, feature flags, phased rollout. --\u003e\n\n## Related ADRs\n\n\u003c!-- Keep related_adrs in the frontmatter in sync; every reference is checked. --\u003e\n",
+  "stderr": "",
+  "failed": false
+}

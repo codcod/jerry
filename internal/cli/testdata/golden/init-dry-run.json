@@ -1,0 +1,5 @@
+{
+  "stdout": "(dry run — nothing was written)\n  ~ .github/CODEOWNERS\n  ~ .github/workflows/docs.yml\n  ~ .gitignore\n  ~ CONTRIBUTING.md\n  ~ README.md\n  ~ cross-cutting/adr/.gitkeep\n  ~ cross-cutting/solution-designs/.gitkeep\n  ~ jerry.yaml\n  ~ teams/example-team/adr/0001-example-use-postgres-for-primary-store.md\n  ~ teams/example-team/solution-designs/.gitkeep\n  ~ templates/adr-template.md\n  ~ templates/solution-design-template.md\n  * index/index.md (generated)\n",
+  "stderr": "",
+  "failed": false
+}
