@@ -284,6 +284,15 @@ cost: estimated M, actual M
 Blocking finding present (F2). Ticket moves to `5-rework/` for a scoped fix: add the missing
 manual coverage on the same branch. No other changes in scope for the rework pass.
 
+### Rework fix record — round 1 (commit 01dece6)
+
+F2: added two sentences to `docs/user-manual/introduction.adoc` — one beside the existing
+`unknown-key` paragraph, covering `validate`'s new `schema-version-ahead` warning
+(at-or-below silent, above warns, never errors); one in `== Editor support`, covering
+`jerry schema`'s `schema_version` floor (`minimum`, not `const`). No other changes; scope was
+F2 only. Acceptance test (`just build`, `just lint`, `just test`, `just docs-check`) re-run
+green after the fix.
+
 ## History
 
 - 2026-09-02 — created (TO DO). source: pickle ticket new
@@ -291,3 +300,4 @@ manual coverage on the same branch. No other changes in scope for the rework pas
 - 2026-09-03 — READY → IN DEVELOPMENT: picked up
 - 2026-09-03 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-03 — IN REVIEW → REWORK: F2 blocking: user manual not updated
+- 2026-09-03 — REWORK → IN REVIEW: findings fixed

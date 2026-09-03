@@ -20,10 +20,11 @@ Last updated: 2026-09-03
 
 ## IN REVIEW
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-008 | schema_version tolerance, and stop jerry schema publishing const 1 | [] |
 
 ## REWORK
 
@@ -31,7 +32,6 @@ Last updated: 2026-09-03
 
 | id | title | open findings |
 |---|---|---|
-| JRY-008 | schema_version tolerance, and stop jerry schema publishing const 1 | F2 blocking: user manual not updated |
 
 ## READY (impact order, per child)
 
