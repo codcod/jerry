@@ -38,6 +38,7 @@ Last updated: 2026-09-03
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
+| JRY-008 | schema_version tolerance, and stop jerry schema publishing const 1 | medium | medium | M | [] |  |
 
 ## TO DO (impact order, per child)
 
@@ -45,7 +46,6 @@ Last updated: 2026-09-03
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
-| JRY-008 | schema_version tolerance, and stop jerry schema publishing const 1 | medium | medium | M | [] |  |
 
 ## DONE
 
