@@ -230,3 +230,4 @@ cost: estimated S, actual S
 - 2026-09-03 — IN REVIEW → DONE: reviewed: 2 noted, 1 fixed inline, no blocking findings
 - 2026-09-03 — pushed `feat/JRY-010-docs-release-brew-fix`, opened PR #11
   (https://github.com/codcod/jerry/pull/11) against `main`; awaiting human merge
+- 2026-09-03 — merged — PR #11 merged to `main` (commit `caa730f`)
