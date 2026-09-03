@@ -56,6 +56,7 @@ func Check(corpus *doc.Corpus, options Options) Findings {
 		checkPlaceholders(&findings, document, options)
 		checkAppliesTo(&findings, document)
 		checkUnknownKeys(&findings, document)
+		checkSchemaVersion(&findings, document)
 	}
 	checkDuplicateIDs(&findings, corpus)
 
@@ -337,6 +338,19 @@ func checkUnknownKeys(findings *Findings, document *doc.Document) {
 				"frontmatter key %q is not one jerry knows — check for a typo (preserved as-is by `jerry fmt`)", key)
 		}
 	}
+}
+
+// checkSchemaVersion warns when a document claims a schema_version newer than
+// this binary knows, and never blocks: DESIGN.md §3.6 makes "the binary is
+// replaceable" a charter item, so an old jerry must not turn a newer
+// repository red merely for existing.
+func checkSchemaVersion(findings *Findings, document *doc.Document) {
+	if document.Front.SchemaVersion <= doc.CurrentSchemaVersion {
+		return
+	}
+	findings.warnf(document.Path, doc.FieldLine(document.Mapping, "schema_version"), "schema-version-ahead",
+		"schema_version %d is newer than this jerry binary knows (%d) — checked with %[2]d's rules; upgrade jerry to read %[1]d's own rules",
+		document.Front.SchemaVersion, doc.CurrentSchemaVersion)
 }
 
 // commentPattern matches an HTML comment. The guidance prompts `jerry new`

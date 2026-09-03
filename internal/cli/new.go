@@ -129,7 +129,7 @@ func newADRCmd(g *globals) *cobra.Command {
 
 			id := corpus.NextID(scope)
 			front := doc.Front{
-				SchemaVersion: 1,
+				SchemaVersion: doc.CurrentSchemaVersion,
 				ID:            "ADR-" + id,
 				Title:         title,
 				Status:        canonicalStatus,
@@ -192,7 +192,7 @@ func newSDCmd(g *globals) *cobra.Command {
 
 			today := now()
 			front := doc.Front{
-				SchemaVersion: 1,
+				SchemaVersion: doc.CurrentSchemaVersion,
 				Title:         title,
 				Status:        canonicalStatus,
 				Team:          scope,

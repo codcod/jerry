@@ -90,9 +90,9 @@ approval is the approval.
      not turn a repository red for being newer than itself: that would make
      upgrading jerry a prerequisite for merging anything, which is the opposite
      of "the binary is replaceable".
-   - `jerry schema` must therefore publish a *floor*, not an equality. Today it
-     emits `const: 1` and so will reject every v2 document the day v2 exists
-     (§10).
+   - `jerry schema` therefore publishes a *floor* (`minimum`), not an equality:
+     a document above the newest version this binary knows still validates
+     against the published schema, instead of being rejected outright.
 
 ## 4. Document schema
 
@@ -109,7 +109,7 @@ than merely old. Its lifecycle therefore has somewhere to end.
 
 | Field | ADR | SD | Notes |
 |---|---|---|---|
-| `schema_version` | optional | optional | Defaults to 1. Exists so the tool can stay tolerant of old documents. Nothing reads it yet (§10). |
+| `schema_version` | optional | optional | Defaults to 1. `jerry validate` warns (never errors) when it is above the newest version this binary knows (§3.6). |
 | `id` | required | — | `ADR-NNNN`, must match the filename. SDs have no sequential id. |
 | `title` | required | required | |
 | `status` | required | required | See 4.2. |
@@ -432,7 +432,6 @@ needing one.
 
 | # | This document says | The code does | Where |
 |---|---|---|---|
-| 2 | `schema_version` keeps the tool tolerant of old documents (§3.6) | Nothing reads it, and `jerry schema` publishes `const: 1`, which will reject v2 documents outright | `internal/cli/schema.go` |
 | 3 | Repositories own none of the rules (v1 §3.2) | `jerry.yaml` replaces the placeholder and required-section lists, so a repository can switch a rule off | `internal/config/config.go` |
 | 4 | Status lifecycles are enforced (§4.2) | `jerry status` enforces transitions; `validate` checks only membership, so a hand edit passes CI | `internal/cli/status.go` vs `internal/rules/rules.go` |
 | 6 | Findings accumulate and are always printed (§3.4, §5) | True — except `validate --diff`, which filters findings by a corpus-relative path against git's repo-relative output. With `jerry.yaml` below the git root it discards every finding and exits 0 | `internal/cli/validate.go` |
@@ -464,5 +463,9 @@ that is absent, because the green tick is taken as evidence.
   fenced code blocks are now excluded from the scan, and a document opts out of the rule
   entirely with an inline `<!-- jerry:allow placeholder -->` marker; §5's wording was corrected
   from "opts out of one phrase" to match, and the resolved row was removed from §10's table.
+- **Version 2.4** (2026-09-03) — JRY-008 closed divergence 2 (§3.6/§10 vs. `schema_version`
+  tolerance): `jerry validate` now warns, never errors, when a document's `schema_version` is
+  newer than the binary knows, and `jerry schema` publishes it as a floor (`minimum`) rather
+  than an equality; the resolved row was removed from §10's table.
 - **Version 1** (2026-09-01) — initial design, written alongside the Phase 1
   implementation.

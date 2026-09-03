@@ -8,6 +8,14 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
 
 ## [Unreleased]
 
+### Fixed
+
+- `jerry validate` now warns (never errors) when a document's `schema_version` is newer than
+  this binary knows, instead of silently ignoring the field, and `jerry schema` no longer
+  publishes `schema_version` as `const: 1` — which would have rejected every future-versioned
+  document in any editor's YAML language server the day a newer version exists. It now
+  publishes it as a floor (`minimum`).
+
 ## [0.2.0] - 2026-09-02
 
 ### Added
