@@ -335,3 +335,4 @@ cost: estimated M, actual M (one rework round; no cost overrun)
 - 2026-09-03 — REWORK → IN REVIEW: findings fixed
 - 2026-09-03 — IN REVIEW → DONE: scoped re-review clean, F2 verified closed
 - 2026-09-03 — MR opened (PR #13, https://github.com/codcod/jerry/pull/13); pending human merge
+- 2026-09-03 — merged to main (PR #13, `d6dc81a`)
