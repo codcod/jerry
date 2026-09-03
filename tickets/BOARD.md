@@ -45,9 +45,13 @@ Last updated: 2026-09-03
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
+| JRY-015 | jerry comment: post governing decisions to the merge request | critical | medium | M | [JRY-012, JRY-014] |  |
 | JRY-011 | Applies_to matching: gitignore-style globs and match precedence | high | medium | M | [JRY-005] |  |
 | JRY-012 | jerry related: resolve changed paths to governing decisions | high | medium | M | [JRY-011] | JRY-011 |
 | JRY-013 | Harden validate --diff: fix corpus/git path mismatch and base-ref handling | high | medium | M | [JRY-007] | JRY-011 |
+| JRY-014 | Forge client, comment scope: create-or-update MR comment | high | medium | M | [JRY-001] |  |
+| JRY-016 | Scaffold emits the comment bot in CI | high | medium | M | [JRY-015] |  |
+| JRY-017 | jerry upgrade-ci: bump a scaffolded repo's pinned version | medium | low | S | [JRY-003] |  |
 
 ## DONE
 
