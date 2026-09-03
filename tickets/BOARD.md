@@ -45,6 +45,9 @@ Last updated: 2026-09-03
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
+| JRY-011 | Applies_to matching: gitignore-style globs and match precedence | high | medium | M | [JRY-005] |  |
+| JRY-012 | jerry related: resolve changed paths to governing decisions | high | medium | M | [JRY-011] |  |
+| JRY-013 | Harden validate --diff: fix corpus/git path mismatch and base-ref handling | high | medium | M | [JRY-007] |  |
 
 ## DONE
 
