@@ -327,3 +327,4 @@ neither depends on nor references JRY-007. No downstream assumption to patch.
 - 2026-09-03 — IN REVIEW → DONE: F1 confirmed fixed, scoped re-review clean; 3 non-blocking
   (F5, F6, F7), all note-and-close
 - 2026-09-03 — IN REVIEW → DONE: review clean, F1 fixed
+- 2026-09-03 — pushed `feat/JRY-007-command-golden-tests`, opened MR #12 to `main` — merge is the human's
