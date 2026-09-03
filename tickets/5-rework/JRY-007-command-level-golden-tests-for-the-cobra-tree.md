@@ -241,6 +241,22 @@ stdout/stderr "independently" is contradicted by F1 below.
 
 cost: estimated M, actual M
 
+### Rework fix record — round 1 (commit ffb4eb5)
+
+Fixed F1 only, per its suggestion column: `runCLI` (`internal/cli/golden_test.go`) no longer
+calls `tree.SetOut`/`tree.SetErr`. A new `captureStreams` helper swaps the real
+`os.Stdout`/`os.Stderr` package variables for a pair of `os.Pipe`s around `tree.Execute()`
+(read via two goroutines into buffers, joined after the write ends close), so
+`OutOrStdout()`/`OutOrStderr()` fall through to the same real streams `cli.Execute` uses in
+production. All 11 affected golden files regenerated (`go test ./internal/cli/... -update`) and
+confirmed stable across two consecutive `-update` runs (identical SHA-1s). Spot-checked
+`validate-dirty`: the machine-readable findings (`renderFindings(cmd.OutOrStdout(), …)`) now sit
+in `stdout`, and the human summary line (`cmd.Printf`) now sits in `stderr` — the exact split F1
+said was missing. F2 resolved as predicted, as a side effect of the fix, with no separate change:
+9 of the 14 goldens now carry non-empty `stderr`. F3 and F4 were left untouched — out of this
+round's scope. Full acceptance test re-run green (`go test ./internal/cli/... -v`, reproducibility
+check, `just build`, `just test`, `just lint`, `just docs-check`).
+
 ## History
 
 - 2026-09-02 — created (TO DO). source: pickle ticket new
