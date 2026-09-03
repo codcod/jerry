@@ -9,6 +9,9 @@
 # release, so a broken manual build must never block or unpublish the release
 # itself — hence the `conclusion == 'success'` guard rather than a hard failure,
 # and `continue-on-error` on the build step below.
+#
+# Also triggers on `workflow_dispatch` (optional `tag` input), to run this job on demand
+# against an existing release without waiting for or cutting a new one.
 name: docs-release
 
 on:
