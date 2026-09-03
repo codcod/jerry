@@ -143,6 +143,12 @@ repository is separate, larger work and not yet built. Any frontmatter key
 {product} does not recognise is reported as a warning rather than silently
 preserved — see the note on `fmt` below about what "preserved" still means.
 
+`schema_version` defaults to `1` and stays optional. `validate` warns — never
+errors — when a document's `schema_version` is newer than this binary knows,
+and still checks it with the newest rules available: an old {product} must
+never turn a repository red for being newer than itself, since upgrading
+{product} is not meant to be a prerequisite for merging anything.
+
 == Formatting
 
 [source,sh]
@@ -164,7 +170,10 @@ jerry schema --kind adr > adr.schema.json
 ----
 
 Point any YAML language server at the result for frontmatter completion and
-inline validation.
+inline validation. The published `schema_version` constraint is a floor
+(`minimum`), not an equality, so a document written by a newer {product}
+still validates against an older binary's schema instead of being rejected
+outright.
 
 == Configuration
 
