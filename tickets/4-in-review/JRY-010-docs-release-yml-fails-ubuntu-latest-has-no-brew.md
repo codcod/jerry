@@ -181,7 +181,25 @@ pipeline's internals).
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+**Applicability gate (pickup):** independent sub-agent audit, no findings — all plan
+assumptions still held true against current repo/board state (`runs-on: ubuntu-latest` and the
+`head_branch` tag bug both still present, unchanged since 2026-09-02; morty's cited fix commit
+`0b299b6` confirmed as described; `v0.2.0` still lacked manual assets). Proceeded without
+amendment.
+
+**Live verification (Task 4):** manual-dispatch run
+[33724479793](https://github.com/codcod/jerry/actions/runs/33724479793) on
+`feat/JRY-010-docs-release-brew-fix` (`workflow_dispatch`, input `tag=v0.2.0`), completed
+successfully in 2m29s on `macos-latest`. "Determine the release tag" resolved `v0.2.0` from the
+manual input. `snowball build` itself succeeded (the upload step ran and found files, not just
+the skip path) — one Homebrew tap-trust annotation (`aws/tap`) appeared on the run but did not
+fail it. `v0.2.0` release assets before: 7 items (`checksums.txt` + 6 platform tarballs), no
+manual. After: same 7 plus `jerry-user-manual.pdf` and `jerry-user-manual.epub` — confirmed via
+`gh release view v0.2.0 --json assets`.
+
+The `gh release list` fallback path (non-`workflow_dispatch` case) was verified by code
+inspection only, per the ticket's own acceptance-test note — not independently triggerable
+without a fresh `workflow_run` event.
 
 ## History
 
@@ -190,3 +208,4 @@ pipeline's internals).
   sibling project `morty` already carries the fix (`runs-on: macos-latest`)
 - 2026-09-03 — TO DO → READY: plan complete
 - 2026-09-03 — READY → IN DEVELOPMENT: picked up
+- 2026-09-03 — IN DEVELOPMENT → IN REVIEW: acceptance green

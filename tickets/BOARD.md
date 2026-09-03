@@ -13,18 +13,18 @@ Last updated: 2026-09-03
 
 ## IN DEVELOPMENT
 
+### jerry (0/1)
+
+| id | title | depends-on |
+|---|---|---|
+
+## IN REVIEW
+
 ### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
 | JRY-010 | docs-release.yml fails: ubuntu-latest has no brew | [] |
-
-## IN REVIEW
-
-### jerry (0/1)
-
-| id | title | depends-on |
-|---|---|---|
 
 ## REWORK
 
