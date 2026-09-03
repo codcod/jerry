@@ -176,3 +176,4 @@ this ticket extends to fixture *inputs*; no wording change needed there.
 
 - 2026-09-02 — created (TO DO). source: pickle ticket new
 - 2026-09-03 — TO DO → READY: plan complete
+- 2026-09-03 — READY → IN DEVELOPMENT: picked up
