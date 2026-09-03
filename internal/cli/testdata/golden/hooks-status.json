@@ -1,5 +1,5 @@
 {
-  "stdout": "not installed (\u003croot\u003e/.git/hooks/pre-commit)\n",
-  "stderr": "",
+  "stdout": "",
+  "stderr": "not installed (\u003croot\u003e/.git/hooks/pre-commit)\n",
   "failed": false
 }

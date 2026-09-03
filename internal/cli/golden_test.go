@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"flag"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -31,9 +32,8 @@ type goldenResult struct {
 
 // runCLI builds a fresh, isolated tree (newRoot) and runs it in-process
 // against root, per decision 3: g.configPath is set directly rather than
-// threading --config through args, and stdout/stderr are captured on
-// separate buffers so cobra's stderr-writing Print* helpers cannot masquerade
-// as stdout. now() is pinned for the duration (decision 4).
+// threading --config through args. now() is pinned for the duration
+// (decision 4).
 //
 // `init` is the one leaf that resolves its target from os.Getwd() rather than
 // g.configPath (internal/cli/init.go) — an assumption the plan did not carry,
@@ -52,13 +52,9 @@ func runCLI(t *testing.T, root string, chdir bool, args ...string) goldenResult 
 
 	tree, g := newRoot("golden")
 	g.configPath = filepath.Join(root, config.DefaultFile)
-
-	var stdout, stderr bytes.Buffer
-	tree.SetOut(&stdout)
-	tree.SetErr(&stderr)
 	tree.SetArgs(args)
 
-	err := tree.Execute()
+	stdout, stderr, failed := captureStreams(t, tree.Execute)
 
 	// The fixture root is a t.TempDir(), a fresh path every run; hooks
 	// install/uninstall/status print it verbatim (internal/hooks/hooks.go's
@@ -66,10 +62,59 @@ func runCLI(t *testing.T, root string, chdir bool, args ...string) goldenResult 
 	// golden file.
 	normalise := func(s string) string { return strings.ReplaceAll(s, root, "<root>") }
 	return goldenResult{
-		Stdout: normalise(stdout.String()),
-		Stderr: normalise(stderr.String()),
-		Failed: err != nil,
+		Stdout: normalise(stdout),
+		Stderr: normalise(stderr),
+		Failed: failed,
 	}
+}
+
+// captureStreams runs fn with the real os.Stdout/os.Stderr swapped for pipes,
+// then returns what each captured plus whether fn returned an error.
+//
+// This is the F1 rework fix (see the ticket's Review): cobra's Print*/Println
+// resolve through OutOrStderr(), which is `getOut(os.Stderr)` — it returns
+// c.outWriter (the SetOut buffer) whenever one is set, never c.errWriter. A
+// tree with both SetOut and SetErr configured therefore funnels every
+// cmd.Print* call into the SetOut buffer regardless of which real stream
+// production code would use, making the two channels indistinguishable in a
+// golden file. cli.Execute never calls SetOut/SetErr in production, so
+// OutOrStdout()/OutOrStderr() fall through to the literal os.Stdout/os.Stderr
+// package variables — swapping those, rather than cobra's own seam, is what
+// actually reproduces the real split.
+func captureStreams(t *testing.T, fn func() error) (stdout, stderr string, failed bool) {
+	t.Helper()
+
+	stdoutR, stdoutW, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("creating stdout pipe: %v", err)
+	}
+	stderrR, stderrW, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("creating stderr pipe: %v", err)
+	}
+
+	origStdout, origStderr := os.Stdout, os.Stderr
+	os.Stdout, os.Stderr = stdoutW, stderrW
+
+	var stdoutBuf, stderrBuf bytes.Buffer
+	copied := make(chan struct{}, 2)
+	go func() { io.Copy(&stdoutBuf, stdoutR); copied <- struct{}{} }()
+	go func() { io.Copy(&stderrBuf, stderrR); copied <- struct{}{} }()
+
+	runErr := fn()
+
+	// Restore before closing the write ends: a later case must never
+	// observe the pipe, and closing is what lets the copying goroutines see
+	// EOF and return.
+	os.Stdout, os.Stderr = origStdout, origStderr
+	stdoutW.Close()
+	stderrW.Close()
+	<-copied
+	<-copied
+	stdoutR.Close()
+	stderrR.Close()
+
+	return stdoutBuf.String(), stderrBuf.String(), runErr != nil
 }
 
 // goldenCase is one command invocation pinned as a golden file. leafPath is

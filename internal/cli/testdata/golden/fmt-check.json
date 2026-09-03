@@ -1,5 +1,5 @@
 {
-  "stdout": "All documents are already canonical.\n",
-  "stderr": "",
+  "stdout": "",
+  "stderr": "All documents are already canonical.\n",
   "failed": false
 }

@@ -1,5 +1,5 @@
 {
-  "stdout": "(dry run) would remove \u003croot\u003e/.git/hooks/pre-commit\n",
-  "stderr": "",
+  "stdout": "",
+  "stderr": "(dry run) would remove \u003croot\u003e/.git/hooks/pre-commit\n",
   "failed": false
 }
