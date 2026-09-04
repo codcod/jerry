@@ -230,3 +230,4 @@ cost: estimated M, actual M.
 - 2026-09-04 — IN REVIEW → REWORK: blocking: user-manual coverage for jerry related missing (F1)
 - 2026-09-04 — REWORK → IN REVIEW: findings fixed
 - 2026-09-04 — IN REVIEW → DONE: scoped re-review clean, 3 non-blocking fixed inline, 1 noted
+- 2026-09-04 — MR opened (PR #15)
