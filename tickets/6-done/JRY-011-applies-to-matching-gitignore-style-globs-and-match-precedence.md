@@ -209,3 +209,4 @@ proceeds to `tickets/6-done/`.
 - 2026-09-04 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-04 — IN REVIEW → DONE: review clean; 2 non-blocking fixed inline
 - 2026-09-04 — MR opened (PR #14, https://github.com/codcod/jerry/pull/14); pending human merge
+- 2026-09-04 — merged to main (PR #14, `91cd553`)
