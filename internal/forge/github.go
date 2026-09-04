@@ -8,6 +8,7 @@
 package forge
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -158,7 +159,7 @@ func (c *GitHubClient) sendComment(method, url, body string) error {
 		return err
 	}
 
-	req, err := http.NewRequest(method, url, strings.NewReader(string(payload)))
+	req, err := http.NewRequest(method, url, bytes.NewReader(payload))
 	if err != nil {
 		return err
 	}
