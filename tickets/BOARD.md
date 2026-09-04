@@ -13,10 +13,11 @@ Last updated: 2026-09-04
 
 ## IN DEVELOPMENT
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-014 | Forge client, comment scope: create-or-update MR comment | [JRY-001] |
 
 ## IN REVIEW
 
@@ -39,7 +40,6 @@ Last updated: 2026-09-04
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
 | JRY-015 | jerry comment: post governing decisions to the merge request | critical | medium | M | [JRY-012, JRY-014] |  |
-| JRY-014 | Forge client, comment scope: create-or-update MR comment | high | medium | M | [JRY-001] |  |
 
 ## TO DO (impact order, per child)
 

@@ -164,3 +164,4 @@ ticket's own docs step is "none."
   `forge-comment`, the first ticket in the design's core "decisions arrive where the work
   happens" step.
 - 2026-09-04 — TO DO → READY: plan complete
+- 2026-09-04 — READY → IN DEVELOPMENT: picked up
