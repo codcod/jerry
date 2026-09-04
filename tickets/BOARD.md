@@ -20,11 +20,10 @@ Last updated: 2026-09-04
 
 ## IN REVIEW
 
-### jerry (1/1)
+### jerry (0/1)
 
 | id | title | depends-on |
 |---|---|---|
-| JRY-012 | jerry related: resolve changed paths to governing decisions | [JRY-011] |
 
 ## REWORK
 
@@ -73,6 +72,7 @@ Last updated: 2026-09-04
 | JRY-009 | Prove the emitted CI on GitLab once account CI minutes unblock | yes — merged to main (PR #10, `af6ccf2`) |
 | JRY-010 | docs-release.yml fails: ubuntu-latest has no brew | yes — merged — PR #11 merged to `main` (commit `caa730f`) |
 | JRY-011 | Applies_to matching: gitignore-style globs and match precedence | yes — merged to main (PR #14, `91cd553`) |
+| JRY-012 | jerry related: resolve changed paths to governing decisions | no — publish-gated |
 
 ## DROPPED
 

@@ -195,6 +195,31 @@ text|json]` (query semantics, silent-no-match, the `jerry.related/1` envelope), 
 stale "matching ... is separate, larger work and not yet built" sentence with a short description
 of the shipped dialect. `just docs-check`, `just test`, `just lint` all clean after the fix.
 
+### Scoped re-review (round 1)
+
+Reviewer independence (step 0): **delegated** — the reviewing agent authored round 1's fix
+commit in this same session, so the audit of that diff (steps 2–4a) was handed to a fresh,
+memory-free agent briefed adversarially, per an independent reviewer's brief. Its four findings
+were each re-verified by hand before recording below (grep for section headings, read
+`internal/cli/related.go`/`internal/match/match.go` directly, confirmed `just docs-check` clean)
+— all four held up.
+
+F1 confirmed resolved: `jerry related` now has a manual section, and every factual claim in it
+(envelope schema, exit-code rule, ordering, `cmd.OutOrStdout()`) checks out against the code.
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F3 | non-blocking | other | fixed inline | New section heading was the only question-phrased one in the file; every sibling is a noun/imperative phrase | `docs/user-manual/introduction.adoc:154` (as of b1f9c7b) | Renamed to "Resolve a path to its governing decisions", matching sibling style. |
+| F4 | non-blocking | docs-gap | fixed inline | Example `--paths` value used jerry's own source path (`internal/cli/related.go`) rather than a fictional ADR-repo path like every other example and the golden-test precedent, which could read as introspecting on jerry itself | `docs/user-manual/introduction.adoc:158` (as of b1f9c7b) | Swapped for `teams/payments/src/ledger.go`. |
+| F5 | non-blocking | correctness | fixed inline | "A queried path with no governing decision prints nothing" was stated before the `--format json` paragraph and read as universal, but JSON mode always emits an entry (empty `decisions: []`) — never literal silence | `docs/user-manual/introduction.adoc:163` (as of b1f9c7b) vs `internal/cli/related.go` (JSON path always appends to `envelope.Results`) | Qualified as "In the default text format, ...". |
+| F6 | non-blocking | other | noted | The new cross-reference ("described below under ...") is a plain quoted string, not an asciidoc `xref:`/`<<>>` anchor — but the file has no xref convention anywhere, so this isn't a new deviation; a future heading rename won't be caught by `docs-check`'s xref checker | `docs/user-manual/introduction.adoc` (grep for `xref:`/`<<` returns nothing repo-wide) | No action — matches existing (lack of) convention; flagged for awareness only. |
+
+Disposition summary: 3 fixed inline (F3, F4, F5), 1 noted (F6). Fixed in
+`feat/JRY-012-related` commit `e6ae97f`; `just docs-check`, `just test`, `just lint` re-verified
+clean after.
+
+cost: estimated M, actual M.
+
 ## History
 
 - 2026-09-03 — created (TO DO). source: chat: filed from PLAN.md's build-step-1 row `related`,
@@ -204,3 +229,4 @@ of the shipped dialect. `just docs-check`, `just test`, `just lint` all clean af
 - 2026-09-04 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-04 — IN REVIEW → REWORK: blocking: user-manual coverage for jerry related missing (F1)
 - 2026-09-04 — REWORK → IN REVIEW: findings fixed
+- 2026-09-04 — IN REVIEW → DONE: scoped re-review clean, 3 non-blocking fixed inline, 1 noted
