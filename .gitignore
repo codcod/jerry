@@ -9,3 +9,7 @@
 
 # Editor / OS
 .DS_Store
+
+# AI
+.claude/settings.json
+.claude/settings.local.json
