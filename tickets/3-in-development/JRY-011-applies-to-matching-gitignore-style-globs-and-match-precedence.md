@@ -152,3 +152,4 @@ step is where the CHANGELOG line belongs.
   `applies-to-match`, following `applies-to-validate` (JRY-005, done) per PLAN.md's stated
   sequencing rule (matching lands after validation, before the read side).
 - 2026-09-04 — TO DO → READY: plan complete
+- 2026-09-04 — READY → IN DEVELOPMENT: picked up
