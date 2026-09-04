@@ -20,10 +20,11 @@ Last updated: 2026-09-04
 
 ## IN REVIEW
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-012 | jerry related: resolve changed paths to governing decisions | [JRY-011] |
 
 ## REWORK
 
@@ -31,7 +32,6 @@ Last updated: 2026-09-04
 
 | id | title | open findings |
 |---|---|---|
-| JRY-012 | jerry related: resolve changed paths to governing decisions | blocking: user-manual coverage for jerry related missing (F1) |
 
 ## READY (impact order, per child)
 

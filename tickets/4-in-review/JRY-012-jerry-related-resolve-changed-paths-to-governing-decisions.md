@@ -187,6 +187,14 @@ Impact sweep (step 8): JRY-015 depends on JRY-012 and reuses `relatedFixture`; i
 `internal/match.Resolve` in-process rather than the CLI envelope, so nothing this branch shipped
 invalidates its assumptions. No patch needed.
 
+### Rework fix record — round 1 (commit b1f9c7b)
+
+Fixed F1: added a "Which decisions govern this code?" section to
+`docs/user-manual/introduction.adoc` documenting `jerry related --paths <files> [--format
+text|json]` (query semantics, silent-no-match, the `jerry.related/1` envelope), and replaced the
+stale "matching ... is separate, larger work and not yet built" sentence with a short description
+of the shipped dialect. `just docs-check`, `just test`, `just lint` all clean after the fix.
+
 ## History
 
 - 2026-09-03 — created (TO DO). source: chat: filed from PLAN.md's build-step-1 row `related`,
@@ -195,3 +203,4 @@ invalidates its assumptions. No patch needed.
 - 2026-09-04 — READY → IN DEVELOPMENT: picked up
 - 2026-09-04 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-04 — IN REVIEW → REWORK: blocking: user-manual coverage for jerry related missing (F1)
+- 2026-09-04 — REWORK → IN REVIEW: findings fixed
