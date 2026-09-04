@@ -165,7 +165,27 @@ for this ticket (nothing else has one either).
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+Reviewer independence (step 0): fresh session, no memory of writing this branch — the natural
+handoff the protocol allows when an independent reviewer cannot be spawned. Recorded as this
+review's own audits (independent by way of a memory-free session), not a self-review.
+
+Implementation audit: all three tasks done as specified. `related.go` matches the plan's flag
+shapes, envelope, exit-code rule (query not gate), and render-verbatim-order rule. Golden case
+`related-match` and `TestRelatedFixtureContract` both present and pass on first run.
+`go test ./...`, `just test`, `just lint`, `just docs-check` all clean.
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | blocking | docs-gap | — | `jerry related` is not documented in `docs/user-manual/introduction.adoc`; the existing text also still asserts applies_to matching "is separate, larger work and not yet built," which JRY-011/012 made false | `docs/user-manual/introduction.adoc` (no `related` section; stale sentence under "References between decisions") | Add a section documenting `jerry related --paths <files> [--format text\|json]` (model it on the existing "Check it" section's style) and correct or remove the now-false "not yet built" sentence. `review-addendum.md` §4a is explicit that the manual being one page is not a reason to skip coverage for a new command. |
+| F2 | non-blocking | stale-xref | fixed inline | DESIGN.md line 3 asserted "sections 7.2 onward are intent, not code," which this branch made false for §7.2's `related` bullet; PLAN.md's filed-so-far table had no row for `related`/JRY-012 | `DESIGN.md` (version stamp + §11), `PLAN.md` (filed-so-far table) | Fixed inline this review, on `feat/JRY-012-related` (commit `8d2d1c2`): version bumped to 2.6 with a corrected opening line and a new §11 entry; PLAN.md's `related` row added. |
+
+Disposition summary: 1 blocking (F1, docs-gap), 1 non-blocking fixed inline (F2, stale-xref).
+
+cost: estimated M, actual M.
+
+Impact sweep (step 8): JRY-015 depends on JRY-012 and reuses `relatedFixture`; it calls
+`internal/match.Resolve` in-process rather than the CLI envelope, so nothing this branch shipped
+invalidates its assumptions. No patch needed.
 
 ## History
 
@@ -174,3 +194,4 @@ for this ticket (nothing else has one either).
 - 2026-09-04 — TO DO → READY: plan complete
 - 2026-09-04 — READY → IN DEVELOPMENT: picked up
 - 2026-09-04 — IN DEVELOPMENT → IN REVIEW: acceptance green
+- 2026-09-04 — IN REVIEW → REWORK: blocking: user-manual coverage for jerry related missing (F1)
