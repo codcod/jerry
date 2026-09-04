@@ -165,3 +165,4 @@ ticket's own docs step is "none."
   happens" step.
 - 2026-09-04 — TO DO → READY: plan complete
 - 2026-09-04 — READY → IN DEVELOPMENT: picked up
+- 2026-09-04 — IN DEVELOPMENT → IN REVIEW: acceptance green
