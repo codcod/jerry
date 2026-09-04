@@ -172,3 +172,4 @@ for this ticket (nothing else has one either).
 - 2026-09-03 — created (TO DO). source: chat: filed from PLAN.md's build-step-1 row `related`,
   the read-side landing command that queries JRY-011's matcher.
 - 2026-09-04 — TO DO → READY: plan complete
+- 2026-09-04 — READY → IN DEVELOPMENT: picked up
