@@ -13,18 +13,18 @@ Last updated: 2026-09-04
 
 ## IN DEVELOPMENT
 
+### jerry (0/1)
+
+| id | title | depends-on |
+|---|---|---|
+
+## IN REVIEW
+
 ### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
 | JRY-012 | jerry related: resolve changed paths to governing decisions | [JRY-011] |
-
-## IN REVIEW
-
-### jerry (0/1)
-
-| id | title | depends-on |
-|---|---|---|
 
 ## REWORK
 
