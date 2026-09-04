@@ -153,3 +153,4 @@ step is where the CHANGELOG line belongs.
   sequencing rule (matching lands after validation, before the read side).
 - 2026-09-04 — TO DO → READY: plan complete
 - 2026-09-04 — READY → IN DEVELOPMENT: picked up
+- 2026-09-04 — IN DEVELOPMENT → IN REVIEW: acceptance green
