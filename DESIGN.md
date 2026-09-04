@@ -1,6 +1,6 @@
 # jerry — solution design
 
-**Version 2.4** · 2026-09-03 · Phase 1 implemented; sections 7.2 onward are intent, not code.
+**Version 2.5** · 2026-09-04 · Phase 1 implemented; sections 7.2 onward are intent, not code.
 
 This file is authoritative on **intent**. Where it conflicts with a shipped
 ticket decision, the ticket wins and this file is wrong and should be corrected.
@@ -120,7 +120,7 @@ than merely old. Its lifecycle therefore has somewhere to end.
 | `date` | required | required | ISO. For SDs the filename prefix must agree. |
 | `deciders` / `authors` | required | required | |
 | `related_adrs` | — | optional | Checked. |
-| `applies_to` | optional | optional | Paths. Validated: rejects empty/whitespace-only, absolute, and `..`-traversal entries. Nothing yet *reads* the field for drift or ownership — that's still Phase 2. |
+| `applies_to` | optional | optional | Paths. Validated: rejects empty/whitespace-only, absolute, and `..`-traversal entries. Matched against changed paths per the dialect below (§7.2's `related`). |
 
 **Unknown keys are preserved, not rejected.** `jerry fmt` keeps keys jerry has
 never heard of, in their authored order, because a tool that silently deletes
@@ -134,6 +134,35 @@ the one field the whole of §7.2 depends on.
 "paths or service ids"; nothing resolves a service id until a catalogue exists
 (§7.3, `jerry owners`), so specifying the form now would be specifying it
 against nothing. It is deferred to the ticket that builds the catalogue lookup.
+
+**`applies_to` matching dialect.** Deliberately a subset of gitignore/CODEOWNERS
+syntax, not a vendored parser wholesale — "whatever the library did" is not an
+answer anyone could give a year from now. An entry is validated as a relative
+path first (above), then matched one of two ways:
+
+- Ending in `/`: a **directory-prefix**. Matches every path nested under it,
+  recursively, no glob expansion inside it — `internal/rules/` matches
+  `internal/rules/rules.go` and everything else below `internal/rules/`.
+- Otherwise: matched **segment-by-segment** against the `/`-split candidate
+  path. Each pattern segment matches the candidate's corresponding segment via
+  `*`/`?`/`[...]` globbing, except the literal segment `**`, which matches zero
+  or more whole path segments (gitignore's double-star). There is **no
+  negation (`!`)** — `applies_to` is a flat allow-list per decision, not a
+  layered ignore file, so there is nothing for a later entry to override.
+
+**Precedence when several decisions match the same path.** CODEOWNERS'
+"last-match-wins" (§6) resolves ambiguity inside one ordered file; independent
+ADRs have no such order, so **the most specific pattern wins** instead,
+ranked, highest first, by:
+
+1. literal segment count in the pattern (a segment containing none of `*`,
+   `?`, `[` counts; `**` and a directory-prefix's implicit remainder count 0);
+2. tie-break: longer pattern string (more characters);
+3. final tie-break: document path, lexicographic — for determinism only.
+
+The matcher (`internal/match`) returns every matching decision in this order;
+it does not itself collapse ties to one winner — a caller may show all of
+them or just the head of the list.
 
 ### 4.2 Status lifecycles
 
@@ -467,5 +496,9 @@ that is absent, because the green tick is taken as evidence.
   tolerance): `jerry validate` now warns, never errors, when a document's `schema_version` is
   newer than the binary knows, and `jerry schema` publishes it as a floor (`minimum`) rather
   than an equality; the resolved row was removed from §10's table.
+- **Version 2.5** (2026-09-04) — JRY-011 specified the `applies_to` matching dialect and
+  precedence rule §4.1 previously left undecided: directory-prefix and gitignore-style segment
+  globbing (including `**`), most-specific-pattern-wins when several decisions match one path.
+  Implemented in `internal/match`.
 - **Version 1** (2026-09-01) — initial design, written alongside the Phase 1
   implementation.
