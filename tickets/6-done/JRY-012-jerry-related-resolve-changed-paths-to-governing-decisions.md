@@ -231,3 +231,4 @@ cost: estimated M, actual M.
 - 2026-09-04 — REWORK → IN REVIEW: findings fixed
 - 2026-09-04 — IN REVIEW → DONE: scoped re-review clean, 3 non-blocking fixed inline, 1 noted
 - 2026-09-04 — MR opened (PR #15)
+- 2026-09-04 — merged to main (PR #15, `4e4b321`)
