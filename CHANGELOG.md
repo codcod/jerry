@@ -8,6 +8,13 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
 
 ## [Unreleased]
 
+### Added
+
+- `jerry related --paths <files> [--format text|json]` resolves a set of changed paths against
+  every decision's `applies_to`, offline from the terminal — the first command that reads the
+  field rather than just validating it. A path with no governing decision is silent, not an
+  error; the JSON form is a versioned `jerry.related/1` envelope.
+
 ### Fixed
 
 - `jerry validate` now warns (never errors) when a document's `schema_version` is newer than

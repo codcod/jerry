@@ -167,6 +167,12 @@ var goldenCases = []goldenCase{
 		args:     []string{"validate"},
 	},
 	{
+		name:     "related-match",
+		leafPath: "jerry related",
+		fixture:  relatedFixture,
+		args:     []string{"related", "--paths", "teams/example-team/src/db.go", "--paths", "docs/readme.md"},
+	},
+	{
 		name:     "fmt-check",
 		leafPath: "jerry fmt",
 		fixture:  cleanFixture,

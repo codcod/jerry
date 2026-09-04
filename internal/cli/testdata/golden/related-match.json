@@ -1,0 +1,5 @@
+{
+  "stdout": "teams/example-team/src/db.go\n  ADR-0001 Use PostgreSQL as the primary data store (teams/example-team/adr/0001-example-use-postgres-for-primary-store.md)\n",
+  "stderr": "",
+  "failed": false
+}

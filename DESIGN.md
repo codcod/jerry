@@ -1,6 +1,6 @@
 # jerry — solution design
 
-**Version 2.5** · 2026-09-04 · Phase 1 implemented; sections 7.2 onward are intent, not code.
+**Version 2.6** · 2026-09-04 · Phase 1 implemented; §7.2's `related` command is implemented, the rest of the roadmap remains intent, not code.
 
 This file is authoritative on **intent**. Where it conflicts with a shipped
 ticket decision, the ticket wins and this file is wrong and should be corrected.
@@ -500,5 +500,9 @@ that is absent, because the green tick is taken as evidence.
   precedence rule §4.1 previously left undecided: directory-prefix and gitignore-style segment
   globbing (including `**`), most-specific-pattern-wins when several decisions match one path.
   Implemented in `internal/match`.
+- **Version 2.6** (2026-09-04) — JRY-012 implemented §7.2's `related` command
+  (`jerry related --paths <files>`, versioned `jerry.related/1` envelope), the first consumer of
+  `internal/match.Resolve`; the opening line's blanket "§7.2 onward is intent" no longer holds for
+  that one bullet.
 - **Version 1** (2026-09-01) — initial design, written alongside the Phase 1
   implementation.

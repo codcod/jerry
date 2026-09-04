@@ -139,7 +139,9 @@ the corpus.
 
 `applies_to` entries are validated as paths: an empty or whitespace-only entry, an
 absolute path, or a `..`-traversal is an error. Matching those paths against a
-repository is separate, larger work and not yet built. Any frontmatter key
+repository is a gitignore-style dialect — directory prefixes and glob segments,
+most-specific-pattern-wins when several decisions match one path — described
+below under "Resolve a path to its governing decisions". Any frontmatter key
 {product} does not recognise is reported as a warning rather than silently
 preserved — see the note on `fmt` below about what "preserved" still means.
 
@@ -148,6 +150,25 @@ errors — when a document's `schema_version` is newer than this binary knows,
 and still checks it with the newest rules available: an old {product} must
 never turn a repository red for being newer than itself, since upgrading
 {product} is not meant to be a prerequisite for merging anything.
+
+== Resolve a path to its governing decisions
+
+[source,sh]
+----
+jerry related --paths teams/payments/src/ledger.go --paths docs/readme.md
+----
+
+Resolves each `--paths` entry against every decision's `applies_to`, offline,
+from the terminal — no network, no forge lookup. In the default text format, a
+queried path with no governing decision renders no line: silence is the
+expected shape for "nothing governs this," not an error. `related` is a
+query, not a gate, so it exits non-zero only on bad input (an empty
+`--paths`, a corpus that fails to load), never because nothing matched.
+
+`--format json` emits a versioned envelope (`jerry.related/1`) instead, one
+entry per queried path, decisions ordered most-specific-pattern-first — the
+same order `--format text` renders, never re-ranked or collapsed to a single
+winner.
 
 == Formatting
 
