@@ -156,7 +156,43 @@ ticket's own docs step is "none."
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+Reviewer independence (step 0): **delegated** — the reviewing agent authored this branch in
+this same session, so the implementation/quality/consistency/docs audits (steps 2–4a) were
+handed to a fresh, memory-free agent briefed adversarially. Its findings were each re-verified
+by hand before recording below (grepped `PLAN.md`, read `internal/forge/github.go` at the cited
+lines, re-ran `go test ./internal/forge/... -v`, `just test`, `just lint`) — all held up.
+
+Implementation audit: all 6 confirmed design decisions honored, signatures match the ticket's
+public-surface spec verbatim (`Commenter`, `CommentMarker`, `NewGitHubFromEnv`, `Repository`,
+`PRNumber`). `go.mod` unchanged (cobra + yaml.v3 direct, per `AGENTS.md`'s dependency policy).
+Env-only token/repo/PR-number sourcing confirmed; no flag/config wiring anywhere in the package.
+Pagination limitation is documented in `PostOrUpdate`'s own doc comment, not just ticket prose.
+No error-swallowing; response bodies always closed; no token leakage into any error string.
+
+Test audit: `go test ./internal/forge/... -v` green, all four required cases (Task 2) present
+and each backed by a `t.Errorf` on any unexpected request — a broken branch would fail them, not
+just pass trivially.
+
+Consistency/docs audit: `just test`, `just lint` clean. No pre-existing `internal/forge`/
+`Commenter`/`CommentMarker` found elsewhere in the repo. DESIGN.md §7.2/§7.4 citations check out
+against current section content. No CLI command wired in (`internal/cli/cli.go` unchanged, per
+plan); `docs/user-manual/` and `CHANGELOG.md` correctly untouched — matches the ticket's own "no
+user-facing surface yet" call.
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | non-blocking | stale-xref | fixed inline | `PLAN.md`'s filed-so-far table had no row for `forge-comment`/JRY-014; its adjacent `related`/JRY-012 row was also still stuck at "in rework" from before that ticket shipped and merged | `PLAN.md` (filed-so-far table, before commit `52d812c`) | Fixed inline on `feat/JRY-014-forge-comment` (commit `52d812c`): added the `forge-comment`/`JRY-014` row and corrected `related`/`JRY-012` to "done, merged (PR #15)". |
+| F2 | non-blocking | other | fixed inline | Needless `[]byte`→`string`→`io.Reader` round-trip: `strings.NewReader(string(payload))` where `payload` is already `[]byte` from `json.Marshal` | `internal/forge/github.go` (pre-fix, in `sendComment`) | Fixed inline (commit `52d812c`): `bytes.NewReader(payload)` directly. No behaviour change. |
+| F3 | non-blocking | design | noted | `GitHubClient` uses `http.DefaultClient` with no request timeout/context deadline; a hung GitHub API call blocks `PostOrUpdate` indefinitely | `internal/forge/github.go` (`httpClient: http.DefaultClient`, plain `http.NewRequest`/`Do`, no context) | Not fixed inline — adding a timeout changes runtime behaviour, so it isn't a no-behaviour-change idiom fix. Worth revisiting once `bot` (JRY-015) is a real caller with an actual timeout budget in mind; promotion test fails for a ticket of its own today. |
+
+Disposition summary: 2 fixed inline (F1, F2), 1 noted (F3).
+
+cost: estimated M, actual M.
+
+Impact sweep (step 8): JRY-015 (`bot`, `2-ready/`) depends on JRY-014 and calls this package's
+`Commenter`/`NewGitHubFromEnv` directly per its own plan (in-process, not a subprocess). Nothing
+this branch shipped diverges from what JRY-015 already assumes — same signatures the ticket
+specified, same env-var contract. No patch needed.
 
 ## History
 
@@ -166,3 +202,4 @@ ticket's own docs step is "none."
 - 2026-09-04 — TO DO → READY: plan complete
 - 2026-09-04 — READY → IN DEVELOPMENT: picked up
 - 2026-09-04 — IN DEVELOPMENT → IN REVIEW: acceptance green
+- 2026-09-04 — IN REVIEW → DONE: review clean, 2 non-blocking fixed inline, 1 noted
