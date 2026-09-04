@@ -285,8 +285,8 @@ func checkPlaceholders(findings *Findings, document *doc.Document, options Optio
 }
 
 // checkAppliesTo rejects an applies_to entry that cannot be a path. Matching
-// semantics (globs, existence) is separate, larger work — this only guards
-// against the field silently governing nothing.
+// semantics live in internal/match (JRY-011) — this only guards against the
+// field being an unparsable path in the first place.
 func checkAppliesTo(findings *Findings, document *doc.Document) {
 	line := doc.FieldLine(document.Mapping, "applies_to")
 	for _, entry := range document.Front.AppliesTo {

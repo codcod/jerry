@@ -1,6 +1,6 @@
 # jerry — solution design
 
-**Version 2.4** · 2026-09-03 · Phase 1 implemented; sections 7.2 onward are intent, not code.
+**Version 2.5** · 2026-09-04 · Phase 1 implemented; sections 7.2 onward are intent, not code.
 
 This file is authoritative on **intent**. Where it conflicts with a shipped
 ticket decision, the ticket wins and this file is wrong and should be corrected.
@@ -496,5 +496,9 @@ that is absent, because the green tick is taken as evidence.
   tolerance): `jerry validate` now warns, never errors, when a document's `schema_version` is
   newer than the binary knows, and `jerry schema` publishes it as a floor (`minimum`) rather
   than an equality; the resolved row was removed from §10's table.
+- **Version 2.5** (2026-09-04) — JRY-011 specified the `applies_to` matching dialect and
+  precedence rule §4.1 previously left undecided: directory-prefix and gitignore-style segment
+  globbing (including `**`), most-specific-pattern-wins when several decisions match one path.
+  Implemented in `internal/match`.
 - **Version 1** (2026-09-01) — initial design, written alongside the Phase 1
   implementation.
