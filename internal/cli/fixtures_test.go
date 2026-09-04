@@ -10,6 +10,7 @@ import (
 
 	"github.com/codcod/jerry/internal/config"
 	"github.com/codcod/jerry/internal/doc"
+	"github.com/codcod/jerry/internal/match"
 	"github.com/codcod/jerry/internal/rules"
 	"github.com/codcod/jerry/internal/scaffold"
 )
@@ -72,6 +73,33 @@ func dirtyFixture(t *testing.T) string {
 	return root
 }
 
+// relatedFixture builds the same scaffolded repository as cleanFixture, then
+// gives the example ADR a valid directory-prefix applies_to entry (JRY-011
+// decision 2) — a real, matchable value, unlike dirtyFixture's deliberately
+// invalid one — so `jerry related` has something to resolve.
+func relatedFixture(t *testing.T) string {
+	t.Helper()
+	root := cleanFixture(t)
+
+	path := filepath.Join(root, filepath.FromSlash(exampleADRPath))
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("reading example ADR: %v", err)
+	}
+	const marker = "\ndeciders: [example-author]\n---\n"
+	replacement := "\ndeciders: [example-author]\n" +
+		`applies_to: ["teams/example-team/"]` + "\n" +
+		"---\n"
+	if !strings.Contains(string(raw), marker) {
+		t.Fatalf("example ADR frontmatter did not match the expected shape:\n%s", raw)
+	}
+	perturbed := strings.Replace(string(raw), marker, replacement, 1)
+	if err := os.WriteFile(path, []byte(perturbed), 0o644); err != nil {
+		t.Fatalf("writing perturbed example ADR: %v", err)
+	}
+	return root
+}
+
 func gitInit(t *testing.T, root string) {
 	t.Helper()
 	cmd := exec.Command("git", "init", "--quiet", root)
@@ -122,5 +150,27 @@ func TestDirtyFixtureContract(t *testing.T) {
 	if errors != 1 || warnings != 1 {
 		t.Fatalf("dirty fixture must carry exactly one error and one warning, got %d error(s) and %d warning(s): %v",
 			errors, warnings, findings)
+	}
+}
+
+// TestRelatedFixtureContract pins the property the "related-match" golden
+// case relies on: a path under the fixture's applies_to prefix matches the
+// example ADR, and a path outside it matches nothing.
+func TestRelatedFixtureContract(t *testing.T) {
+	root := relatedFixture(t)
+	cfg, err := config.Load(filepath.Join(root, config.DefaultFile))
+	if err != nil {
+		t.Fatalf("loading config: %v", err)
+	}
+	corpus, err := doc.Load(cfg.Root, cfg.Layout())
+	if err != nil {
+		t.Fatalf("loading corpus: %v", err)
+	}
+
+	if matches := match.Resolve(corpus, "teams/example-team/src/db.go"); len(matches) != 1 {
+		t.Fatalf("expected exactly one match under the applies_to prefix, got %d: %v", len(matches), matches)
+	}
+	if matches := match.Resolve(corpus, "docs/readme.md"); len(matches) != 0 {
+		t.Fatalf("expected no match outside the applies_to prefix, got %d: %v", len(matches), matches)
 	}
 }
