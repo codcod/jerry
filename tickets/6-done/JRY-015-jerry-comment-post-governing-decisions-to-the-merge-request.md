@@ -245,3 +245,6 @@ dispositions this round.
 - 2026-09-05 — IN REVIEW → REWORK: F1 blocking: no user-manual coverage for jerry comment
 - 2026-09-05 — REWORK → IN REVIEW: findings fixed
 - 2026-09-05 — IN REVIEW → DONE: scoped re-review clean, F1 resolved
+- 2026-09-05 — MR opened (PR #17) against `main`; branch tidied to 2 atomic commits
+  (`1dc7394` implementation, `2a89cce` docs reconciliation). Not yet merged — merging is
+  the human's.
