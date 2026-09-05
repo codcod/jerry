@@ -38,8 +38,14 @@ func Resolve(corpus *doc.Corpus, changedPath string) []Match {
 	return matches
 }
 
-// lessSpecific reports whether a is strictly less specific than b, per
-// DESIGN.md §4.1's three-step precedence rule.
+// LessSpecific reports whether a is strictly less specific than b, per
+// DESIGN.md §4.1's three-step precedence rule. Exported so a caller
+// aggregating Matches across several Resolve calls (comment, JRY-015) can
+// compare candidates without re-implementing the rule.
+func LessSpecific(a, b Match) bool {
+	return lessSpecific(a, b)
+}
+
 func lessSpecific(a, b Match) bool {
 	aLiteral, aLen := specificity(a.Pattern)
 	bLiteral, bLen := specificity(b.Pattern)

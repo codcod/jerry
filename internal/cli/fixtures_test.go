@@ -108,6 +108,62 @@ func gitInit(t *testing.T, root string) {
 	}
 }
 
+// gitCommit commits every pending change in root under a pinned test
+// identity — needed once a fixture wants real git history (comment,
+// JRY-015), unlike gitInit's bare repo with no commits at all.
+func gitCommit(t *testing.T, root, message string) {
+	t.Helper()
+	if out, err := exec.Command("git", "-C", root, "add", "-A").CombinedOutput(); err != nil {
+		t.Fatalf("git add %s: %v\n%s", root, err, out)
+	}
+	cmd := exec.Command("git", "-C", root,
+		"-c", "user.email=test@example.com", "-c", "user.name=Test",
+		"commit", "--quiet", "-m", message)
+	if out, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("git commit %s: %v\n%s", root, err, out)
+	}
+}
+
+// gitCommentFixture gives base (a cleanFixture or relatedFixture root) a
+// two-commit history: the current state as a base commit, tagged as
+// refs/remotes/origin/main so changedFiles' default "origin/main" resolves
+// with no real remote (there is nothing to push to in a test fixture, so
+// the ref is synthesized directly rather than staged in an actual clone),
+// then a second commit writing changedRelPath — the file `comment`'s
+// changedFiles/match.Resolve pipeline sees as changed against that base.
+func gitCommentFixture(t *testing.T, base, changedRelPath, changedContent string) string {
+	t.Helper()
+	gitCommit(t, base, "base")
+	if out, err := exec.Command("git", "-C", base, "update-ref", "refs/remotes/origin/main", "HEAD").CombinedOutput(); err != nil {
+		t.Fatalf("git update-ref origin/main %s: %v\n%s", base, err, out)
+	}
+
+	path := filepath.Join(base, filepath.FromSlash(changedRelPath))
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatalf("creating changed file dir: %v", err)
+	}
+	if err := os.WriteFile(path, []byte(changedContent), 0o644); err != nil {
+		t.Fatalf("writing changed file: %v", err)
+	}
+	gitCommit(t, base, "change")
+	return base
+}
+
+// commentMatchFixture builds relatedFixture with git history whose one
+// changed file falls under the example ADR's applies_to prefix — `jerry
+// comment` has exactly one governing decision to report.
+func commentMatchFixture(t *testing.T) string {
+	t.Helper()
+	return gitCommentFixture(t, relatedFixture(t), "teams/example-team/src/db.go", "package db\n")
+}
+
+// commentNoMatchFixture builds cleanFixture (no applies_to entries at all)
+// with git history whose one changed file matches nothing.
+func commentNoMatchFixture(t *testing.T) string {
+	t.Helper()
+	return gitCommentFixture(t, cleanFixture(t), "docs/readme.md", "# hi\n")
+}
+
 // loadFixtureFindings runs the real rules.Check over a fixture root the same
 // way `jerry validate` does, under the pinned clock.
 func loadFixtureFindings(t *testing.T, root string) rules.Findings {
