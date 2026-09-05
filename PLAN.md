@@ -38,7 +38,8 @@ them again.
 | `schema-tolerance` | `JRY-008` | done, publish-gated |
 | `forge-proof-gitlab` | `JRY-009` | done — GitLab proven end to end with the current (checksum-verified) template |
 | `applies-to-match` | `JRY-011` | done, publish-gated |
-| `related` | `JRY-012` | in rework — see ticket Review |
+| `related` | `JRY-012` | done, merged (PR #15) |
+| `forge-comment` | `JRY-014` | done, publish-gated |
 
 `pin-fallback` is not a row in the tables below and never was; it is recorded here because it
 consumed the id this file's second row expected.
