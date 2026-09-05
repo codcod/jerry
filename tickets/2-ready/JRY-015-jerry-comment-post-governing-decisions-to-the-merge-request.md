@@ -99,25 +99,34 @@ JRY-012 (`internal/match` + `jerry related`) and JRY-014 (`internal/forge`) must
 `commentCmd(g *globals) *cobra.Command`: `Use: "comment"`, `Args: cobra.NoArgs`,
 `Annotations: map[string]string{kindKey: kindWrite}` (it can write to the forge and to the
 adoption log — not a read-only command like `related`). Flags: `--base` (default
-`"origin/main"`), `--adoption-log` (default `adoptionLogPath = "jerry-adoption.jsonl"`).
+`"origin/main"`), `--adoption-log` (default `adoptionLogPath = "jerry-adoption.jsonl"`),
+`--dry-run` (default `false`) — `write_safety_test.go` requires every `kindWrite` leaf to carry
+this flag; when set, `RunE` runs match/aggregation/render as normal but prints the would-be
+comment body to `cmd.OutOrStdout()` instead of calling `PostOrUpdate`, and skips the adoption-log
+append (nothing was actually posted).
 `RunE`: `openCorpus` → `changedFiles` → aggregate via `match.Resolve` (decisions 2–3) → decision
-5's first no-op check → render body (decision 4) → `forge.NewGitHubFromEnv` → decision 5's
-second no-op check → `PostOrUpdate` → on success, append the adoption line (decision 7); wrap
-the whole body after flag parsing so any returned error is logged to `cmd.ErrOrStderr()` and
-swallowed (decision 6), always returning `nil` from `RunE` itself past that point.
+5's first no-op check → render body (decision 4) → `--dry-run` check (above) → `forge.NewGitHubFromEnv`
+→ decision 5's second no-op check → `PostOrUpdate` → on success, append the adoption line
+(decision 7); wrap the whole body after flag parsing so any returned error is logged to
+`cmd.ErrOrStderr()` and swallowed (decision 6), always returning `nil` from `RunE` itself past
+that point.
 
 #### Task 2 — Wire the command in
 Add `commentCmd(g)` to `internal/cli/cli.go`'s `root.AddCommand(...)` list.
 
 #### Task 3 — Fixtures + golden cases
-`internal/cli/fixtures_test.go`: reuse `relatedFixture` (JRY-012) for the "has a match" case.
+`internal/cli/fixtures_test.go`: reuse `relatedFixture` (JRY-012) for the "has a match" case,
+but `relatedFixture`'s `gitInit` has no commit and no `origin/main` ref, and `changedFiles`
+shells to `git diff base...HEAD` which errors without one — add a base commit and an
+`origin/main` branch to the fixture (or a small variant of it) so `comment`'s `--base` resolves.
 `internal/cli/golden_test.go`: because `comment` talks to a real forge API and reads CI
-environment, its golden cases must stub both — inject a `forge.Commenter` (the interface from
-JRY-014 decision 3) and an `httptest.Server` the same way `internal/forge/github_test.go`
-already does, rather than exercising `NewGitHubFromEnv` against real env vars in the golden
-harness. Cases: no matches (no comment attempted, exit 0, empty adoption log); a match with no
-`GITHUB_TOKEN` set (no-op, exit 0, empty adoption log); a match with a fake token/server
-(comment posted, one adoption-log line, correct JSON shape).
+environment, its golden cases must stub both, the same way `internal/forge/github_test.go`
+already does: point the real `forge.NewGitHubFromEnv` / `GitHubClient` at an `httptest.Server`
+via the `GITHUB_TOKEN` / `GITHUB_REPOSITORY` / `GITHUB_EVENT_PATH` / `GITHUB_API_URL` env vars
+(decision 1 — no `Commenter` seam, no injected interface). Cases: no matches (no comment
+attempted, exit 0, empty adoption log); a match with no `GITHUB_TOKEN` set (no-op, exit 0, empty
+adoption log); a match with a fake token/server (comment posted, one adoption-log line, correct
+JSON shape).
 
 ### Acceptance test
 
@@ -158,3 +167,9 @@ documents the token requirement in `CONTRIBUTING.md` — out of scope here.
   depending on `related` (JRY-012) and `forge-comment` (JRY-014) per PLAN.md's stated
   sequencing.
 - 2026-09-04 — TO DO → READY: plan complete
+- 2026-09-05 — plan amended inline: applicability audit found Task 1 missing the `--dry-run`
+  flag `write_safety_test.go` requires of every `kindWrite` leaf (blocking) — added to Task 1's
+  flags and `RunE` order. Also folded in two non-blocking findings (note-and-close): Task 3's
+  fixture needs a base commit + `origin/main` ref for `changedFiles` to resolve, and Task 3's
+  "inject a forge.Commenter" wording corrected to the actual env-var/`httptest.Server` pattern
+  (decision 1 — no injected seam).
