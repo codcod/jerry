@@ -198,6 +198,16 @@ documents the token requirement in `CONTRIBUTING.md` — out of scope here.
 
 cost: estimated M, actual M
 
+### Rework fix record — round 1 (commits 3d8bf10..9d05ec9)
+
+F1 fixed: added a `== Post governing decisions to a merge request` section to
+`docs/user-manual/introduction.adoc`, between "Resolve a path to its governing decisions" and
+"Formatting" (mirroring `related`'s section style) — covers `jerry comment`'s behavior,
+`--base`/`--dry-run`/`--adoption-log`, the no-token/no-match no-op, and the new
+`jerry-adoption.jsonl` file. Re-ran `go test ./internal/cli/... -run TestGolden -v`,
+`TestGoldenCoversEveryLeaf`, `just test`, `just lint`, `just docs-check` — all green.
+No other findings touched this round; F2–F6 were already dispositioned above.
+
 ## History
 
 - 2026-09-03 — created (TO DO). source: chat: filed from PLAN.md's build-step-2 row `bot`,
@@ -213,3 +223,4 @@ cost: estimated M, actual M
 - 2026-09-05 — READY → IN DEVELOPMENT: picked up
 - 2026-09-05 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-05 — IN REVIEW → REWORK: F1 blocking: no user-manual coverage for jerry comment
+- 2026-09-05 — REWORK → IN REVIEW: findings fixed
