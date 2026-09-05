@@ -20,11 +20,10 @@ Last updated: 2026-09-05
 
 ## IN REVIEW
 
-### jerry (1/1)
+### jerry (0/1)
 
 | id | title | depends-on |
 |---|---|---|
-| JRY-015 | jerry comment: post governing decisions to the merge request | [JRY-012, JRY-014] |
 
 ## REWORK
 
@@ -32,6 +31,7 @@ Last updated: 2026-09-05
 
 | id | title | open findings |
 |---|---|---|
+| JRY-015 | jerry comment: post governing decisions to the merge request | F1 blocking: no user-manual coverage for jerry comment |
 
 ## READY (impact order, per child)
 

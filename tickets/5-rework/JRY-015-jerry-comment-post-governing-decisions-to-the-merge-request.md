@@ -159,7 +159,44 @@ documents the token requirement in `CONTRIBUTING.md` — out of scope here.
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+- [x] Reviewer independence settled (step 0): **delegated** — the orchestrating reviewer
+  authored the branch this same session, so steps 2–4a's audits ran in a fresh, independent
+  sub-agent briefed adversarially (ticket, branch, `AGENTS.md`, `review-addendum.md`,
+  `DESIGN.md` §1/§7.2/§10, `PLAN.md`'s `bot` row). Every finding below was re-verified by hand
+  before being recorded (file:line / command output checked directly), per step 0's "delegation
+  buys independence, not accuracy."
+- [x] Implementation audit — acceptance test re-run, tasks & criteria verified (steps 1, 2):
+  `go test ./internal/cli/... -run TestGolden -v` (18/18 pass, including the three new
+  `comment-*` cases), `TestGoldenCoversEveryLeaf` pass, `just test` all packages `ok`, `just
+  lint` clean (`gofmt -l` empty, `go vet` clean), `just build` succeeds, `go.mod`/`go.sum` diff
+  empty (dependency policy honoured). All seven confirmed design decisions and Tasks 1–3
+  implemented exactly as specified, including Task 1's precise `RunE` ordering.
+- [x] Quality audit (step 3) — idiomatic, matches sibling `write` commands' `--dry-run`
+  convention; no unnecessary dependency added; error handling matches decision 6 (logged to
+  stderr via `cmd.ErrOrStderr()`, swallowed). Coverage gaps noted below (F4, F5).
+- [x] Consistency audit (step 4) — output-stream rule respected (`--dry-run` preview uses
+  `cmd.Printf`, correctly a human-facing preview, not machine-consumed output); write-safety
+  classification (`kindWrite` + `--dry-run`) correct; `match.go` diff minimal, reuses rather
+  than reimplements. Governing-document staleness found and reconciled below (F2, F3).
+- [x] Documentation audit — coverage, whole-tree sweep, docs build clean (step 4a): `just
+  docs-check` exits 0, but that only checks include/xref syntax, not command coverage — see F1
+  (blocking).
+- [ ] Docs-readability pass (step 4b, optional): **conscious skip** — no docs-readability
+  reviewer configured in this host session.
+- [x] Findings recorded below with severity, class, and disposition (step 5).
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | blocking | docs-gap | — | `jerry comment` (new command, `--base`/`--adoption-log`/`--dry-run`) has no entry in `docs/user-manual/introduction.adoc`; review-addendum step 4a makes missing coverage for a new command blocking. | `docs/user-manual/introduction.adoc` section list (`Install` … `Resolve a path to its governing decisions` … `Global flags`) has no `comment` section; `grep -rni "comment\|adoption\|GITHUB_TOKEN" docs/` returns nothing relevant. | Add a section documenting `jerry comment`: what it does, `--base`/`--adoption-log`/`--dry-run`, the no-token/no-match no-op, and the `jerry-adoption.jsonl` file. |
+| F2 | non-blocking | stale-xref | fixed inline | `DESIGN.md`'s line-3 stamp still read "the rest of the roadmap remains intent, not code" after this ticket shipped §7.2's second bullet (the comment bot). | `DESIGN.md:3` (pre-fix). | Fixed: stamp now reads "…§7.2's `related` command and merge-request comment bot are implemented…", version bumped to 2.7, and a §11 revision-history line added (commit `fadb283` on `feat/JRY-015-bot`). |
+| F3 | non-blocking | stale-xref | fixed inline | `internal/forge/github.go`'s `Commenter` doc comment implied bot (JRY-015) would prove the interface as a consumer, but decision 1 deliberately keeps `comment` off the interface (concrete `*GitHubClient` called directly) — the comment's premise no longer held. | `internal/forge/github.go:19-24` (pre-fix) vs. `internal/cli/comment.go` (calls `forge.NewGitHubFromEnv()` / `client.PostOrUpdate(body)` directly, no `Commenter` reference). | Fixed: comment reworded to state bot calls the concrete type directly by design, and a second forge implements `Commenter` once one is actually needed (commit `fadb283`). |
+| F4 | non-blocking | test-gap | noted | `--dry-run` is untested — the only `write` leaf whose dry-run path has no golden case (every sibling write command does: `init`, `new adr`/`sd`, `supersede`, `hooks install`/`uninstall`). | `internal/cli/golden_test.go` `goldenCases` — three `comment-*` entries, none passing `--dry-run`; `internal/cli/comment.go`'s dry-run branch never exercised by a test. | Add a `comment-dry-run` golden case if this command's test suite is revisited; not scheduled on its own. |
+| F5 | non-blocking | test-gap | noted | Decision 3's cross-file dedup/highest-specificity/sort-by-path logic and decision 4's exact rendered body are exercised only by a trivial single-document, single-file fixture; the one case that posts never inspects the request body it sent. No direct unit test exists for `renderCommentBody`, `aggregateMatches`, or `appendAdoptionLog`. | `internal/cli/fixtures_test.go` (`commentMatchFixture`/`relatedFixture`: one `applies_to` entry, one changed path); `commentPostsCase`'s `check` only asserts `posted == true`, never the POST body. | Add a multi-decision fixture and assert the posted body / helper functions directly if this area sees more work; not scheduled on its own. |
+| F6 | non-blocking | spec-unclear | fixed inline | `CHANGELOG.md`'s new entry (authored on this branch) read as if "absent" and "insufficiently-scoped" token both hit the same explicit no-op check; only the absent-token case does (decision 5b) — an insufficiently-scoped token instead falls through to `PostOrUpdate`'s error and the generic catch-all (decision 6). End behaviour is identical (silent, exit 0), so this was prose imprecision, not a functional bug. | `CHANGELOG.md` (pre-fix) vs. `internal/cli/comment.go`'s explicit no-op check vs. its generic `RunE` error swallow. | Fixed: reworded to name the absent-token no-op and the generic-failure no-op as the two distinct paths that both degrade the same way (commit `fadb283`). |
+
+**Disposition summary:** 1 blocking (F1, unresolved — routes to rework), 3 `fixed inline` (F2, F3, F6), 2 `noted` (F4, F5). No `folded` or `new ticket` dispositions this round.
+
+cost: estimated M, actual M
 
 ## History
 
@@ -175,3 +212,4 @@ documents the token requirement in `CONTRIBUTING.md` — out of scope here.
   (decision 1 — no injected seam).
 - 2026-09-05 — READY → IN DEVELOPMENT: picked up
 - 2026-09-05 — IN DEVELOPMENT → IN REVIEW: acceptance green
+- 2026-09-05 — IN REVIEW → REWORK: F1 blocking: no user-manual coverage for jerry comment
