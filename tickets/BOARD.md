@@ -9,7 +9,7 @@ hand — edit the tickets. Hand-written planning notes live in [`NOTES.md`](NOTE
 **WIP limits (per child-project):**
 - `jerry`: `3-in-development/` ≤ 1 · `4-in-review/` ≤ 1
 
-Last updated: 2026-09-04
+Last updated: 2026-09-05
 
 ## IN DEVELOPMENT
 
@@ -72,7 +72,7 @@ Last updated: 2026-09-04
 | JRY-010 | docs-release.yml fails: ubuntu-latest has no brew | yes — merged — PR #11 merged to `main` (commit `caa730f`) |
 | JRY-011 | Applies_to matching: gitignore-style globs and match precedence | yes — merged to main (PR #14, `91cd553`) |
 | JRY-012 | jerry related: resolve changed paths to governing decisions | yes — merged to main (PR #15, `4e4b321`) |
-| JRY-014 | Forge client, comment scope: create-or-update MR comment | no — publish-gated |
+| JRY-014 | Forge client, comment scope: create-or-update MR comment | yes — merged to main (PR #16, `b527ebe`) |
 
 ## DROPPED
 
