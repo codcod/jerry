@@ -208,6 +208,26 @@ F1 fixed: added a `== Post governing decisions to a merge request` section to
 `TestGoldenCoversEveryLeaf`, `just test`, `just lint`, `just docs-check` — all green.
 No other findings touched this round; F2–F6 were already dispositioned above.
 
+### Scoped re-review — round 1 (commits 3d8bf10..b8fa740)
+
+Reviewer independence: **delegated** (same reason as the first pass — the orchestrating
+reviewer authored the round-1 fix this session). Scope per protocol §1: F1's fix plus the diff
+that closed it (`docs/user-manual/introduction.adoc`), not a re-audit of F2–F6 or the original
+implementation.
+
+F1 confirmed resolved: the new section covers `--base`/`--dry-run`/`--adoption-log`, the
+no-match/no-token no-op, and `jerry-adoption.jsonl`; style/placement matches neighbouring
+sections; `just docs-check` clean.
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| G1 | non-blocking | correctness | fixed inline | The new section's own prose overclaimed: it said a missing token degrades "the same way" as any other failure — "a message on stderr, exit 0" — but a missing token (`NewGitHubFromEnv` returns `ok=false`) returns `nil` with no error, so `RunE`'s stderr `Fprintf` never runs; that path is purely silent, not logged. Only an *insufficiently-scoped* token (which passes `NewGitHubFromEnv`'s checks, then fails at `PostOrUpdate`) actually logs to stderr. | `internal/cli/comment.go:53-58` (`RunE` prints only on non-nil `err`) and `:89-92` (`if !ok { return nil }`, no error); `internal/forge/github.go:47-56` (`NewGitHubFromEnv` returns `ok=false` on empty token, never an error). | Fixed: reworded to separate the missing-token silent no-op from the logged-but-silent path any other failure (insufficiently-scoped token, network error, non-2xx) takes (commit `b8fa740`). |
+
+**Disposition summary:** 0 blocking, 1 `fixed inline` (G1). No `noted`, `folded` or `new ticket`
+dispositions this round.
+
+**Verdict: no blocking findings — proceeds to `6-done/`.**
+
 ## History
 
 - 2026-09-03 — created (TO DO). source: chat: filed from PLAN.md's build-step-2 row `bot`,
@@ -224,3 +244,4 @@ No other findings touched this round; F2–F6 were already dispositioned above.
 - 2026-09-05 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-05 — IN REVIEW → REWORK: F1 blocking: no user-manual coverage for jerry comment
 - 2026-09-05 — REWORK → IN REVIEW: findings fixed
+- 2026-09-05 — IN REVIEW → DONE: scoped re-review clean, F1 resolved

@@ -20,11 +20,10 @@ Last updated: 2026-09-05
 
 ## IN REVIEW
 
-### jerry (1/1)
+### jerry (0/1)
 
 | id | title | depends-on |
 |---|---|---|
-| JRY-015 | jerry comment: post governing decisions to the merge request | [JRY-012, JRY-014] |
 
 ## REWORK
 
@@ -73,6 +72,7 @@ Last updated: 2026-09-05
 | JRY-011 | Applies_to matching: gitignore-style globs and match precedence | yes — merged to main (PR #14, `91cd553`) |
 | JRY-012 | jerry related: resolve changed paths to governing decisions | yes — merged to main (PR #15, `4e4b321`) |
 | JRY-014 | Forge client, comment scope: create-or-update MR comment | yes — merged to main (PR #16, `b527ebe`) |
+| JRY-015 | jerry comment: post governing decisions to the merge request | no — publish-gated |
 
 ## DROPPED
 
