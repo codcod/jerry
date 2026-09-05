@@ -40,6 +40,7 @@ them again.
 | `applies-to-match` | `JRY-011` | done, publish-gated |
 | `related` | `JRY-012` | done, merged (PR #15) |
 | `forge-comment` | `JRY-014` | done, publish-gated |
+| `bot` | `JRY-015` | done, publish-gated |
 
 `pin-fallback` is not a row in the tables below and never was; it is recorded here because it
 consumed the id this file's second row expected.

@@ -17,8 +17,10 @@ import (
 )
 
 // Commenter posts or updates the one comment jerry owns on a pull request.
-// One implementation today (GitHub); a second forge ports against this
-// interface once bot (JRY-015) is a proven consumer (DESIGN.md §7).
+// One implementation today (GitHub), called directly by its one consumer
+// (bot, JRY-015 — decision 1 keeps it off this interface on purpose, so
+// there is no seam to inject in tests); a second forge implements Commenter
+// once one is actually needed (DESIGN.md §7).
 type Commenter interface {
 	PostOrUpdate(body string) error
 }
