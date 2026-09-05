@@ -14,6 +14,14 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
   every decision's `applies_to`, offline from the terminal — the first command that reads the
   field rather than just validating it. A path with no governing decision is silent, not an
   error; the JSON form is a versioned `jerry.related/1` envelope.
+- `jerry comment` runs `related` over the merge request's changed files (`--base`, default
+  `origin/main`) and posts (or updates) a comment listing the governing decisions — silent,
+  exit 0, when nothing matches. Meant to run in CI: an absent `GITHUB_TOKEN` is also a silent
+  no-op, and any other failure (an insufficiently-scoped token, a network error, a non-2xx
+  response) degrades the same way rather than failing the pipeline, since a docs tool must
+  never be the reason a merge request cannot merge. Every successful post appends one line to
+  `jerry-adoption.jsonl` at the repo root — a new file that will appear in a repository's root
+  the first time this runs.
 
 ### Fixed
 

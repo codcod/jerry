@@ -170,6 +170,33 @@ entry per queried path, decisions ordered most-specific-pattern-first — the
 same order `--format text` renders, never re-ranked or collapsed to a single
 winner.
 
+== Post governing decisions to a merge request
+
+[source,sh]
+----
+jerry comment            # run in CI, on a merge request
+jerry comment --dry-run  # preview the comment body, post nothing
+----
+
+Runs the same query as `related` over the merge request's changed files
+(`--base`, default `origin/main`) and posts — or updates, never duplicates —
+a comment listing the decisions that govern them. Nothing is posted, and
+nothing is logged, when no changed file matches any decision: silence is the
+expected shape, the same as `related`'s.
+
+Meant to run as a CI step, using the forge's own `GITHUB_TOKEN`. A missing
+token is a silent no-op, the same as no match: nothing printed, exit 0. Any
+other failure — an insufficiently-scoped token, a network error, a non-2xx
+response — logs one line to stderr but still exits 0 and posts nothing. A
+docs tool must never be the reason a merge request cannot merge.
+
+Every successful post appends one line to `jerry-adoption.jsonl` at the repo
+root (override with `--adoption-log`) — `{"repo", "pr", "decisions",
+"timestamp"}` — so whether the comment is actually read is answerable from
+the first post onward, not only once a separate reporting tool exists. This
+is a new file that will appear in a repository's root the first time
+`comment` successfully posts; commit it like any other generated artifact.
+
 == Formatting
 
 [source,sh]

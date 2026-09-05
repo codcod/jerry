@@ -1,6 +1,6 @@
 # jerry — solution design
 
-**Version 2.6** · 2026-09-04 · Phase 1 implemented; §7.2's `related` command is implemented, the rest of the roadmap remains intent, not code.
+**Version 2.7** · 2026-09-05 · Phase 1 implemented; §7.2's `related` command and merge-request comment bot are implemented, the rest of the roadmap remains intent, not code.
 
 This file is authoritative on **intent**. Where it conflicts with a shipped
 ticket decision, the ticket wins and this file is wrong and should be corrected.
@@ -504,5 +504,9 @@ that is absent, because the green tick is taken as evidence.
   (`jerry related --paths <files>`, versioned `jerry.related/1` envelope), the first consumer of
   `internal/match.Resolve`; the opening line's blanket "§7.2 onward is intent" no longer holds for
   that one bullet.
+- **Version 2.7** (2026-09-05) — JRY-015 implemented §7.2's merge-request comment bot (`jerry
+  comment`), the second bullet of that phase: posts the decisions governing a merge request's
+  changed files, counts adoption from its first commit (`jerry-adoption.jsonl`), and degrades
+  silently, never failing the pipeline, on a missing or insufficiently-scoped token.
 - **Version 1** (2026-09-01) — initial design, written alongside the Phase 1
   implementation.

@@ -63,6 +63,7 @@ func newRoot(version string) (*cobra.Command, *globals) {
 		newCmd(g),
 		validateCmd(g),
 		relatedCmd(g),
+		commentCmd(g),
 		fmtCmd(g),
 		indexCmd(g),
 		supersedeCmd(g),

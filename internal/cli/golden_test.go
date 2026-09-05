@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"flag"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -126,6 +128,13 @@ type goldenCase struct {
 	fixture  func(t *testing.T) string
 	chdir    bool
 	args     []string
+	// setup runs after the fixture is built and before the command, for
+	// cases that need more than args to reach a given path (comment's
+	// forge-environment stubbing). check runs after the command, for
+	// assertions the golden JSON itself can't express (side effects like a
+	// file written, or a fake server call observed). Both are optional.
+	setup func(t *testing.T, root string)
+	check func(t *testing.T, root string)
 }
 
 var goldenCases = []goldenCase{
@@ -220,6 +229,104 @@ var goldenCases = []goldenCase{
 		fixture:  cleanFixture,
 		args:     []string{"hooks", "status"},
 	},
+	{
+		name:     "comment-no-match",
+		leafPath: "jerry comment",
+		fixture:  commentNoMatchFixture,
+		args:     []string{"comment"},
+		setup:    clearForgeEnv,
+		check:    assertNoAdoptionLog,
+	},
+	{
+		name:     "comment-no-token",
+		leafPath: "jerry comment",
+		fixture:  commentMatchFixture,
+		args:     []string{"comment"},
+		setup:    clearForgeEnv,
+		check:    assertNoAdoptionLog,
+	},
+	commentPostsCase(),
+}
+
+// clearForgeEnv blanks every GitHub Actions env var forge.NewGitHubFromEnv
+// reads, so a case exercising the no-token path is hermetic regardless of
+// what environment `go test` itself happens to run under (a real CI job may
+// well export GITHUB_TOKEN for other steps).
+func clearForgeEnv(t *testing.T, _ string) {
+	t.Setenv("GITHUB_TOKEN", "")
+	t.Setenv("GITHUB_REPOSITORY", "")
+	t.Setenv("GITHUB_EVENT_PATH", "")
+	t.Setenv("GITHUB_API_URL", "")
+}
+
+// assertNoAdoptionLog checks the no-op path (decision 5, JRY-015) never
+// writes the adoption log.
+func assertNoAdoptionLog(t *testing.T, root string) {
+	t.Helper()
+	if _, err := os.Stat(filepath.Join(root, adoptionLogPath)); !os.IsNotExist(err) {
+		t.Fatalf("adoption log: got err = %v, want a not-exist error", err)
+	}
+}
+
+// commentPostsCase exercises the one path that actually posts: a fake
+// GITHUB_TOKEN pointed at an httptest.Server, the same seam
+// internal/forge/github_test.go's newTestClient uses. It asserts both that
+// the server saw the POST and that the adoption log gained exactly one,
+// correctly shaped line — properties the golden JSON (empty stdout/stderr,
+// not failed) can't express on its own.
+func commentPostsCase() goldenCase {
+	var posted bool
+	return goldenCase{
+		name:     "comment-match-posts",
+		leafPath: "jerry comment",
+		fixture:  commentMatchFixture,
+		args:     []string{"comment"},
+		setup: func(t *testing.T, root string) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch {
+				case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/comments"):
+					_ = json.NewEncoder(w).Encode([]any{})
+				case r.Method == http.MethodPost:
+					posted = true
+					w.WriteHeader(http.StatusCreated)
+				default:
+					t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
+					w.WriteHeader(http.StatusNotFound)
+				}
+			}))
+			t.Cleanup(server.Close)
+
+			eventPath := filepath.Join(t.TempDir(), "event.json")
+			if err := os.WriteFile(eventPath, []byte(`{"pull_request":{"number":7}}`), 0o644); err != nil {
+				t.Fatalf("writing event file: %v", err)
+			}
+
+			t.Setenv("GITHUB_TOKEN", "test-token")
+			t.Setenv("GITHUB_REPOSITORY", "owner/repo")
+			t.Setenv("GITHUB_EVENT_PATH", eventPath)
+			t.Setenv("GITHUB_API_URL", server.URL)
+		},
+		check: func(t *testing.T, root string) {
+			if !posted {
+				t.Fatal("expected the comment to be posted to the fake server")
+			}
+			data, err := os.ReadFile(filepath.Join(root, adoptionLogPath))
+			if err != nil {
+				t.Fatalf("reading adoption log: %v", err)
+			}
+			lines := strings.Split(strings.TrimRight(string(data), "\n"), "\n")
+			if len(lines) != 1 {
+				t.Fatalf("adoption log: got %d line(s), want 1: %q", len(lines), data)
+			}
+			var entry adoptionLogEntry
+			if err := json.Unmarshal([]byte(lines[0]), &entry); err != nil {
+				t.Fatalf("unmarshalling adoption log line: %v", err)
+			}
+			if entry.Repo != "owner/repo" || entry.PR != 7 || len(entry.Decisions) == 0 || entry.Timestamp == "" {
+				t.Fatalf("adoption log entry shape: %+v", entry)
+			}
+		},
+	}
 }
 
 // TestGolden pins stdout, stderr and failure for every case in goldenCases
@@ -238,7 +345,13 @@ func TestGolden(t *testing.T) {
 	for _, tc := range goldenCases {
 		t.Run(tc.name, func(t *testing.T) {
 			root := tc.fixture(t)
+			if tc.setup != nil {
+				tc.setup(t, root)
+			}
 			got := runCLI(t, root, tc.chdir, tc.args...)
+			if tc.check != nil {
+				tc.check(t, root)
+			}
 
 			rendered, err := json.MarshalIndent(got, "", "  ")
 			if err != nil {
