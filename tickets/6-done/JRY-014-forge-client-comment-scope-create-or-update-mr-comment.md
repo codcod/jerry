@@ -203,3 +203,4 @@ specified, same env-var contract. No patch needed.
 - 2026-09-04 — READY → IN DEVELOPMENT: picked up
 - 2026-09-04 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-04 — IN REVIEW → DONE: review clean, 2 non-blocking fixed inline, 1 noted
+- 2026-09-05 — MR opened (PR #16)
