@@ -13,10 +13,11 @@ Last updated: 2026-09-05
 
 ## IN DEVELOPMENT
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-015 | jerry comment: post governing decisions to the merge request | [JRY-012, JRY-014] |
 
 ## IN REVIEW
 
@@ -38,7 +39,6 @@ Last updated: 2026-09-05
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
-| JRY-015 | jerry comment: post governing decisions to the merge request | critical | medium | M | [JRY-012, JRY-014] |  |
 
 ## TO DO (impact order, per child)
 

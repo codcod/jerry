@@ -173,3 +173,4 @@ documents the token requirement in `CONTRIBUTING.md` — out of scope here.
   fixture needs a base commit + `origin/main` ref for `changedFiles` to resolve, and Task 3's
   "inject a forge.Commenter" wording corrected to the actual env-var/`httptest.Server` pattern
   (decision 1 — no injected seam).
+- 2026-09-05 — READY → IN DEVELOPMENT: picked up
