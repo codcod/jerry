@@ -174,3 +174,4 @@ documents the token requirement in `CONTRIBUTING.md` — out of scope here.
   "inject a forge.Commenter" wording corrected to the actual env-var/`httptest.Server` pattern
   (decision 1 — no injected seam).
 - 2026-09-05 — READY → IN DEVELOPMENT: picked up
+- 2026-09-05 — IN DEVELOPMENT → IN REVIEW: acceptance green
