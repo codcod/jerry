@@ -105,6 +105,72 @@ func TestZeroStaleDaysIsHonoured(t *testing.T) {
 	}
 }
 
+func TestListValuedKeysAreAdditive(t *testing.T) {
+	dir := t.TempDir()
+	yaml := "required-adr-sections: [\"## Extra\"]\n"
+	if err := os.WriteFile(filepath.Join(dir, DefaultFile), []byte(yaml), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	chdir(t, dir)
+
+	cfg, err := Load("")
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+
+	defaults := &Config{}
+	defaults.applyDefaults()
+	want := append(append([]string{}, defaults.RequiredADRSections...), "## Extra")
+	if len(cfg.RequiredADRSections) != len(want) {
+		t.Fatalf("required-adr-sections = %v, want %v (built-ins plus the repo's own entry)", cfg.RequiredADRSections, want)
+	}
+	for i, section := range want {
+		if cfg.RequiredADRSections[i] != section {
+			t.Errorf("required-adr-sections[%d] = %q, want %q", i, cfg.RequiredADRSections[i], section)
+		}
+	}
+}
+
+func TestListValuedKeysDedupeRepeatedDefaults(t *testing.T) {
+	dir := t.TempDir()
+	yaml := "placeholders: [\"your-team\"]\n"
+	if err := os.WriteFile(filepath.Join(dir, DefaultFile), []byte(yaml), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	chdir(t, dir)
+
+	cfg, err := Load("")
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+
+	defaults := &Config{}
+	defaults.applyDefaults()
+	if len(cfg.Placeholders) != len(defaults.Placeholders) {
+		t.Errorf("re-listing a built-in placeholder produced a duplicate: %v, want %v", cfg.Placeholders, defaults.Placeholders)
+	}
+}
+
+func TestEmptyListCannotSwitchOffTheDefaults(t *testing.T) {
+	// Additive means a repo can only extend, never narrow — not even to nothing.
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, DefaultFile), []byte("placeholders: []\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	chdir(t, dir)
+
+	cfg, err := Load("")
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+
+	defaults := &Config{}
+	defaults.applyDefaults()
+	if len(cfg.Placeholders) != len(defaults.Placeholders) {
+		t.Errorf("an explicit empty list narrowed placeholders: %v, want the built-in defaults %v", cfg.Placeholders, defaults.Placeholders)
+	}
+}
+
 func TestValidateRejectsCollidingDirs(t *testing.T) {
 	dir := t.TempDir()
 	content := "adr-dir: docs\nsolution-design-dir: docs\n"
