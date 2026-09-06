@@ -158,3 +158,4 @@ already states defaults rather than replace/merge behaviour and needs no wording
   `config-additive`.
 - 2026-09-06 — refined: implementation plan complete.
 - 2026-09-06 — TO DO → READY: plan complete
+- 2026-09-06 — READY → IN DEVELOPMENT: picked up
