@@ -13,18 +13,18 @@ Last updated: 2026-09-06
 
 ## IN DEVELOPMENT
 
+### jerry (0/1)
+
+| id | title | depends-on |
+|---|---|---|
+
+## IN REVIEW
+
 ### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
 | JRY-021 | Make list-valued jerry.yaml keys additive | [JRY-001] |
-
-## IN REVIEW
-
-### jerry (0/1)
-
-| id | title | depends-on |
-|---|---|---|
 
 ## REWORK
 
