@@ -88,6 +88,22 @@ jerry validate --format sarif > jerry.sarif
 
 `--format` also accepts `text`, `json` and `junit`.
 
+To check only what a merge request actually touches, rather than the whole corpus:
+
+[source,sh]
+----
+jerry validate --diff                      # base ref: origin/main, or autodetected on GitHub Actions
+jerry validate --diff --base origin/develop
+----
+
+`--diff` filters the findings above to the files changed against `--base` (default
+`origin/main`). In a GitHub Actions `pull_request` run, an unset `--base` autodetects
+`origin/$GITHUB_BASE_REF` instead of the literal default — a check that already knows which
+branch it is targeting needs no extra configuration to point `--diff` at the right one. A base
+ref that cannot be resolved — a shallow checkout missing it, a typo, no matching remote branch —
+fails the command — usually surfacing git's own reason for the failure — rather than silently
+reporting zero findings.
+
 `validate` also flags an unfilled template placeholder anywhere in the document, except inside a
 fenced code block — quoting a template is not the same as forgetting to fill one in. A document
 that legitimately discusses a placeholder phrase — documenting the `ADR-NNNN` id convention, say
