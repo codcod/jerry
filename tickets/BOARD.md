@@ -9,7 +9,7 @@ hand — edit the tickets. Hand-written planning notes live in [`NOTES.md`](NOTE
 **WIP limits (per child-project):**
 - `jerry`: `3-in-development/` ≤ 1 · `4-in-review/` ≤ 1
 
-Last updated: 2026-09-06
+Last updated: 2026-09-07
 
 ## IN DEVELOPMENT
 
@@ -20,11 +20,10 @@ Last updated: 2026-09-06
 
 ## IN REVIEW
 
-### jerry (1/1)
+### jerry (0/1)
 
 | id | title | depends-on |
 |---|---|---|
-| JRY-021 | Make list-valued jerry.yaml keys additive | [JRY-001] |
 
 ## REWORK
 
@@ -32,6 +31,7 @@ Last updated: 2026-09-06
 
 | id | title | open findings |
 |---|---|---|
+| JRY-021 | Make list-valued jerry.yaml keys additive | F1 fixed (branch rebase), F2/F3 open: PLAN.md + CHANGELOG.md governing-doc coverage |
 
 ## READY (impact order, per child)
 

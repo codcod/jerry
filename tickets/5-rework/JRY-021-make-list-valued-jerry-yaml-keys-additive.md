@@ -150,7 +150,60 @@ already states defaults rather than replace/merge behaviour and needs no wording
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+**Reviewer independence (step 0):** the reviewing agent authored this branch in this same
+session, so steps 2–4a were delegated to an independent sub-agent, briefed adversarially with
+the ticket (read from `main`), `AGENTS.md`, `review-addendum.md`, and instructed to check out
+`feat/JRY-021-additive-list-config` and re-run the configured commands. Every delegated finding
+was re-verified by hand before entering this table, per step 0's "delegation buys independence,
+not accuracy."
+
+**Implementation audit (step 2):** all three tasks done as specified. `mergeUnique` in
+`internal/config/config.go` is correct — fresh backing array (no aliasing of `defaults`/`extra`),
+nil-safe, dedup preserves order. `applyDefaults` runs it unconditionally for
+`RequiredADRSections`, `RequiredSDSections`, `Placeholders`; the five layout/threshold fields are
+untouched, matching confirmed decision 1. `just build`/`test`/`lint`/`docs-check` all green. The
+plan's manual acceptance check was independently re-run against a scratch repo and confirmed:
+`required-adr-sections: ["## Extra"]` produces findings for the built-in three sections *and*
+the added one.
+
+**Quality audit (step 3):** idiomatic; the dependency policy (`cobra`+`pflag`+`yaml.v3`+stdlib)
+is untouched; findings-accumulate and output-stream conventions are not implicated (no CLI-facing
+change). Test coverage was initially incomplete — see F4.
+
+**Consistency audit (step 4)** and **documentation audit (step 4a):** no stale cross-reference
+introduced by the code change itself; `docs/user-manual.adoc` never documented list-key
+semantics, so no doc there goes stale. But reconciling this branch with `main` (below) surfaced
+that the branch was cut before origin's JRY-015 merge and its own `DESIGN.md` reconciliation
+commit — the branch's `DESIGN.md` edit collided with an already-used version number. Resolved by
+rebasing `main` onto `origin/main` (fast, no conflicts — the 3 local board-bookkeeping commits
+were unpushed) and then rebasing the feature branch onto the reconciled `main`, renumbering this
+ticket's revision-history entry from the colliding "Version 2.7" to **"Version 2.8"** and
+bumping the line-3 stamp to match (this *is* finding F1, discovered and fixed together with the
+rebase — see its row).
+
+**Governing-documents reconciliation (step 7):** `DESIGN.md`, `PLAN.md`, and `CHANGELOG.md` are
+this project's governing documents (`review-addendum.md`). `DESIGN.md`'s §10 divergence-3 row and
+§3 aside were correctly removed by the ticket's own Task 3. `PLAN.md`'s "Filed so far" table and
+its `config-additive` cross-cutting row, and `CHANGELOG.md`'s `[Unreleased]` section, were not
+updated — F2 and F3 below, both within this review's reach (same repository, root-path child).
+
+**Impact sweep (step 8):** no ticket in `tickets/1-to-do/` or `tickets/2-ready/` references
+JRY-021 in `depends-on:` or Description. Nothing to patch.
+
+**Docs-readability pass (step 4b):** conscious skip — no docs-readability reviewer configured in
+this session.
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | blocking | stale-xref | — | `DESIGN.md`'s version stamp (line 3) was not bumped when a new §11 revision-history entry was added, and the entry itself used a version number ("2.7") already claimed by origin's JRY-015 reconciliation commit (`2a89cce`), since the branch was cut before that merge | `DESIGN.md:3` read "Version 2.6" pre-rebase; origin/main's `DESIGN.md` already reads "Version 2.7" as of JRY-015 | Already resolved: fixed while reconciling the branch with `origin/main` (rebase, commit `469ab3e`) — line 3 now reads "Version 2.8", and the JRY-021 revision-history entry is renumbered to match, sitting after JRY-015's 2.7 entry |
+| F2 | blocking | docs-gap | — | `PLAN.md`'s "Filed so far" table has no row for `config-additive`/JRY-021, and the cross-cutting table's `config-additive` row (line 339) still describes it as an un-filed future task | `PLAN.md:339` unchanged; no `JRY-021` row added to the "Filed so far" table (`review-addendum.md` step 7: "a review that concludes a ticket updates that row") | Add `\| config-additive \| JRY-021 \| done, publish-gated \|` to "Filed so far"; mark the cross-cutting row 339 resolved |
+| F3 | blocking | docs-gap | — | `CHANGELOG.md`'s `## [Unreleased]` section has no entry for this fix, despite it being a real user-facing behavior change (list-valued `jerry.yaml` keys go from replace-if-empty to additive) | `CHANGELOG.md` `[Unreleased]` (lines 9–23) has entries for JRY-012 and JRY-008 but none for JRY-021; `review-addendum.md` step 4a names the Unreleased section as coverage, class `docs-gap` | Add a `### Fixed` (or `### Changed`) bullet describing the additive-merge behavior change, following the JRY-008 entry's style |
+| F4 | non-blocking | test-gap | fixed inline | `TestListValuedKeysDedupeRepeatedDefaults` and `TestEmptyListCannotSwitchOffTheDefaults` compared only `len(...)` against the defaults, so a coincidental length match without content equality would have passed | `internal/config/config_test.go` (pre-fix, lines ~133–172) | Fixed inline (branch-authored idiom, no behaviour change): both now use `reflect.DeepEqual` for full content comparison — commit `0ce44da` |
+
+**Disposition summary:** 3 blocking (F1 already fixed via the main-rebase; F2, F3 open — ticket
+to `5-rework/`), 1 non-blocking fixed inline (F4).
+
+`cost: estimated S, actual S`
 
 ## History
 
@@ -160,3 +213,4 @@ already states defaults rather than replace/merge behaviour and needs no wording
 - 2026-09-06 — TO DO → READY: plan complete
 - 2026-09-06 — READY → IN DEVELOPMENT: picked up
 - 2026-09-06 — IN DEVELOPMENT → IN REVIEW: acceptance green
+- 2026-09-07 — IN REVIEW → REWORK: F1 fixed (branch rebase), F2/F3 open: PLAN.md + CHANGELOG.md governing-doc coverage
