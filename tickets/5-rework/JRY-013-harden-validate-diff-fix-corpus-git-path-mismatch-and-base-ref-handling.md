@@ -201,7 +201,7 @@ correct by virtue of being generated.
    ```
    mkdir -p /tmp/jry013-smoke/docs && cd /tmp/jry013-smoke
    git init -q && git -c user.email=a@b.com -c user.name=a commit -q --allow-empty -m init
-   (cd docs && /path/to/jerry init --forge github --version test)   # or scaffold.Run equivalent via `jerry init`
+   (cd docs && /path/to/jerry init --forge github)   # `init` takes no --version flag; that's a scaffold.Run test option only
    git add -A && git -c user.email=a@b.com -c user.name=a commit -q -m base
    git update-ref refs/remotes/origin/main HEAD
    # perturb docs/teams/example-team/adr/0001-...md the same way dirtyFixture does, then:
@@ -257,7 +257,45 @@ correct by virtue of being generated.
 
 ## Review
 
-<!-- empty until IN REVIEW -->
+**Reviewer independence (step 0):** delegated. The orchestrating reviewer authored
+`feat/JRY-013-diff-hardening` in this same session, so audits (protocol steps 2–4a) were run by
+an independently spawned reviewer with no memory of writing the branch, briefed adversarially.
+Every delegated finding below was re-verified by hand before being recorded here.
+
+**Implementation audit (step 2):** acceptance test re-run — `just test`, `just lint`,
+`just docs-check` all green (steps 1–3); the nested-corpus-root and missing-base-ref smoke
+scenarios (steps 4–5) both reproduced by hand with the expected behaviour, once step 4's command
+was corrected (see F1). All three tasks done in the files the plan names; all five confirmed
+design decisions honoured, including decision 5 (`comment.go:73` inherits the fix with no code
+change — verified `match.Resolve`'s contract expects corpus-relative paths, same as
+`finding.Path`).
+
+**Quality audit (step 3):** idiomatic; the fix was mutation-tested (reverting the
+`CutPrefix`/prefix logic makes `TestChangedFilesRewritesToCorpusRoot` and the new golden case
+fail), confirming the new tests actually assert behaviour. No shell-injection surface —
+`exec.Command` uses discrete argv, and the autodetected base is always `"origin/" + $GITHUB_BASE_REF`,
+a fixed prefix that defeats a leading-dash injection attempt even from an adversarial env var.
+
+**Consistency audit (step 4):** no stale `DESIGN.md §` citations found; `CHANGELOG.md`,
+`DESIGN.md` §11, and the code agree on what shipped; no redundant logic (existing git test
+helpers reused).
+
+**Documentation audit (step 4a):** `just docs-check` clean. `docs/user-manual/introduction.adoc`'s
+"Check it" section documents `validate` and `--format` but has zero coverage of `--diff`,
+`--base`, or `GITHUB_BASE_REF` anywhere in the manual — the `--diff`/`--base` flags predate this
+ticket, but the autodetection behaviour and the clearer failure message are new user-facing
+behaviour this ticket ships on top of that surface, with no manual update planned for it (F3).
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F1 | non-blocking | spec-unclear | fixed inline | Acceptance test step 4's exact command (`jerry init --forge github --version test`) does not run — `init` has no `--version` flag (that's a `scaffold.Run` test-helper option only) | `internal/cli/init.go` flags (`--forge`, `--force`, `--dry-run` only) vs. this ticket's own step 4 | Corrected the command in this ticket's Acceptance test (step 4) to drop `--version`; no code or behaviour affected |
+| F2 | non-blocking | design | noted | `changedFiles`'s two git subcalls are asymmetric: the `diff` call extracts `(*exec.ExitError).Stderr` for a clear failure message (decision 3), but the `rev-parse --show-prefix` call above it still wraps a bare `exit status N` if it fails (e.g. corpus root not inside any git repository at all) | `internal/cli/validate.go:106-109` vs. `:112-119` | Left as a `noted` finding rather than fixed here — a rare edge case, and the code matches the plan's own Task 1 scope (stderr-extraction was scoped to the `diff` call only); worth folding into whatever next touches this function |
+| F3 | **blocking** | docs-gap | — | `validate --diff`'s `GITHUB_BASE_REF` autodetection and clearer base-ref failure message are new user-facing behaviour with no manual coverage; the addendum's rule ("a new command or flag that does not appear there is blocking coverage") and the base protocol's 4a.1 both make missing coverage here blocking | `docs/user-manual/introduction.adoc` "Check it" section (lines 68-96): no mention of `--diff`, `--base`, or `GITHUB_BASE_REF` | Add a short paragraph to "Check it" documenting `--diff`, `--base`, its `GITHUB_BASE_REF` autodetection, and that a missing/unreachable base ref now fails with git's own reason |
+
+Disposition summary: 1 blocking (F3, unresolved — ticket moves to `5-rework/`), 2 non-blocking
+(F1 fixed inline, F2 noted).
+
+cost: estimated M, actual M
 
 ## History
 
@@ -267,3 +305,6 @@ correct by virtue of being generated.
 - 2026-09-07 — TO DO → READY: plan complete
 - 2026-09-07 — READY → IN DEVELOPMENT: picked up
 - 2026-09-07 — IN DEVELOPMENT → IN REVIEW: acceptance green
+- 2026-09-07 — plan amended inline: Acceptance test step 4's example command corrected (dropped
+  a nonexistent `--version` flag on `jerry init`) — found as review finding F1
+- 2026-09-07 — IN REVIEW → REWORK: 1 blocking finding: F3 docs-gap
