@@ -72,7 +72,7 @@ Last updated: 2026-09-07
 | JRY-012 | jerry related: resolve changed paths to governing decisions | yes — merged to main (PR #15, `4e4b321`) |
 | JRY-014 | Forge client, comment scope: create-or-update MR comment | yes — merged to main (PR #16, `b527ebe`) |
 | JRY-015 | jerry comment: post governing decisions to the merge request | yes — merged to main (MR !17, `ea2b3ae`). |
-| JRY-021 | Make list-valued jerry.yaml keys additive | no — publish-gated |
+| JRY-021 | Make list-valued jerry.yaml keys additive | yes — merged to main (PR #18, `4e90f7a`). |
 
 ## DROPPED
 
