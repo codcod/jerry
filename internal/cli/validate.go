@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -41,7 +43,7 @@ func validateCmd(g *globals) *cobra.Command {
 			findings := rules.Check(corpus, cfg.RuleOptions(now()))
 
 			if diffOnly {
-				changed, err := changedFiles(cfg.Root, base)
+				changed, err := changedFiles(cfg.Root, resolveDiffBase(cmd, base))
 				if err != nil {
 					return err
 				}
@@ -70,23 +72,66 @@ func validateCmd(g *globals) *cobra.Command {
 	}
 	cmd.Flags().StringVarP(&format, "format", "f", "text", "output format: text, json, sarif or junit")
 	cmd.Flags().BoolVar(&diffOnly, "diff", false, "only report findings in files changed against --base")
-	cmd.Flags().StringVar(&base, "base", "origin/main", "base ref for --diff")
+	cmd.Flags().StringVar(&base, "base", "origin/main",
+		"base ref for --diff (autodetected from GITHUB_BASE_REF when not set explicitly)")
 	return cmd
 }
 
 // errFailed carries a non-zero exit without printing a second message.
 var errFailed = fmt.Errorf("validation failed")
 
+// resolveDiffBase returns the base ref to diff against: the caller's
+// explicit --base when given, otherwise origin/$GITHUB_BASE_REF (GitHub
+// Actions' pull_request env var) when set, otherwise the flag's own
+// default — never silently guessing when a human already said what they want.
+func resolveDiffBase(cmd *cobra.Command, base string) string {
+	if cmd.Flags().Changed("base") {
+		return base
+	}
+	if prBase := os.Getenv("GITHUB_BASE_REF"); prBase != "" {
+		return "origin/" + prBase
+	}
+	return base
+}
+
+// changedFiles lists the files changed against base, as paths relative to
+// root. git always reports diff --name-only paths relative to its own top
+// level regardless of -C, so when root sits below that (a jerry.yaml not at
+// the git root) the raw output has to be rewritten onto root's own offset —
+// resolved via `rev-parse --show-prefix` rather than manual filepath.Rel
+// arithmetic, since only git's own view of the tree is guaranteed to agree
+// with git's own path output (a symlinked temp dir, e.g. macOS's /tmp ->
+// /private/tmp, can make the two disagree).
 func changedFiles(root, base string) (map[string]bool, error) {
+	prefixOut, err := exec.Command("git", "-C", root, "rev-parse", "--show-prefix").Output()
+	if err != nil {
+		return nil, fmt.Errorf("resolving %s's offset from the git root: %w", root, err)
+	}
+	prefix := strings.TrimSpace(string(prefixOut))
+
 	output, err := exec.Command("git", "-C", root, "diff", "--name-only", base+"...HEAD").Output()
 	if err != nil {
+		var exitErr *exec.ExitError
+		if errors.As(err, &exitErr) && len(exitErr.Stderr) > 0 {
+			return nil, fmt.Errorf("listing files changed against %s: %s", base, strings.TrimSpace(string(exitErr.Stderr)))
+		}
 		return nil, fmt.Errorf("listing files changed against %s: %w", base, err)
 	}
+
 	changed := map[string]bool{}
 	for _, line := range strings.Split(string(output), "\n") {
-		if trimmed := strings.TrimSpace(line); trimmed != "" {
-			changed[trimmed] = true
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" {
+			continue
 		}
+		if prefix == "" {
+			changed[trimmed] = true
+			continue
+		}
+		if rel, ok := strings.CutPrefix(trimmed, prefix); ok {
+			changed[rel] = true
+		}
+		// else: changed outside the corpus root, can never match a finding
 	}
 	return changed, nil
 }

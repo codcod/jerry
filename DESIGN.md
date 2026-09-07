@@ -1,6 +1,6 @@
 # jerry — solution design
 
-**Version 2.8** · 2026-09-07 · Phase 1 implemented; §7.2's `related` command and merge-request comment bot are implemented, the rest of the roadmap remains intent, not code.
+**Version 2.9** · 2026-09-07 · Phase 1 implemented; §7.2's `related` command and merge-request comment bot are implemented, the rest of the roadmap remains intent, not code.
 
 This file is authoritative on **intent**. Where it conflicts with a shipped
 ticket decision, the ticket wins and this file is wrong and should be corrected.
@@ -462,10 +462,6 @@ needing one.
 | # | This document says | The code does | Where |
 |---|---|---|---|
 | 4 | Status lifecycles are enforced (§4.2) | `jerry status` enforces transitions; `validate` checks only membership, so a hand edit passes CI | `internal/cli/status.go` vs `internal/rules/rules.go` |
-| 6 | Findings accumulate and are always printed (§3.4, §5) | True — except `validate --diff`, which filters findings by a corpus-relative path against git's repo-relative output. With `jerry.yaml` below the git root it discards every finding and exits 0 | `internal/cli/validate.go` |
-
-Item 6 is the worst of these: a validator that passes silently is worse than one
-that is absent, because the green tick is taken as evidence.
 
 ## 11. Revision history
 
@@ -512,5 +508,12 @@ that is absent, because the green tick is taken as evidence.
   `required-adr-sections`, `required-sd-sections`) now merge with the built-in defaults instead
   of replacing them, so a repository can extend but never switch off a rule; §3's "(Today they
   replace — see §10.)" aside was dropped and the resolved row was removed from §10's table.
+- **Version 2.9** (2026-09-07) — JRY-013 closed divergence 6 (§3.4/§5/§10 vs. `validate
+  --diff`): `changedFiles` now rewrites git's repository-relative changed-file paths to the
+  corpus-relative form findings use (`git rev-parse --show-prefix`), so a `jerry.yaml` below
+  the git root no longer discards every finding; a missing/unreachable base ref's failure
+  message now carries git's own reason; and `--base`, when not explicitly given, autodetects
+  from `GITHUB_BASE_REF` on GitHub Actions `pull_request` runs. The resolved row was removed
+  from §10's table.
 - **Version 1** (2026-09-01) — initial design, written alongside the Phase 1
   implementation.

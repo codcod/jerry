@@ -34,6 +34,12 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
   `required-sd-sections`) now merge with the built-in defaults instead of replacing them, so a
   repository can extend a rule but can no longer switch it off by overriding one of these keys
   to a narrower list or to empty.
+- `jerry validate --diff` no longer silently discards every finding when `jerry.yaml` is not at
+  the git repository's root — it compared git's repository-relative changed-file paths against
+  corpus-relative finding paths, so a mismatch filtered out every finding and exited 0 having
+  checked nothing. It now also autodetects its base ref from `GITHUB_BASE_REF` in GitHub
+  Actions `pull_request` runs when `--base` is not given, and reports git's actual failure
+  reason (instead of a bare exit status) when the base ref cannot be resolved.
 
 ## [0.2.0] - 2026-09-02
 

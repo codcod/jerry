@@ -176,6 +176,12 @@ var goldenCases = []goldenCase{
 		args:     []string{"validate"},
 	},
 	{
+		name:     "validate-diff-nested-corpus-root",
+		leafPath: "jerry validate",
+		fixture:  nestedCorpusFixture,
+		args:     []string{"validate", "--diff", "--base", "origin/main"},
+	},
+	{
 		name:     "related-match",
 		leafPath: "jerry related",
 		fixture:  relatedFixture,

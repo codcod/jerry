@@ -41,17 +41,25 @@ func cleanFixture(t *testing.T) string {
 const exampleADRPath = "teams/example-team/adr/0001-example-use-postgres-for-primary-store.md"
 
 // dirtyFixture builds the same scaffolded repository as cleanFixture, then
-// introduces exactly one rules.SeverityError finding and exactly one
-// rules.SeverityWarning finding by splicing two lines into the example ADR's
-// frontmatter — not by hand-authoring a document. doc.Front has no field for
-// an unrecognised key (that is what makes it unrecognised), so a byte-level
-// insertion into the frontmatter block is the only way to produce checkDate's
-// unknown-key case; the malformed applies_to entry is the same class of
-// deliberate, minimal perturbation. TestDirtyFixtureContract pins the exact
-// count so a future edit here cannot silently drift it.
+// perturbs the example ADR into perturbExampleADR's one-error-one-warning
+// shape.
 func dirtyFixture(t *testing.T) string {
 	t.Helper()
 	root := cleanFixture(t)
+	perturbExampleADR(t, root)
+	return root
+}
+
+// perturbExampleADR introduces exactly one rules.SeverityError finding and
+// exactly one rules.SeverityWarning finding by splicing two lines into the
+// example ADR's frontmatter — not by hand-authoring a document. doc.Front has
+// no field for an unrecognised key (that is what makes it unrecognised), so a
+// byte-level insertion into the frontmatter block is the only way to produce
+// checkDate's unknown-key case; the malformed applies_to entry is the same
+// class of deliberate, minimal perturbation. TestDirtyFixtureContract pins
+// the exact count so a future edit here cannot silently drift it.
+func perturbExampleADR(t *testing.T, root string) {
+	t.Helper()
 
 	path := filepath.Join(root, filepath.FromSlash(exampleADRPath))
 	raw, err := os.ReadFile(path)
@@ -70,7 +78,6 @@ func dirtyFixture(t *testing.T) string {
 	if err := os.WriteFile(path, []byte(perturbed), 0o644); err != nil {
 		t.Fatalf("writing perturbed example ADR: %v", err)
 	}
-	return root
 }
 
 // relatedFixture builds the same scaffolded repository as cleanFixture, then
@@ -164,6 +171,33 @@ func commentNoMatchFixture(t *testing.T) string {
 	return gitCommentFixture(t, cleanFixture(t), "docs/readme.md", "# hi\n")
 }
 
+// nestedCorpusFixture scaffolds the corpus at <tempdir>/docs — deliberately
+// not the git top-level — and gives it two commits: a clean base tagged
+// refs/remotes/origin/main, then perturbExampleADR's one-error-one-warning
+// change. This is JRY-013's core regression case: changedFiles must rewrite
+// git's repo-relative changed-file path onto the docs/ corpus root before
+// onlyIn can match it against finding.Path, or `validate --diff` silently
+// discards the finding and exits 0.
+func nestedCorpusFixture(t *testing.T) string {
+	t.Helper()
+	gitRoot := t.TempDir()
+	corpusRoot := filepath.Join(gitRoot, "docs")
+	if err := os.MkdirAll(corpusRoot, 0o755); err != nil {
+		t.Fatalf("creating docs dir: %v", err)
+	}
+	if _, err := scaffold.Run(scaffold.Options{Root: corpusRoot, Forge: scaffold.ForgeGitHub, Version: "test"}); err != nil {
+		t.Fatalf("scaffolding nested corpus fixture: %v", err)
+	}
+	gitInit(t, gitRoot)
+	gitCommit(t, gitRoot, "base")
+	if out, err := exec.Command("git", "-C", gitRoot, "update-ref", "refs/remotes/origin/main", "HEAD").CombinedOutput(); err != nil {
+		t.Fatalf("git update-ref origin/main %s: %v\n%s", gitRoot, err, out)
+	}
+	perturbExampleADR(t, corpusRoot)
+	gitCommit(t, gitRoot, "introduce finding")
+	return corpusRoot
+}
+
 // loadFixtureFindings runs the real rules.Check over a fixture root the same
 // way `jerry validate` does, under the pinned clock.
 func loadFixtureFindings(t *testing.T, root string) rules.Findings {
@@ -205,6 +239,27 @@ func TestDirtyFixtureContract(t *testing.T) {
 	}
 	if errors != 1 || warnings != 1 {
 		t.Fatalf("dirty fixture must carry exactly one error and one warning, got %d error(s) and %d warning(s): %v",
+			errors, warnings, findings)
+	}
+}
+
+// TestNestedCorpusFixtureContract pins the same one-error-one-warning shape
+// as TestDirtyFixtureContract, since nestedCorpusFixture applies the same
+// perturbation — just with the corpus root below the git top-level.
+func TestNestedCorpusFixtureContract(t *testing.T) {
+	findings := loadFixtureFindings(t, nestedCorpusFixture(t))
+
+	var errors, warnings int
+	for _, finding := range findings {
+		switch finding.Severity {
+		case rules.SeverityError:
+			errors++
+		case rules.SeverityWarning:
+			warnings++
+		}
+	}
+	if errors != 1 || warnings != 1 {
+		t.Fatalf("nested corpus fixture must carry exactly one error and one warning, got %d error(s) and %d warning(s): %v",
 			errors, warnings, findings)
 	}
 }
