@@ -205,7 +205,10 @@ to `5-rework/`), 1 non-blocking fixed inline (F4).
 
 `cost: estimated S, actual S`
 
-### Rework fix record — round 1 (commit `0c6607e`)
+### Rework fix record — round 1 (commit `6be4eb3`)
+
+*(SHA updated from the original `0c6607e`: the pre-publish tidy squashed it with a follow-on
+PLAN.md-status commit into this one, per §1's anticipated case.)*
 
 Scope: F2 and F3 only (F1 and F4 were already resolved before this round — see their rows
 above). Branch tip before this round's fix: `0ce44da`.
@@ -225,7 +228,7 @@ above). Branch tip before this round's fix: `0ce44da`.
 
 **Scoped re-review (step 1/6a):** reviewer independence — the reviewing agent authored round
 1's fix in this same session, so the audit was delegated to an independent sub-agent, briefed
-with the ticket's Review section and the fix diff `0ce44da..0c6607e`, and re-verified by hand
+with the ticket's Review section and the fix diff `0ce44da..6be4eb3`, and re-verified by hand
 before recording. Scope was exactly F2 and F3 plus the round's own new text (per protocol §1,
 not a re-audit of the whole feature). Findings:
 
@@ -236,8 +239,8 @@ not a re-audit of the whole feature). Findings:
 - **F3** — confirmed resolved. The new `CHANGELOG.md` bullet was checked against
   `internal/config/config.go`'s current `applyDefaults`/`mergeUnique` and matches the shipped
   behavior exactly; correctly placed under the existing `[Unreleased]` → `### Fixed` heading.
-- Diff hygiene: `0ce44da..0c6607e` touches only `PLAN.md` (+1) and `CHANGELOG.md` (+4), no
-  scope creep. `just build`/`test`/`lint`/`docs-check` re-run clean on `0c6607e`.
+- Diff hygiene: `0ce44da..6be4eb3` touches only `PLAN.md` (+1) and `CHANGELOG.md` (+4), no
+  scope creep. `just build`/`test`/`lint`/`docs-check` re-run clean on `6be4eb3`.
 - **No new findings.** Zero blocking, zero non-blocking this round.
 
 **Verdict: clean.** No blocking findings remain (F1/F4 resolved before this round, F2/F3
