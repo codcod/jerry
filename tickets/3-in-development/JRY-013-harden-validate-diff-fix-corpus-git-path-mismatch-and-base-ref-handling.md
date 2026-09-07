@@ -265,3 +265,4 @@ correct by virtue of being generated.
   `diff-hardening`, next in the cross-cutting queue since its dependency (`golden-tests`,
   JRY-007) is done and the underlying defect is already live and silent.
 - 2026-09-07 — TO DO → READY: plan complete
+- 2026-09-07 — READY → IN DEVELOPMENT: picked up

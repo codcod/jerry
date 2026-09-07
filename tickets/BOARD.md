@@ -13,10 +13,11 @@ Last updated: 2026-09-07
 
 ## IN DEVELOPMENT
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-013 | Harden validate --diff: fix corpus/git path mismatch and base-ref handling | [JRY-007] |
 
 ## IN REVIEW
 
@@ -38,7 +39,6 @@ Last updated: 2026-09-07
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
-| JRY-013 | Harden validate --diff: fix corpus/git path mismatch and base-ref handling | high | medium | M | [JRY-007] | JRY-011 |
 
 ## TO DO (impact order, per child)
 
