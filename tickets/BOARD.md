@@ -38,6 +38,7 @@ Last updated: 2026-09-07
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
+| JRY-013 | Harden validate --diff: fix corpus/git path mismatch and base-ref handling | high | medium | M | [JRY-007] | JRY-011 |
 
 ## TO DO (impact order, per child)
 
@@ -45,7 +46,6 @@ Last updated: 2026-09-07
 
 | id | title | impact | complexity | cost | depends-on | family |
 |---|---|---|---|---|---|---|
-| JRY-013 | Harden validate --diff: fix corpus/git path mismatch and base-ref handling | high | medium | M | [JRY-007] | JRY-011 |
 | JRY-016 | Scaffold emits the comment bot in CI | high | medium | M | [JRY-015] |  |
 | JRY-017 | jerry upgrade-ci: bump a scaffolded repo's pinned version | medium | low | S | [JRY-003] |  |
 | JRY-019 | jerry show: render one decision and its supersession chain | medium | low | S | [JRY-001] |  |
