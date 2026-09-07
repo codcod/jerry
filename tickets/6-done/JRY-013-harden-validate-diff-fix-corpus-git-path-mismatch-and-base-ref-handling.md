@@ -307,6 +307,24 @@ match the existing `--base` paragraph under "Post governing decisions to a merge
 `just build`, `just test`, `just lint`, `just docs-check` all re-run clean. No other file
 touched.
 
+**Scoped re-review (round 1's fix, commit `f5bdfac`):** delegated to an independent reviewer
+(the orchestrating reviewer authored the fix this same session), re-verified by hand. **F3
+confirmed closed** — the added paragraph accurately reflects `resolveDiffBase` and
+`changedFiles` (`internal/cli/validate.go:74-137`): the `--base` default, the
+`GITHUB_BASE_REF` autodetection gated on `cmd.Flags().Changed("base")`, and the clearer failure
+message. `git show f5bdfac --stat` confirmed the round touched only the one declared file.
+
+Reading the fix's own diff turned up two new, non-blocking findings, both fixed inline in a
+second commit (`6f08d99`):
+
+| id | severity | class | disposition | description | evidence | suggestion |
+|---|---|---|---|---|---|---|
+| F4 | non-blocking | docs-gap | fixed inline | The added inline comment said autodetection happens "in CI" generically, but it is GitHub-Actions-specific (`GITHUB_BASE_REF`); a GitLab CI reader could wrongly assume the same autodetection applies to them | `docs/user-manual/introduction.adoc` (round-1 diff) vs. `internal/cli/validate.go:87-95`'s `os.Getenv("GITHUB_BASE_REF")` | Reworded the comment to say "autodetected on GitHub Actions" |
+| F5 | non-blocking | docs-gap | fixed inline | The added prose stated the base-ref failure "fails ... with git's own reason" unconditionally, but `changedFiles` only surfaces git's reason when `(*exec.ExitError).Stderr` is non-empty (the same asymmetry already recorded as F2, noted) — an empty-stderr failure still falls back to the bare `exit status N` message | `docs/user-manual/introduction.adoc` (round-1 diff) vs. `internal/cli/validate.go:112-119` | Softened to "usually surfacing git's own reason for the failure" |
+
+Disposition summary (this round): 2 non-blocking (F4, F5, both fixed inline). No blocking
+findings remain — the ticket proceeds to `6-done/`.
+
 ## History
 
 - 2026-09-03 — created (TO DO). source: chat: filed from PLAN.md's cross-cutting row
@@ -319,3 +337,4 @@ touched.
   a nonexistent `--version` flag on `jerry init`) — found as review finding F1
 - 2026-09-07 — IN REVIEW → REWORK: 1 blocking finding: F3 docs-gap
 - 2026-09-07 — REWORK → IN REVIEW: findings fixed
+- 2026-09-07 — IN REVIEW → DONE: review clean; 2 non-blocking, both fixed inline

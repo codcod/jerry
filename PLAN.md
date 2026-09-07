@@ -39,7 +39,7 @@ them again.
 | `forge-proof-gitlab` | `JRY-009` | done — GitLab proven end to end with the current (checksum-verified) template |
 | `applies-to-match` | `JRY-011` | done, publish-gated |
 | `related` | `JRY-012` | done, merged (PR #15) |
-| `diff-hardening` | `JRY-013` | in rework — review found one blocking finding (missing docs coverage) |
+| `diff-hardening` | `JRY-013` | done, publish-gated |
 | `forge-comment` | `JRY-014` | done, publish-gated |
 | `bot` | `JRY-015` | done, publish-gated |
 | `config-additive` | `JRY-021` | done, publish-gated |
