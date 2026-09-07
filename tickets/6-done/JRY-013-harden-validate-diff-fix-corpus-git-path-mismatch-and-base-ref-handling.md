@@ -339,3 +339,4 @@ findings remain — the ticket proceeds to `6-done/`.
 - 2026-09-07 — REWORK → IN REVIEW: findings fixed
 - 2026-09-07 — IN REVIEW → DONE: review clean; 2 non-blocking, both fixed inline
 - 2026-09-07 — MR opened (PR #19, https://github.com/codcod/jerry/pull/19), commits 0fdbe1b, a9793fb
+- 2026-09-07 — merged to main (PR #19, 4aa28b9)
