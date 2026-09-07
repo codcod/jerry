@@ -260,3 +260,6 @@ updates that row").
 - 2026-09-07 — IN REVIEW → REWORK: F1 fixed (branch rebase), F2/F3 open: PLAN.md + CHANGELOG.md governing-doc coverage
 - 2026-09-07 — REWORK → IN REVIEW: findings fixed (F2/F3 governing-doc coverage)
 - 2026-09-07 — IN REVIEW → DONE: scoped re-review clean, F2/F3 resolved
+- 2026-09-07 — MR opened (PR #18) against `main`; branch tidied to 3 atomic commits
+  (`469ab3e` implementation, `0ce44da` review-found test fix, `6be4eb3` PLAN.md/CHANGELOG.md
+  reconciliation). Not yet merged — merging is the human's.
