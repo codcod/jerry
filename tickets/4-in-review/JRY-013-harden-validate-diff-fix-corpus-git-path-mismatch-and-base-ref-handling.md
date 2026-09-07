@@ -266,3 +266,4 @@ correct by virtue of being generated.
   JRY-007) is done and the underlying defect is already live and silent.
 - 2026-09-07 — TO DO → READY: plan complete
 - 2026-09-07 — READY → IN DEVELOPMENT: picked up
+- 2026-09-07 — IN DEVELOPMENT → IN REVIEW: acceptance green
