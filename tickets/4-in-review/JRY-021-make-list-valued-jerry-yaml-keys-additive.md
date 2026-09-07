@@ -205,6 +205,24 @@ to `5-rework/`), 1 non-blocking fixed inline (F4).
 
 `cost: estimated S, actual S`
 
+### Rework fix record — round 1 (commit `0c6607e`)
+
+Scope: F2 and F3 only (F1 and F4 were already resolved before this round — see their rows
+above). Branch tip before this round's fix: `0ce44da`.
+
+- **F2** — added `| \`config-additive\` | \`JRY-021\` | in review |` to `PLAN.md`'s "Filed so
+  far" table. The cross-cutting description row (`PLAN.md:339`) was deliberately **left
+  untouched**: `git log -p` on `PLAN.md` shows every prior filed ticket (`JRY-006`, `JRY-008`)
+  only ever edited the "Filed so far" status cell, never its cross-cutting description row —
+  the original finding's suggestion to "mark it resolved" did not match that precedent, so the
+  fix follows the actual convention instead. Status is `in review`, not `done`, since the
+  ticket has not concluded yet; whichever review concludes it updates this row again per
+  `review-addendum.md` step 7.
+- **F3** — added a bullet under `CHANGELOG.md`'s existing `[Unreleased]` → `### Fixed` heading,
+  in the style of the adjacent JRY-008 entry, describing the additive-merge behavior change.
+- Re-ran `just build`/`test`/`lint`/`docs-check` — all green (unchanged from the prior round;
+  these two files carry no executable behavior).
+
 ## History
 
 - 2026-09-03 — created (TO DO). source: chat: filed from PLAN.md's cross-cutting row
@@ -214,3 +232,4 @@ to `5-rework/`), 1 non-blocking fixed inline (F4).
 - 2026-09-06 — READY → IN DEVELOPMENT: picked up
 - 2026-09-06 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-07 — IN REVIEW → REWORK: F1 fixed (branch rebase), F2/F3 open: PLAN.md + CHANGELOG.md governing-doc coverage
+- 2026-09-07 — REWORK → IN REVIEW: findings fixed (F2/F3 governing-doc coverage)

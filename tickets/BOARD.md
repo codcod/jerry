@@ -20,10 +20,11 @@ Last updated: 2026-09-07
 
 ## IN REVIEW
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-021 | Make list-valued jerry.yaml keys additive | [JRY-001] |
 
 ## REWORK
 
@@ -31,7 +32,6 @@ Last updated: 2026-09-07
 
 | id | title | open findings |
 |---|---|---|
-| JRY-021 | Make list-valued jerry.yaml keys additive | F1 fixed (branch rebase), F2/F3 open: PLAN.md + CHANGELOG.md governing-doc coverage |
 
 ## READY (impact order, per child)
 
