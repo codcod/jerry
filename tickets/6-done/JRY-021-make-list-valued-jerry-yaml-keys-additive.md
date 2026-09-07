@@ -259,3 +259,4 @@ updates that row").
 - 2026-09-06 — IN DEVELOPMENT → IN REVIEW: acceptance green
 - 2026-09-07 — IN REVIEW → REWORK: F1 fixed (branch rebase), F2/F3 open: PLAN.md + CHANGELOG.md governing-doc coverage
 - 2026-09-07 — REWORK → IN REVIEW: findings fixed (F2/F3 governing-doc coverage)
+- 2026-09-07 — IN REVIEW → DONE: scoped re-review clean, F2/F3 resolved
