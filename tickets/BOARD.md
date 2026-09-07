@@ -20,10 +20,11 @@ Last updated: 2026-09-07
 
 ## IN REVIEW
 
-### jerry (0/1)
+### jerry (1/1)
 
 | id | title | depends-on |
 |---|---|---|
+| JRY-013 | Harden validate --diff: fix corpus/git path mismatch and base-ref handling | [JRY-007] |
 
 ## REWORK
 
@@ -31,7 +32,6 @@ Last updated: 2026-09-07
 
 | id | title | open findings |
 |---|---|---|
-| JRY-013 | Harden validate --diff: fix corpus/git path mismatch and base-ref handling | 1 blocking finding: F3 docs-gap |
 
 ## READY (impact order, per child)
 

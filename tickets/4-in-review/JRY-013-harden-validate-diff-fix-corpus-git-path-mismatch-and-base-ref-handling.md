@@ -297,6 +297,16 @@ Disposition summary: 1 blocking (F3, unresolved — ticket moves to `5-rework/`)
 
 cost: estimated M, actual M
 
+### Rework fix record — round 1 (commit f5bdfac)
+
+Fixed F3 only, per scope. Added a paragraph to `docs/user-manual/introduction.adoc`'s
+"Check it" section documenting `jerry validate --diff`, `--base` (default `origin/main`), its
+`GITHUB_BASE_REF` autodetection on GitHub Actions `pull_request` runs, and that an unresolvable
+base ref now fails with git's own reason instead of silently reporting zero findings — styled to
+match the existing `--base` paragraph under "Post governing decisions to a merge request".
+`just build`, `just test`, `just lint`, `just docs-check` all re-run clean. No other file
+touched.
+
 ## History
 
 - 2026-09-03 — created (TO DO). source: chat: filed from PLAN.md's cross-cutting row
@@ -308,3 +318,4 @@ cost: estimated M, actual M
 - 2026-09-07 — plan amended inline: Acceptance test step 4's example command corrected (dropped
   a nonexistent `--version` flag on `jerry init`) — found as review finding F1
 - 2026-09-07 — IN REVIEW → REWORK: 1 blocking finding: F3 docs-gap
+- 2026-09-07 — REWORK → IN REVIEW: findings fixed
