@@ -72,7 +72,7 @@ Last updated: 2026-09-07
 | JRY-011 | Applies_to matching: gitignore-style globs and match precedence | yes — merged to main (PR #14, `91cd553`) |
 | JRY-012 | jerry related: resolve changed paths to governing decisions | yes — merged to main (PR #15, `4e4b321`) |
 | JRY-014 | Forge client, comment scope: create-or-update MR comment | yes — merged to main (PR #16, `b527ebe`) |
-| JRY-015 | jerry comment: post governing decisions to the merge request | no — publish-gated |
+| JRY-015 | jerry comment: post governing decisions to the merge request | yes — merged to main (MR !17, `ea2b3ae`). |
 
 ## DROPPED
 
