@@ -248,3 +248,4 @@ dispositions this round.
 - 2026-09-05 — MR opened (PR #17) against `main`; branch tidied to 2 atomic commits
   (`1dc7394` implementation, `2a89cce` docs reconciliation). Not yet merged — merging is
   the human's.
+- 2026-09-07 — merged to main (MR !17, `ea2b3ae`).
