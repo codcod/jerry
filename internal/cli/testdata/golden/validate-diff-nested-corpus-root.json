@@ -1,0 +1,5 @@
+{
+  "stdout": "teams/example-team/adr/0001-example-use-postgres-for-primary-store.md:9: error: applies_to entry \"../escape\" is not a valid path: must not contain `..` (applies-to)\nteams/example-team/adr/0001-example-use-postgres-for-primary-store.md:10: warning: frontmatter key \"jerry_test_unknown_field\" is not one jerry knows — check for a typo (preserved as-is by `jerry fmt`) (unknown-key)\n",
+  "stderr": "\n1 problem(s) in 1 document(s).\n",
+  "failed": true
+}
