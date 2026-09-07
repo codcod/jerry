@@ -223,6 +223,29 @@ above). Branch tip before this round's fix: `0ce44da`.
 - Re-ran `just build`/`test`/`lint`/`docs-check` — all green (unchanged from the prior round;
   these two files carry no executable behavior).
 
+**Scoped re-review (step 1/6a):** reviewer independence — the reviewing agent authored round
+1's fix in this same session, so the audit was delegated to an independent sub-agent, briefed
+with the ticket's Review section and the fix diff `0ce44da..0c6607e`, and re-verified by hand
+before recording. Scope was exactly F2 and F3 plus the round's own new text (per protocol §1,
+not a re-audit of the whole feature). Findings:
+
+- **F2** — confirmed resolved. `PLAN.md:44` carries the new row, correct columns/style. The
+  claim that leaving the cross-cutting row untouched matches precedent was independently
+  verified against `git log -p -- PLAN.md` (JRY-006's and JRY-008's filings each touched only
+  the "Filed so far" status cell) — not just re-asserted.
+- **F3** — confirmed resolved. The new `CHANGELOG.md` bullet was checked against
+  `internal/config/config.go`'s current `applyDefaults`/`mergeUnique` and matches the shipped
+  behavior exactly; correctly placed under the existing `[Unreleased]` → `### Fixed` heading.
+- Diff hygiene: `0ce44da..0c6607e` touches only `PLAN.md` (+1) and `CHANGELOG.md` (+4), no
+  scope creep. `just build`/`test`/`lint`/`docs-check` re-run clean on `0c6607e`.
+- **No new findings.** Zero blocking, zero non-blocking this round.
+
+**Verdict: clean.** No blocking findings remain (F1/F4 resolved before this round, F2/F3
+resolved this round) → ticket proceeds to `6-done/` (protocol §6b). `PLAN.md`'s "Filed so far"
+row for `config-additive`/JRY-021 is updated from `in review` to `done, publish-gated` as part
+of concluding this review (`review-addendum.md` step 7: "a review that concludes a ticket
+updates that row").
+
 ## History
 
 - 2026-09-03 — created (TO DO). source: chat: filed from PLAN.md's cross-cutting row
