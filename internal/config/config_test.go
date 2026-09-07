@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -146,7 +147,7 @@ func TestListValuedKeysDedupeRepeatedDefaults(t *testing.T) {
 
 	defaults := &Config{}
 	defaults.applyDefaults()
-	if len(cfg.Placeholders) != len(defaults.Placeholders) {
+	if !reflect.DeepEqual(cfg.Placeholders, defaults.Placeholders) {
 		t.Errorf("re-listing a built-in placeholder produced a duplicate: %v, want %v", cfg.Placeholders, defaults.Placeholders)
 	}
 }
@@ -166,7 +167,7 @@ func TestEmptyListCannotSwitchOffTheDefaults(t *testing.T) {
 
 	defaults := &Config{}
 	defaults.applyDefaults()
-	if len(cfg.Placeholders) != len(defaults.Placeholders) {
+	if !reflect.DeepEqual(cfg.Placeholders, defaults.Placeholders) {
 		t.Errorf("an explicit empty list narrowed placeholders: %v, want the built-in defaults %v", cfg.Placeholders, defaults.Placeholders)
 	}
 }
