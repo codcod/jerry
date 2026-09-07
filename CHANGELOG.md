@@ -30,6 +30,10 @@ While the version is below `1.0.0`, breaking changes may land in a minor release
   publishes `schema_version` as `const: 1` — which would have rejected every future-versioned
   document in any editor's YAML language server the day a newer version exists. It now
   publishes it as a floor (`minimum`).
+- `jerry.yaml`'s list-valued keys (`placeholders`, `required-adr-sections`,
+  `required-sd-sections`) now merge with the built-in defaults instead of replacing them, so a
+  repository can extend a rule but can no longer switch it off by overriding one of these keys
+  to a narrower list or to empty.
 
 ## [0.2.0] - 2026-09-02
 
