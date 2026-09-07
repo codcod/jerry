@@ -114,19 +114,29 @@ func (c *Config) applyDefaults() {
 	}
 
 	defaults := rules.DefaultOptions()
-	if len(c.RequiredADRSections) == 0 {
-		c.RequiredADRSections = defaults.RequiredADRSections
-	}
-	if len(c.RequiredSDSections) == 0 {
-		c.RequiredSDSections = defaults.RequiredSDSections
-	}
+	c.RequiredADRSections = mergeUnique(defaults.RequiredADRSections, c.RequiredADRSections)
+	c.RequiredSDSections = mergeUnique(defaults.RequiredSDSections, c.RequiredSDSections)
 	if c.ProposedStaleDays == nil {
 		days := defaults.ProposedStaleDays
 		c.ProposedStaleDays = &days
 	}
-	if len(c.Placeholders) == 0 {
-		c.Placeholders = defaults.Placeholders
+	c.Placeholders = mergeUnique(defaults.Placeholders, c.Placeholders)
+}
+
+// mergeUnique returns defaults followed by every entry in extra not already
+// present, preserving order and dropping duplicates. It is how list-valued
+// jerry.yaml keys stay additive (DESIGN.md §3): a repository can extend the
+// built-in rule set but never replace or narrow it.
+func mergeUnique(defaults, extra []string) []string {
+	merged := make([]string, 0, len(defaults)+len(extra))
+	seen := make(map[string]bool, len(defaults)+len(extra))
+	for _, v := range append(append([]string{}, defaults...), extra...) {
+		if !seen[v] {
+			seen[v] = true
+			merged = append(merged, v)
+		}
 	}
+	return merged
 }
 
 func (c *Config) validate() error {

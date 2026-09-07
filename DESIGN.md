@@ -1,6 +1,6 @@
 # jerry — solution design
 
-**Version 2.7** · 2026-09-05 · Phase 1 implemented; §7.2's `related` command and merge-request comment bot are implemented, the rest of the roadmap remains intent, not code.
+**Version 2.8** · 2026-09-07 · Phase 1 implemented; §7.2's `related` command and merge-request comment bot are implemented, the rest of the roadmap remains intent, not code.
 
 This file is authoritative on **intent**. Where it conflicts with a shipped
 ticket decision, the ticket wins and this file is wrong and should be corrected.
@@ -66,7 +66,7 @@ approval is the approval.
    because that is the same forty-divergent-rule-sets outcome reached by config
    instead of by copied script. **The list-valued keys are therefore additive:
    a repository extends `placeholders` and the required-section lists; it does
-   not replace them.** (Today they replace — see §10.)
+   not replace them.**
 3. **Stateless, single binary, no runtime dependencies.** It must run in any CI
    image and in a pre-commit hook without a toolchain behind it — which is a
    claim about the *binary*, and one the emitted CI now honours: it downloads
@@ -461,7 +461,6 @@ needing one.
 
 | # | This document says | The code does | Where |
 |---|---|---|---|
-| 3 | Repositories own none of the rules (v1 §3.2) | `jerry.yaml` replaces the placeholder and required-section lists, so a repository can switch a rule off | `internal/config/config.go` |
 | 4 | Status lifecycles are enforced (§4.2) | `jerry status` enforces transitions; `validate` checks only membership, so a hand edit passes CI | `internal/cli/status.go` vs `internal/rules/rules.go` |
 | 6 | Findings accumulate and are always printed (§3.4, §5) | True — except `validate --diff`, which filters findings by a corpus-relative path against git's repo-relative output. With `jerry.yaml` below the git root it discards every finding and exits 0 | `internal/cli/validate.go` |
 
@@ -508,5 +507,10 @@ that is absent, because the green tick is taken as evidence.
   comment`), the second bullet of that phase: posts the decisions governing a merge request's
   changed files, counts adoption from its first commit (`jerry-adoption.jsonl`), and degrades
   silently, never failing the pipeline, on a missing or insufficiently-scoped token.
+- **Version 2.8** (2026-09-07) — JRY-021 closed divergence 3 (§3/§10 vs. the placeholder and
+  required-section lists): `jerry.yaml`'s list-valued keys (`placeholders`,
+  `required-adr-sections`, `required-sd-sections`) now merge with the built-in defaults instead
+  of replacing them, so a repository can extend but never switch off a rule; §3's "(Today they
+  replace — see §10.)" aside was dropped and the resolved row was removed from §10's table.
 - **Version 1** (2026-09-01) — initial design, written alongside the Phase 1
   implementation.
