@@ -263,3 +263,4 @@ updates that row").
 - 2026-09-07 — MR opened (PR #18) against `main`; branch tidied to 3 atomic commits
   (`469ab3e` implementation, `0ce44da` review-found test fix, `6be4eb3` PLAN.md/CHANGELOG.md
   reconciliation). Not yet merged — merging is the human's.
+- 2026-09-07 — merged to main (PR #18, `4e90f7a`).
