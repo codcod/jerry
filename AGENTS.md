@@ -12,13 +12,13 @@ ticket decision contradicts it, the ticket wins and DESIGN.md should be fixed.
 | [`DESIGN.md`](DESIGN.md) | the design of record. §3 charter · §4 schema · §5 rules · §6 scaffold contract · **§10 known divergences between this document and the code** |
 | [`PLAN.md`](PLAN.md) | provisional decomposition of DESIGN.md into tickets, keyed by slug; its *Filed so far* table maps slug → ticket id |
 | [`CHANGELOG.md`](CHANGELOG.md) | what shipped, per release |
-| [`review-addendum.md`](review-addendum.md) | jerry's project-specific review rules, layered on top of the brine review protocol via `review_addendum` in `pickle.toml`; no overarching addendum, since jerry is the only child-project |
+| [`development/review-addendum.md`](development/review-addendum.md) | jerry's project-specific review rules, layered on top of the brine review protocol via `review_addendum` in `pickle.toml`; no overarching addendum, since jerry is the only child-project |
 
 ## Conventions that reviews must enforce
 
 These are the rules that are cheap to break and expensive to notice. They are the *conventions*;
 the audit procedure for them — which are enforced by the test suite and which need a reviewer's
-attention — is in [`review-addendum.md`](review-addendum.md), which deliberately does not
+attention — is in [`development/review-addendum.md`](development/review-addendum.md), which deliberately does not
 restate them.
 
 - **Dependency policy, as a grep — not as a belief.** `go.mod` stays at cobra +
